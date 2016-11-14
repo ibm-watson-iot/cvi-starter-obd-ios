@@ -96,6 +96,7 @@
 				TargetAttributes = {
 					61AB542E1DDA5EAA00D60E67 = {
 						CreatedOnToolsVersion = 8.1;
+						DevelopmentTeam = 73424325YV;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -260,7 +261,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 73424325YV;
 				INFOPLIST_FILE = starter.automotive.obdii/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "iot.ibm.com.starter-automotive-obdii";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -272,7 +275,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 73424325YV;
 				INFOPLIST_FILE = starter.automotive.obdii/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "iot.ibm.com.starter-automotive-obdii";
 				PRODUCT_NAME = "$(TARGET_NAME)";
