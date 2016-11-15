@@ -12,6 +12,8 @@ import ReachabilitySwift
 class ViewController: UIViewController {
     
     var reachability = Reachability()!
+    let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5);
+    let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20);
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +38,7 @@ class ViewController: UIViewController {
     
     func simulation() {
         if reachability.isReachable {
-            print("Simulation")
+            print("Simulation \(randomFuelLevel) \(randomEngineCoolant)")
         } else {
             print("No Simulation")
         }
