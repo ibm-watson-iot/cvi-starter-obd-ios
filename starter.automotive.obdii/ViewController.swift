@@ -7,8 +7,11 @@
 //
 
 import UIKit
+import ReachabilitySwift
 
 class ViewController: UIViewController {
+    
+    var reachability = Reachability()!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,7 +35,12 @@ class ViewController: UIViewController {
     }
     
     func simulation() {
-        print("Simulation")
+        if reachability.isReachable {
+            print("Simulation")
+        } else {
+            print("No Simulation")
+        }
+        
     }
     
     func actualDevice() {

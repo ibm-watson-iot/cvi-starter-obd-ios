@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4BA8BFBC934ED5EDF7A2A4B0 /* Pods_starter_automotive_obdii.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B4F8D1C394091276F18CB17 /* Pods_starter_automotive_obdii.framework */; };
+		61A806AD1DDBA875008540CE /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 61A806AC1DDBA875008540CE /* Podfile */; };
+		61A806AF1DDBAB79008540CE /* ReachabilitySwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61A806AE1DDBAB79008540CE /* ReachabilitySwift.framework */; };
 		61AB54331DDA5EAA00D60E67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AB54321DDA5EAA00D60E67 /* AppDelegate.swift */; };
 		61AB54351DDA5EAA00D60E67 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AB54341DDA5EAA00D60E67 /* ViewController.swift */; };
 		61AB54381DDA5EAA00D60E67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61AB54361DDA5EAA00D60E67 /* Main.storyboard */; };
@@ -15,6 +18,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3D01C5A92CAF67CA67CF61C1 /* Pods-starter.automotive.obdii.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-starter.automotive.obdii.release.xcconfig"; path = "Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii.release.xcconfig"; sourceTree = "<group>"; };
+		4B4F8D1C394091276F18CB17 /* Pods_starter_automotive_obdii.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_starter_automotive_obdii.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		61A806AC1DDBA875008540CE /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		61A806AE1DDBAB79008540CE /* ReachabilitySwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReachabilitySwift.framework; path = "Pods/../build/Debug-iphoneos/ReachabilitySwift.framework"; sourceTree = "<group>"; };
 		61AB542F1DDA5EAA00D60E67 /* starter.automotive.obdii.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = starter.automotive.obdii.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		61AB54321DDA5EAA00D60E67 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		61AB54341DDA5EAA00D60E67 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -22,6 +29,7 @@
 		61AB54391DDA5EAA00D60E67 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		61AB543C1DDA5EAA00D60E67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		61AB543E1DDA5EAA00D60E67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ABD1DA47B34BFE20485504F5 /* Pods-starter.automotive.obdii.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-starter.automotive.obdii.debug.xcconfig"; path = "Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,6 +37,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61A806AF1DDBAB79008540CE /* ReachabilitySwift.framework in Frameworks */,
+				4BA8BFBC934ED5EDF7A2A4B0 /* Pods_starter_automotive_obdii.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,8 +48,11 @@
 		61AB54261DDA5EAA00D60E67 = {
 			isa = PBXGroup;
 			children = (
+				61A806AC1DDBA875008540CE /* Podfile */,
 				61AB54311DDA5EAA00D60E67 /* starter.automotive.obdii */,
 				61AB54301DDA5EAA00D60E67 /* Products */,
+				77F4F8874E49F0B43BF4D538 /* Pods */,
+				B6ACD64D1BA7D3B0CB767843 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -64,6 +77,24 @@
 			path = starter.automotive.obdii;
 			sourceTree = "<group>";
 		};
+		77F4F8874E49F0B43BF4D538 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				ABD1DA47B34BFE20485504F5 /* Pods-starter.automotive.obdii.debug.xcconfig */,
+				3D01C5A92CAF67CA67CF61C1 /* Pods-starter.automotive.obdii.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		B6ACD64D1BA7D3B0CB767843 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				61A806AE1DDBAB79008540CE /* ReachabilitySwift.framework */,
+				4B4F8D1C394091276F18CB17 /* Pods_starter_automotive_obdii.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -71,9 +102,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 61AB54411DDA5EAA00D60E67 /* Build configuration list for PBXNativeTarget "starter.automotive.obdii" */;
 			buildPhases = (
+				7ADE6A8D28B1FB5FAA715147 /* [CP] Check Pods Manifest.lock */,
 				61AB542B1DDA5EAA00D60E67 /* Sources */,
 				61AB542C1DDA5EAA00D60E67 /* Frameworks */,
 				61AB542D1DDA5EAA00D60E67 /* Resources */,
+				6F5538D70B54828B065F0D0F /* [CP] Embed Pods Frameworks */,
+				F5823FABBF1C3A94D8150998 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -126,11 +160,60 @@
 			files = (
 				61AB543D1DDA5EAA00D60E67 /* LaunchScreen.storyboard in Resources */,
 				61AB543A1DDA5EAA00D60E67 /* Assets.xcassets in Resources */,
+				61A806AD1DDBA875008540CE /* Podfile in Resources */,
 				61AB54381DDA5EAA00D60E67 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6F5538D70B54828B065F0D0F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7ADE6A8D28B1FB5FAA715147 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		F5823FABBF1C3A94D8150998 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		61AB542B1DDA5EAA00D60E67 /* Sources */ = {
@@ -259,11 +342,16 @@
 		};
 		61AB54421DDA5EAA00D60E67 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = ABD1DA47B34BFE20485504F5 /* Pods-starter.automotive.obdii.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 73424325YV;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
 				INFOPLIST_FILE = starter.automotive.obdii/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "iot.ibm.com.starter-automotive-obdii";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -273,11 +361,16 @@
 		};
 		61AB54431DDA5EAA00D60E67 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3D01C5A92CAF67CA67CF61C1 /* Pods-starter.automotive.obdii.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = 73424325YV;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/build/Debug-iphoneos",
+				);
 				INFOPLIST_FILE = starter.automotive.obdii/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "iot.ibm.com.starter-automotive-obdii";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -304,6 +397,7 @@
 				61AB54431DDA5EAA00D60E67 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
