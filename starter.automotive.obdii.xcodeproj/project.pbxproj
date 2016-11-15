@@ -10,6 +10,7 @@
 		4BA8BFBC934ED5EDF7A2A4B0 /* Pods_starter_automotive_obdii.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B4F8D1C394091276F18CB17 /* Pods_starter_automotive_obdii.framework */; };
 		61A806AD1DDBA875008540CE /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 61A806AC1DDBA875008540CE /* Podfile */; };
 		61A806AF1DDBAB79008540CE /* ReachabilitySwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61A806AE1DDBAB79008540CE /* ReachabilitySwift.framework */; };
+		61A806B11DDBAFE4008540CE /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61A806B01DDBAFE4008540CE /* API.swift */; };
 		61AB54331DDA5EAA00D60E67 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AB54321DDA5EAA00D60E67 /* AppDelegate.swift */; };
 		61AB54351DDA5EAA00D60E67 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AB54341DDA5EAA00D60E67 /* ViewController.swift */; };
 		61AB54381DDA5EAA00D60E67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61AB54361DDA5EAA00D60E67 /* Main.storyboard */; };
@@ -22,6 +23,7 @@
 		4B4F8D1C394091276F18CB17 /* Pods_starter_automotive_obdii.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_starter_automotive_obdii.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		61A806AC1DDBA875008540CE /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		61A806AE1DDBAB79008540CE /* ReachabilitySwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReachabilitySwift.framework; path = "Pods/../build/Debug-iphoneos/ReachabilitySwift.framework"; sourceTree = "<group>"; };
+		61A806B01DDBAFE4008540CE /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		61AB542F1DDA5EAA00D60E67 /* starter.automotive.obdii.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = starter.automotive.obdii.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		61AB54321DDA5EAA00D60E67 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		61AB54341DDA5EAA00D60E67 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				61AB54391DDA5EAA00D60E67 /* Assets.xcassets */,
 				61AB543B1DDA5EAA00D60E67 /* LaunchScreen.storyboard */,
 				61AB543E1DDA5EAA00D60E67 /* Info.plist */,
+				61A806B01DDBAFE4008540CE /* API.swift */,
 			);
 			path = starter.automotive.obdii;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				61AB54351DDA5EAA00D60E67 /* ViewController.swift in Sources */,
+				61A806B11DDBAFE4008540CE /* API.swift in Sources */,
 				61AB54331DDA5EAA00D60E67 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
