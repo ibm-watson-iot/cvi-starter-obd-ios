@@ -45,7 +45,6 @@ class ViewController: UIViewController {
     
     func startSimulation() {
         if reachability.isReachable {
-            print("Simulation \(randomFuelLevel) \(randomEngineCoolant)")
             
             engineCoolantLabel.text = randomEngineCoolant.description + "C"
             fuelLevelLabel.text = randomFuelLevel.description + "%"
@@ -77,20 +76,18 @@ class ViewController: UIViewController {
         var url: String = ""
         
         if (simulation) {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + API.getUUID();
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/";
         } else {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + "test-ios";
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/";
         }
         
-        print(url)
-        print(API.credentialsBase64)
-        
         let headers: HTTPHeaders = [
-            "Authorization": API.credentialsBase64
+            "Authorization": "Basic " + API.credentialsBase64
         ]
         
         Alamofire.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers).responseJSON { (response) in
             print(response)
+            print("\(response.response?.statusCode)")
         }
     }
     
