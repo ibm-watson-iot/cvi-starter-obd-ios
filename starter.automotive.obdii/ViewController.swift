@@ -8,12 +8,17 @@
 
 import UIKit
 import ReachabilitySwift
+import Alamofire
 
 class ViewController: UIViewController {
-    
     var reachability = Reachability()!
     let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5);
     let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20);
+    
+    var simulation: Bool = false
+    
+    @IBOutlet weak var engineCoolantLabel: UILabel!
+    @IBOutlet weak var fuelLevelLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,7 +33,9 @@ class ViewController: UIViewController {
     func startApp() {
         let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
         alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            self.simulation()
+            self.simulation = true
+            
+            self.startSimulation()
         })
         alertController.addAction(UIAlertAction(title: "I have a real OBDII dongle", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
             self.actualDevice()
@@ -36,13 +43,17 @@ class ViewController: UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func simulation() {
+    func startSimulation() {
         if reachability.isReachable {
             print("Simulation \(randomFuelLevel) \(randomEngineCoolant)")
+            
+            engineCoolantLabel.text = randomEngineCoolant.description + "C"
+            fuelLevelLabel.text = randomFuelLevel.description + "%"
+            
+            checkDeviceRegistry()
         } else {
             print("No Simulation")
         }
-        
     }
     
     func actualDevice() {
@@ -60,11 +71,32 @@ class ViewController: UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
     
+    func checkDeviceRegistry() {
+//        getAccurateLocation();
+        
+        var url: String = ""
+        
+        if (simulation) {
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + API.getUUID();
+        } else {
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + "test-ios";
+        }
+        
+        print(url)
+        print(API.credentialsBase64)
+        
+        let headers: HTTPHeaders = [
+            "Authorization": API.credentialsBase64
+        ]
+        
+        Alamofire.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers).responseJSON { (response) in
+            print(response)
+        }
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    
 }
 

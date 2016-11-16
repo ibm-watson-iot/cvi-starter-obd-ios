@@ -16,6 +16,7 @@
 		61AB54381DDA5EAA00D60E67 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61AB54361DDA5EAA00D60E67 /* Main.storyboard */; };
 		61AB543A1DDA5EAA00D60E67 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61AB54391DDA5EAA00D60E67 /* Assets.xcassets */; };
 		61AB543D1DDA5EAA00D60E67 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61AB543B1DDA5EAA00D60E67 /* LaunchScreen.storyboard */; };
+		61BDF6DB1DDCBFA300793CD2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		61AB54391DDA5EAA00D60E67 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		61AB543C1DDA5EAA00D60E67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		61AB543E1DDA5EAA00D60E67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "Pods/../build/Debug-iphoneos/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		ABD1DA47B34BFE20485504F5 /* Pods-starter.automotive.obdii.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-starter.automotive.obdii.debug.xcconfig"; path = "Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -39,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61BDF6DB1DDCBFA300793CD2 /* Alamofire.framework in Frameworks */,
 				61A806AF1DDBAB79008540CE /* ReachabilitySwift.framework in Frameworks */,
 				4BA8BFBC934ED5EDF7A2A4B0 /* Pods_starter_automotive_obdii.framework in Frameworks */,
 			);
@@ -69,13 +72,13 @@
 		61AB54311DDA5EAA00D60E67 /* starter.automotive.obdii */ = {
 			isa = PBXGroup;
 			children = (
+				61A806B01DDBAFE4008540CE /* API.swift */,
 				61AB54321DDA5EAA00D60E67 /* AppDelegate.swift */,
 				61AB54341DDA5EAA00D60E67 /* ViewController.swift */,
 				61AB54361DDA5EAA00D60E67 /* Main.storyboard */,
 				61AB54391DDA5EAA00D60E67 /* Assets.xcassets */,
 				61AB543B1DDA5EAA00D60E67 /* LaunchScreen.storyboard */,
 				61AB543E1DDA5EAA00D60E67 /* Info.plist */,
-				61A806B01DDBAFE4008540CE /* API.swift */,
 			);
 			path = starter.automotive.obdii;
 			sourceTree = "<group>";
@@ -92,6 +95,7 @@
 		B6ACD64D1BA7D3B0CB767843 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */,
 				61A806AE1DDBAB79008540CE /* ReachabilitySwift.framework */,
 				4B4F8D1C394091276F18CB17 /* Pods_starter_automotive_obdii.framework */,
 			);
@@ -353,9 +357,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/Alamofire",
 				);
 				INFOPLIST_FILE = starter.automotive.obdii/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "iot.ibm.com.starter-automotive-obdii";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -372,9 +377,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
+					"$(PROJECT_DIR)/build/Debug-iphoneos/Alamofire",
 				);
 				INFOPLIST_FILE = starter.automotive.obdii/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "iot.ibm.com.starter-automotive-obdii";
 				PRODUCT_NAME = "$(TARGET_NAME)";

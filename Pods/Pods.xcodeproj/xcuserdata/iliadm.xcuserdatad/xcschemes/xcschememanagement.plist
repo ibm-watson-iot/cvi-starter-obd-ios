@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Alamofire.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-starter.automotive.obdii.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -17,12 +22,17 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>3649540DEA3673E8C2546BA24FC8887D</key>
+		<key>5235B81C403149747DDCB5E1BB13B722</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A06043984D9D4130763EAC4CDFD02453</key>
+		<key>5F5EBE124708EE22204C14B3DE7DAA58</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>88E9EC28B8B46C3631E6B242B50F4442</key>
 		<dict>
 			<key>primary</key>
 			<true/>

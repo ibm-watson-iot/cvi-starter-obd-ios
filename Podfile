@@ -1,7 +1,8 @@
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '8.0'
+platform :ios, '9.0'
 use_frameworks!
 
 target "starter.automotive.obdii" do
     pod 'ReachabilitySwift', :git => 'https://github.com/ashleymills/Reachability.swift.git', :tag => 'v3'
+    pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :tag => '4.0.0'
 end
