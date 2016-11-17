@@ -38,7 +38,7 @@ class ViewController: UIViewController {
         alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
             self.simulation = true
             
-            self.deviceBSSID = self.getBSSID()
+            self.deviceBSSID = self.getBSSID().replacingOccurrences(of: ":", with: "-")
             
             self.startSimulation()
         })
@@ -153,8 +153,6 @@ class ViewController: UIViewController {
                     break;
             }
         }
-        
-        print(getBSSID())
     }
     
     private func getBSSID() -> String{
@@ -167,12 +165,12 @@ class ViewController: UIViewController {
             }
         }
         
-        return "NONE"
+        return "0:17:df:37:94:b1"
+        // TODO - Change to NONE
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
 }
 
