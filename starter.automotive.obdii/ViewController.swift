@@ -9,6 +9,7 @@
 import UIKit
 import ReachabilitySwift
 import Alamofire
+import SystemConfiguration.CaptiveNetwork
 
 class ViewController: UIViewController {
     var reachability = Reachability()!
@@ -76,7 +77,7 @@ class ViewController: UIViewController {
         var url: String = ""
         
         if (simulation) {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/";
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + getBSSID();
         } else {
             url = API.platformAPI + "/device/types/" + API.typeId + "/devices/";
         }
@@ -85,10 +86,87 @@ class ViewController: UIViewController {
             "Authorization": "Basic " + API.credentialsBase64
         ]
         
+        print(url)
+        print(headers)
+        
         Alamofire.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers).responseJSON { (response) in
             print(response)
             print("\(response.response?.statusCode)")
+            
+            let statusCode = response.response!.statusCode
+            
+            switch statusCode{
+                case 200:
+                    print("Check Device Registry: \(response)");
+                    print("Check Device Registry: ***Already Registered***");
+                    
+//                    getSupportActionBar().setTitle("Device Already Registered");
+//                    progressBar.setVisibility(View.GONE);
+                    
+//                    currentDevice = result.getJSONObject(0);
+//                    deviceRegistered();
+                    
+                    break;
+                case 404, 405:
+                    print("Check Device Registry: ***Not Registered***");
+//                    progressBar.setVisibility(View.GONE);
+                    
+                    let alertController = UIAlertController(title: "Your Device is NOT Registered!", message: "In order to use this application, we need to register your device to the IBM IoT Platform", preferredStyle: UIAlertControllerStyle.alert)
+                    
+                    alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+//                        registerDevice();
+                    })
+                    
+                    alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                        let toast = UIAlertController(title: nil, message: "Cannot continue without registering your device!", preferredStyle: UIAlertControllerStyle.alert)
+                        self.present(toast, animated: true, completion: nil)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            exit(0)
+                        }
+                    })
+                    self.present(alertController, animated: true, completion: nil)
+                    
+                    break;
+                default:
+                    print("Failed to connect IoTP: statusCode: \(statusCode)");
+//                    progressBar.setVisibility(View.GONE);
+                    
+//                    alertDialog
+//                        .setCancelable(false)
+//                        .setTitle("Failed to connect to IBM IoT Platform")
+//                        .setMessage("Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode:" + statusCode)
+//                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int which) {
+//                                getSupportActionBar().setTitle("Failed to connect to IBM IoT Platform");
+//                            }
+//                        })
+//                        .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int which) {
+//                                Toast.makeText(Home.this, "Cannot continue without connecting to IBM IoT Platform!", Toast.LENGTH_LONG).show();
+//                                Home.this.finishAffinity();
+//                            }
+//                        })
+//                        .show();
+                    break;
+            }
         }
+        
+        print(getBSSID())
+    }
+    
+    func getBSSID() -> String{
+        let interfaces:NSArray? = CNCopySupportedInterfaces()
+        if let interfaceArray = interfaces {
+            let interfaceDict:NSDictionary? = CNCopyCurrentNetworkInfo(interfaceArray[0] as! CFString)
+            
+            if interfaceDict != nil {
+                return interfaceDict!["BSSID"]! as! String
+            }
+        }
+        
+        return "NONE"
     }
     
     override func didReceiveMemoryWarning() {
