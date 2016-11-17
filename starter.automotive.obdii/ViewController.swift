@@ -131,24 +131,21 @@ class ViewController: UIViewController {
                     print("Failed to connect IoTP: statusCode: \(statusCode)");
 //                    progressBar.setVisibility(View.GONE);
                     
-//                    alertDialog
-//                        .setCancelable(false)
-//                        .setTitle("Failed to connect to IBM IoT Platform")
-//                        .setMessage("Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode:" + statusCode)
-//                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int which) {
-//                                getSupportActionBar().setTitle("Failed to connect to IBM IoT Platform");
-//                            }
-//                        })
-//                        .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialogInterface, int which) {
-//                                Toast.makeText(Home.this, "Cannot continue without connecting to IBM IoT Platform!", Toast.LENGTH_LONG).show();
-//                                Home.this.finishAffinity();
-//                            }
-//                        })
-//                        .show();
+                    let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
+                    
+                    alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+//                        getSupportActionBar().setTitle("Failed to connect to IBM IoT Platform");
+                    })
+                    
+                    alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                        let toast = UIAlertController(title: nil, message: "Cannot continue without connecting to IBM IoT Platform!", preferredStyle: UIAlertControllerStyle.alert)
+                        self.present(toast, animated: true, completion: nil)
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            exit(0)
+                        }
+                    })
+                    self.present(alertController, animated: true, completion: nil)
+                    
                     break;
             }
         }
