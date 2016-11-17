@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '24A64CD7D7A527BC46957E163160C64E'
-               BlueprintName = 'ReachabilitySwift'
+               BlueprintIdentifier = 'D4A07B8ABC6D3CEC8CD4F149A4E17BDB'
+               BlueprintName = 'CocoaMQTT'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'ReachabilitySwift.framework'>
+               BuildableName = 'CocoaMQTT.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

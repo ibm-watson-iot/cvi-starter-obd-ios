@@ -12,14 +12,16 @@ import Alamofire
 import SystemConfiguration.CaptiveNetwork
 
 class ViewController: UIViewController {
-    var reachability = Reachability()!
-    let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5);
-    let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20);
+    private var reachability = Reachability()!
+    private let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5);
+    private let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20);
     
-    var simulation: Bool = false
+    private var simulation: Bool = false
     
     @IBOutlet weak var engineCoolantLabel: UILabel!
     @IBOutlet weak var fuelLevelLabel: UILabel!
+    
+    private var deviceBSSID: String = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,10 +33,12 @@ class ViewController: UIViewController {
         startApp()
     }
     
-    func startApp() {
+    private func startApp() {
         let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
         alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
             self.simulation = true
+            
+            self.deviceBSSID = self.getBSSID()
             
             self.startSimulation()
         })
@@ -44,7 +48,7 @@ class ViewController: UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func startSimulation() {
+    private func startSimulation() {
         if reachability.isReachable {
             
             engineCoolantLabel.text = randomEngineCoolant.description + "C"
@@ -56,7 +60,7 @@ class ViewController: UIViewController {
         }
     }
     
-    func actualDevice() {
+    private func actualDevice() {
         let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
         alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
             print("OK")
@@ -71,15 +75,15 @@ class ViewController: UIViewController {
         self.present(alertController, animated: true, completion: nil)
     }
     
-    func checkDeviceRegistry() {
+    private func checkDeviceRegistry() {
 //        getAccurateLocation();
         
         var url: String = ""
         
         if (simulation) {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + getBSSID();
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID
         } else {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/";
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/"
         }
         
         let headers: HTTPHeaders = [
@@ -113,7 +117,7 @@ class ViewController: UIViewController {
                     
                     let alertController = UIAlertController(title: "Your Device is NOT Registered!", message: "In order to use this application, we need to register your device to the IBM IoT Platform", preferredStyle: UIAlertControllerStyle.alert)
                     
-                    alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    alertController.addAction(UIAlertAction(title: "Register", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
 //                        registerDevice();
                     })
                     
@@ -153,7 +157,7 @@ class ViewController: UIViewController {
         print(getBSSID())
     }
     
-    func getBSSID() -> String{
+    private func getBSSID() -> String{
         let interfaces:NSArray? = CNCopySupportedInterfaces()
         if let interfaceArray = interfaces {
             let interfaceDict:NSDictionary? = CNCopyCurrentNetworkInfo(interfaceArray[0] as! CFString)

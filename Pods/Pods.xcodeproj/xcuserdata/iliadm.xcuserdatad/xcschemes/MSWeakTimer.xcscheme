@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '24A64CD7D7A527BC46957E163160C64E'
-               BlueprintName = 'ReachabilitySwift'
+               BlueprintIdentifier = '7E1E41D1203B4D2A4495B3C7A870B6E5'
+               BlueprintName = 'MSWeakTimer'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'ReachabilitySwift.framework'>
+               BuildableName = 'MSWeakTimer.framework'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

@@ -9,6 +9,21 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>CocoaAsyncSocket.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>CocoaMQTT.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>MSWeakTimer.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-starter.automotive.obdii.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -22,17 +37,32 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>5235B81C403149747DDCB5E1BB13B722</key>
+		<key>019772967F6B6B0ACFDA900F5197178C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5F5EBE124708EE22204C14B3DE7DAA58</key>
+		<key>24A64CD7D7A527BC46957E163160C64E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7E1E41D1203B4D2A4495B3C7A870B6E5</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>88E9EC28B8B46C3631E6B242B50F4442</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>AC0D2D2B4EE7C873431AB3502859CA60</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D4A07B8ABC6D3CEC8CD4F149A4E17BDB</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -1,15 +1,30 @@
 PODS:
   - Alamofire (4.0.0)
+  - CocoaAsyncSocket (7.5.1):
+    - CocoaAsyncSocket/GCD (= 7.5.1)
+  - CocoaAsyncSocket/GCD (7.5.1)
+  - CocoaMQTT (1.0.10):
+    - CocoaAsyncSocket (~> 7.5.0)
+    - MSWeakTimer (~> 1.1.0)
+  - MSWeakTimer (1.1.0)
   - ReachabilitySwift (3)
 
 DEPENDENCIES:
   - Alamofire (from `https://github.com/Alamofire/Alamofire.git`, tag `4.0.0`)
+  - CocoaAsyncSocket (from `https://github.com/robbiehanson/CocoaAsyncSocket.git`, tag `7.5.1`)
+  - CocoaMQTT (from `https://github.com/emqtt/CocoaMQTT.git`, tag `1.0.10`)
   - ReachabilitySwift (from `https://github.com/ashleymills/Reachability.swift.git`, tag `v3`)
 
 EXTERNAL SOURCES:
   Alamofire:
     :git: https://github.com/Alamofire/Alamofire.git
     :tag: 4.0.0
+  CocoaAsyncSocket:
+    :git: https://github.com/robbiehanson/CocoaAsyncSocket.git
+    :tag: 7.5.1
+  CocoaMQTT:
+    :git: https://github.com/emqtt/CocoaMQTT.git
+    :tag: 1.0.10
   ReachabilitySwift:
     :git: https://github.com/ashleymills/Reachability.swift.git
     :tag: v3
@@ -18,14 +33,23 @@ CHECKOUT OPTIONS:
   Alamofire:
     :git: https://github.com/Alamofire/Alamofire.git
     :tag: 4.0.0
+  CocoaAsyncSocket:
+    :git: https://github.com/robbiehanson/CocoaAsyncSocket.git
+    :tag: 7.5.1
+  CocoaMQTT:
+    :git: https://github.com/emqtt/CocoaMQTT.git
+    :tag: 1.0.10
   ReachabilitySwift:
     :git: https://github.com/ashleymills/Reachability.swift.git
     :tag: v3
 
 SPEC CHECKSUMS:
   Alamofire: fef59f00388f267e52d9b432aa5d93dc97190f14
+  CocoaAsyncSocket: e0a7e93b2ffa411592ff87e58524fbbc9b95b4fa
+  CocoaMQTT: ac6730349bebc7ceb42a62297eaf8291fce8aa93
+  MSWeakTimer: 9426150f933b80ed3acf3f6d228e4b61f0e303c8
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
 
-PODFILE CHECKSUM: faca323f4a4e0f79cfe1290ea006af3c2d10429c
+PODFILE CHECKSUM: 85fbaafb15acb6571cb7bec3a904553fd59f031f
 
 COCOAPODS: 1.1.1
