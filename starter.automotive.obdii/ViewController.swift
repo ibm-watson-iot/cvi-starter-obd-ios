@@ -23,6 +23,10 @@ class ViewController: UIViewController {
     
     private var deviceBSSID: String = ""
     
+    private let credentialHeaders: HTTPHeaders = [
+        "Authorization": "Basic " + API.credentialsBase64
+    ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -38,7 +42,7 @@ class ViewController: UIViewController {
         alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
             self.simulation = true
             
-            self.deviceBSSID = self.getBSSID().replacingOccurrences(of: ":", with: "-")
+            self.deviceBSSID = self.getBSSID()
             
             self.startSimulation()
         })
@@ -81,19 +85,18 @@ class ViewController: UIViewController {
         var url: String = ""
         
         if (simulation) {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID.replacingOccurrences(of: ":", with: "-")
         } else {
             url = API.platformAPI + "/device/types/" + API.typeId + "/devices/"
         }
         
-        let headers: HTTPHeaders = [
-            "Authorization": "Basic " + API.credentialsBase64
-        ]
         
+        
+        // TODO - Remove
         print(url)
-        print(headers)
+        print(credentialHeaders)
         
-        Alamofire.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: headers).responseJSON { (response) in
+        Alamofire.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: credentialHeaders).responseJSON { (response) in
             print(response)
             print("\(response.response?.statusCode)")
             
@@ -118,7 +121,7 @@ class ViewController: UIViewController {
                     let alertController = UIAlertController(title: "Your Device is NOT Registered!", message: "In order to use this application, we need to register your device to the IBM IoT Platform", preferredStyle: UIAlertControllerStyle.alert)
                     
                     alertController.addAction(UIAlertAction(title: "Register", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-//                        registerDevice();
+                        self.registerDevice()
                     })
                     
                     alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
@@ -167,6 +170,22 @@ class ViewController: UIViewController {
         
         return "0:17:df:37:94:b1"
         // TODO - Change to NONE
+    }
+    
+    private func registerDevice() {
+        let url: String = API.addDevices
+        
+//        getSupportActionBar().setTitle("Registering Your Device");
+//        progressBar.setVisibility(View.VISIBLE);
+        
+        let parameters: Parameters = [
+            "typeId": API.typeId,
+            "deviceId": simulation ? API.getUUID() : deviceBSSID.replacingOccurrences(of: ":", with: "-")
+        ]
+        
+        Alamofire.request(url, method: .post, parameters: parameters, encoding: URLEncoding.httpBody, headers: credentialHeaders).responseJSON { (response) in
+            
+        }
     }
     
     override func didReceiveMemoryWarning() {
