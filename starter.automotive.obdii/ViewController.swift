@@ -24,6 +24,7 @@ class ViewController: UIViewController {
     private var deviceBSSID: String = ""
     
     private let credentialHeaders: HTTPHeaders = [
+        "Content-Type": "application/json",
         "Authorization": "Basic " + API.credentialsBase64
     ]
     
@@ -85,9 +86,9 @@ class ViewController: UIViewController {
         var url: String = ""
         
         if (simulation) {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID.replacingOccurrences(of: ":", with: "-")
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + API.getUUID()
         } else {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/"
+            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID.replacingOccurrences(of: ":", with: "-")
         }
         
         
@@ -173,23 +174,104 @@ class ViewController: UIViewController {
     }
     
     private func registerDevice() {
-        let url: String = API.addDevices
+        let url: URL = URL(string: API.addDevices)!
         
 //        getSupportActionBar().setTitle("Registering Your Device");
 //        progressBar.setVisibility(View.VISIBLE);
         
         let parameters: Parameters = [
             "typeId": API.typeId,
-            "deviceId": simulation ? API.getUUID() : deviceBSSID.replacingOccurrences(of: ":", with: "-")
+            "deviceId": simulation ? API.getUUID() : deviceBSSID.replacingOccurrences(of: ":", with: "-"),
+            "authToken": API.apiToken
         ]
         
-        Alamofire.request(url, method: .post, parameters: parameters, encoding: URLEncoding.httpBody, headers: credentialHeaders).responseJSON { (response) in
+        Alamofire.request(url, method: .post, parameters: parameters, encoding: deviceParamsEncoding(), headers: credentialHeaders).responseJSON { (response) in
+            print("Register Device: \(response)")
             
+            let statusCode = response.response!.statusCode
+            print(statusCode)
+            
+//            switch (statusCode) {
+//            case 201, 202:
+////                final String authToken = result.getJSONObject(0).getString("authToken");
+////                final String deviceId = result.getJSONObject(0).getString("deviceId");
+////                final String sharedPrefsKey = "iota-obdii-auth-" + deviceId;
+////                
+////                if (!API.getStoredData(sharedPrefsKey).equals(authToken)) {
+////                    API.storeData(sharedPrefsKey, authToken);
+////                }
+////                
+////                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this, R.style.AppCompatAlertDialogStyle);
+////                View authTokenAlert = getLayoutInflater().inflate(R.layout.activity_home_authtokenalert, null, false);
+////                
+////                EditText authTokenField = (EditText) authTokenAlert.findViewById(R.id.authTokenField);
+////                authTokenField.setText(authToken);
+////                
+////                Button copyToClipboard = (Button) authTokenAlert.findViewById(R.id.copyToClipboard);
+////                copyToClipboard.setOnClickListener(new View.OnClickListener() {
+////                    @Override
+////                    public void onClick(View view) {
+////                        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+////                        ClipData clipData = ClipData.newPlainText("authToken", authToken);
+////                        clipboardManager.setPrimaryClip(clipData);
+////                        
+////                        Toast.makeText(Home.this, "Successfully copied to your Clipboard!", Toast.LENGTH_SHORT).show();
+////                    }
+////                });
+////                
+////                alertDialog.setView(authTokenAlert);
+////                alertDialog
+////                    .setCancelable(false)
+////                    .setTitle("Your Device is Now Registered!")
+////                    .setMessage("Please take note of this Autentication Token as you will need it in the future")
+////                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+////                        @Override
+////                        public void onClick(DialogInterface dialogInterface, int which) {
+////                            try {
+////                            currentDevice = result.getJSONObject(0);
+////                            deviceRegistered();
+////                            } catch (JSONException e) {
+////                            e.printStackTrace();
+////                            }
+////                        }
+////                    })
+////                    .show();
+////                break;
+//            default:
+//                break;
+//            }
+//            
+//            progressBar.setVisibility(View.GONE);
         }
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    private static func toJsonArray(data: Parameters) -> String {
+        var temp: String = "[{"
+        
+        for (index, item) in data.enumerated() {
+            temp += "\"\(item.key)\":\"\(item.value)\""
+            
+            if index < (data.count - 1) {
+                temp += ", "
+            }
+        }
+        
+        temp += "}]"
+        
+        return temp
+    }
+    
+    struct deviceParamsEncoding: ParameterEncoding {
+        func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
+            var request = try urlRequest.asURLRequest()
+            request.httpBody = ViewController.toJsonArray(data: parameters!).data(using: .utf8)
+            
+            return request
+        }
     }
 }
 
