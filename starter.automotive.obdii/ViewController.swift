@@ -21,6 +21,8 @@ class ViewController: UIViewController {
     @IBOutlet weak var engineCoolantLabel: UILabel!
     @IBOutlet weak var fuelLevelLabel: UILabel!
     
+    private var navigationBar: UINavigationBar?
+    
     private var deviceBSSID: String = ""
     
     private let credentialHeaders: HTTPHeaders = [
@@ -30,6 +32,9 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationBar = self.navigationController?.navigationBar
+        navigationBar?.barStyle = UIBarStyle.black
     }
     
     override func viewDidAppear(_ animated: Bool) {

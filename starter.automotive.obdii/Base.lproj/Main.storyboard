@@ -56,18 +56,24 @@
                                 <rect key="frame" x="16" y="254" width="115" height="30"/>
                                 <state key="normal" title="Change Network"/>
                             </button>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="ImS-Od-MNO">
+                                <rect key="frame" x="0.0" y="64" width="375" height="2"/>
+                            </progressView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="Knc-ua-uFC" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="3Eh-2c-rPg"/>
+                            <constraint firstItem="ImS-Od-MNO" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="6Le-GG-ytA"/>
                             <constraint firstItem="j6f-TZ-aRY" firstAttribute="top" secondItem="Knc-ua-uFC" secondAttribute="bottom" constant="8" id="Gjg-3y-mqd"/>
                             <constraint firstItem="DVg-lQ-Zda" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="22" id="HXa-re-je1"/>
                             <constraint firstItem="eQa-gB-UV6" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="IWE-vI-xKu"/>
                             <constraint firstItem="qMb-fY-dM5" firstAttribute="top" secondItem="j6f-TZ-aRY" secondAttribute="bottom" constant="94" id="Q3Q-Sh-z5v"/>
                             <constraint firstItem="Sph-Ya-ZbR" firstAttribute="top" secondItem="j6f-TZ-aRY" secondAttribute="bottom" constant="42" id="TR5-ib-M8M"/>
+                            <constraint firstItem="ImS-Od-MNO" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="XWm-SZ-rEJ"/>
                             <constraint firstItem="qMb-fY-dM5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="XvS-O7-Abb"/>
                             <constraint firstItem="Knc-ua-uFC" firstAttribute="top" secondItem="eQa-gB-UV6" secondAttribute="bottom" constant="26" id="cPm-8u-hJ9"/>
                             <constraint firstItem="j6f-TZ-aRY" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="fyX-cr-4dU"/>
+                            <constraint firstAttribute="trailing" secondItem="ImS-Od-MNO" secondAttribute="trailing" id="kMp-1f-ptF"/>
                             <constraint firstItem="DVg-lQ-Zda" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="sDZ-lo-v98"/>
                             <constraint firstItem="eQa-gB-UV6" firstAttribute="top" secondItem="DVg-lQ-Zda" secondAttribute="bottom" constant="8" id="udv-J8-6Tz"/>
                             <constraint firstItem="n5h-VJ-V6A" firstAttribute="top" secondItem="j6f-TZ-aRY" secondAttribute="bottom" constant="42" id="vcJ-iI-UzH"/>
