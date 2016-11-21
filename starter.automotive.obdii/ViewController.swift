@@ -60,13 +60,14 @@ class ViewController: UIViewController {
     
     private func startSimulation() {
         if reachability.isReachable {
+            self.navigationBar?.topItem?.title = "Starting the Simulation"
             
             engineCoolantLabel.text = randomEngineCoolant.description + "C"
             fuelLevelLabel.text = randomFuelLevel.description + "%"
             
             checkDeviceRegistry()
         } else {
-            print("No Simulation")
+            self.navigationBar?.topItem?.title = "No Internet Connection Available"
         }
     }
     
@@ -113,7 +114,7 @@ class ViewController: UIViewController {
                     print("Check Device Registry: \(response)");
                     print("Check Device Registry: ***Already Registered***");
                     
-//                    getSupportActionBar().setTitle("Device Already Registered");
+                    self.navigationBar?.topItem?.title = "Device Already Registered"
 //                    progressBar.setVisibility(View.GONE);
                     
 //                    currentDevice = result.getJSONObject(0);
@@ -147,7 +148,7 @@ class ViewController: UIViewController {
                     let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
                     
                     alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-//                        getSupportActionBar().setTitle("Failed to connect to IBM IoT Platform");
+                        self.navigationBar?.topItem?.title = "Failed to connect to IBM IoT Platform"
                     })
                     
                     alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
@@ -181,7 +182,7 @@ class ViewController: UIViewController {
     private func registerDevice() {
         let url: URL = URL(string: API.addDevices)!
         
-//        getSupportActionBar().setTitle("Registering Your Device");
+            self.navigationBar?.topItem?.title = "Registering Your Device";
 //        progressBar.setVisibility(View.VISIBLE);
         
         let parameters: Parameters = [
