@@ -249,13 +249,13 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
     
-    private static func toJsonArray(data: Parameters) -> String {
+    private static func deviceParamsToString(parameters: Parameters) -> String {
         var temp: String = "[{"
         
-        for (index, item) in data.enumerated() {
+        for (index, item) in parameters.enumerated() {
             temp += "\"\(item.key)\":\"\(item.value)\""
             
-            if index < (data.count - 1) {
+            if index < (parameters.count - 1) {
                 temp += ", "
             }
         }
@@ -268,7 +268,7 @@ class ViewController: UIViewController {
     struct deviceParamsEncoding: ParameterEncoding {
         func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
             var request = try urlRequest.asURLRequest()
-            request.httpBody = ViewController.toJsonArray(data: parameters!).data(using: .utf8)
+            request.httpBody = ViewController.deviceParamsToString(parameters: parameters!).data(using: .utf8)
             
             return request
         }
