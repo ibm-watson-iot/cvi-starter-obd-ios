@@ -10,8 +10,9 @@ import UIKit
 import ReachabilitySwift
 import Alamofire
 import SystemConfiguration.CaptiveNetwork
+import CoreLocation
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, CLLocationManagerDelegate {
     private var reachability = Reachability()!
     private let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5);
     private let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20);
@@ -23,6 +24,8 @@ class ViewController: UIViewController {
     
     private var navigationBar: UINavigationBar?
     
+    let locationManager = CLLocationManager()
+    
     private var deviceBSSID: String = ""
     
     private let credentialHeaders: HTTPHeaders = [
@@ -32,13 +35,42 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        navigationBar = self.navigationController?.navigationBar
-        navigationBar?.barStyle = UIBarStyle.black
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        switch CLLocationManager.authorizationStatus(){
+        case .denied:
+            fallthrough
+        case .restricted:
+            fallthrough
+        case .notDetermined:
+            let alert = UIAlertController(title: "Location Required", message: "Using your location, you can analyze your driving.", preferredStyle: .alert)
+            let okAction = UIAlertAction(title: "Setting", style: .default) { action -> Void in
+                let url = NSURL(string: UIApplicationOpenSettingsURLString)!
+                UIApplication.shared.openURL(url as URL)
+            }
+            let cancelAction = UIAlertAction(title: "Don't Allow", style: .cancel){action -> Void in
+                // do nothing
+            }
+            alert.addAction(okAction)
+            alert.addAction(cancelAction)
+            present(alert, animated: true, completion: nil)
+        default:
+            break
+        }
+        
+        self.locationManager.delegate = self
+        self.tabBarController?.tabBar.isHidden = false
+        
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        self.locationManager.activityType = .automotiveNavigation
+        self.locationManager.requestWhenInUseAuthorization()
+        self.locationManager.startUpdatingLocation()
+        
+        navigationBar = self.navigationController?.navigationBar
+        navigationBar?.barStyle = UIBarStyle.black
         
         startApp()
     }
@@ -251,8 +283,9 @@ class ViewController: UIViewController {
         }
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+    func locationManager(manager: CLLocationManager, didUpdateToLocation newLocation: CLLocation, fromLocation oldLocation: CLLocation) {
+        print("New Location: \(newLocation.coordinate.longitude) \(newLocation.coordinate.latitude)")
+        print("Old Location: \(oldLocation.coordinate.longitude) \(oldLocation.coordinate.latitude)")
     }
     
     private static func deviceParamsToString(parameters: Parameters) -> String {
@@ -278,6 +311,10 @@ class ViewController: UIViewController {
             
             return request
         }
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
     }
 }
 

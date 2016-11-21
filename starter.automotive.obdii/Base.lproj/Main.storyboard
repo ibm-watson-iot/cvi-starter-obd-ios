@@ -8,7 +8,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--IoT4a Automotive - OBDII-->
+        <!--IBM IoT4a - OBDII-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="starter_automotive_obdii" customModuleProvider="target" sceneMemberID="viewController">
@@ -79,7 +79,7 @@
                             <constraint firstItem="n5h-VJ-V6A" firstAttribute="top" secondItem="j6f-TZ-aRY" secondAttribute="bottom" constant="42" id="vcJ-iI-UzH"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="IoT4a Automotive - OBDII" id="qeM-4p-eCM"/>
+                    <navigationItem key="navigationItem" title="IBM IoT4a - OBDII" id="qeM-4p-eCM"/>
                     <connections>
                         <outlet property="engineCoolantLabel" destination="eQa-gB-UV6" id="WLr-04-JXd"/>
                         <outlet property="fuelLevelLabel" destination="j6f-TZ-aRY" id="ZNH-ie-2ld"/>
