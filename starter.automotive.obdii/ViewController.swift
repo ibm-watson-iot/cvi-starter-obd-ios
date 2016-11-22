@@ -11,6 +11,7 @@ import ReachabilitySwift
 import Alamofire
 import SystemConfiguration.CaptiveNetwork
 import CoreLocation
+import CocoaMQTT
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
     private var reachability = Reachability()!
@@ -33,6 +34,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         "Content-Type": "application/json",
         "Authorization": "Basic " + API.credentialsBase64
     ]
+    
+    private var mqtt: CocoaMQTT?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -132,7 +135,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     print("Check Device Registry: \(response)");
                     print("Check Device Registry: ***Already Registered***");
                     
+//                    if let result = response.result.value {
+//                        let resultDictionary = result as! NSDictionary
+//                        authToken = (((resultDictionary["registration"] as! NSDictionary)["auth"] as! NSDictionary)["id"]!)
+//                    }
+                    
                     self.navigationBar?.topItem?.title = "Device Already Registered"
+                    
+                    self.deviceRegistered()
 //                    progressBar.setVisibility(View.GONE);
                     
 //                    currentDevice = result.getJSONObject(0);
@@ -156,6 +166,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                             exit(0)
                         }
                     })
+                    
                     self.present(alertController, animated: true, completion: nil)
                     
                     break;
@@ -215,6 +226,54 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             let statusCode = response.response!.statusCode
             print(statusCode)
             
+            switch statusCode{
+            case 200, 201:
+                if let result = response.result.value {
+                    let resultDictionary = (result as! [NSDictionary])[0]
+                    
+                    let authToken = (resultDictionary["authToken"] ?? "N/A") as? String
+                    
+                    let alertController = UIAlertController(title: "Your Device is Now Registered!", message: "Please take note of this Autentication Token as you will need it in the future", preferredStyle: UIAlertControllerStyle.alert)
+                    
+                    alertController.addAction(UIAlertAction(title: "Copy to my Clipboard", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                        UIPasteboard.general.string = authToken
+                    })
+                    
+                    alertController.addTextField(configurationHandler: {(textField: UITextField!) in
+                        textField.text = authToken
+                        textField.isEnabled = false
+                    })
+                    
+                    self.present(alertController, animated: true, completion: nil)
+                }
+                
+                break;
+            case 404, 405:
+                print(statusCode)
+                
+                break;
+            default:
+                print("Failed to connect IoTP: statusCode: \(statusCode)");
+                //                    progressBar.setVisibility(View.GONE);
+                
+                let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
+                
+                alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    self.navigationBar?.topItem?.title = "Failed to connect to IBM IoT Platform"
+                })
+                
+                alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                    let toast = UIAlertController(title: nil, message: "Cannot continue without connecting to IBM IoT Platform!", preferredStyle: UIAlertControllerStyle.alert)
+                    self.present(toast, animated: true, completion: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        exit(0)
+                    }
+                })
+                self.present(alertController, animated: true, completion: nil)
+                
+                break;
+            }
+            
 //            switch (statusCode) {
 //            case 201, 202:
 ////                final String authToken = result.getJSONObject(0).getString("authToken");
@@ -267,6 +326,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
 //            
 //            progressBar.setVisibility(View.GONE);
         }
+    }
+    
+    private func deviceRegistered() {
+//        DispatchQueue.main.sync(execute: {
+//            let clientIdPid = "d:\(API.orgId):\(API.typeId):\(deviceBSSID)"
+//            mqtt = CocoaMQTT(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
+//            
+//            if let mqtt = mqtt {
+//                mqtt.username = "use-token-auth"
+//                mqtt.password = deviceCredentials.objectForKey("token") as? String
+//                mqtt.keepAlive = 90
+//                mqtt.delegate = self
+//                mqtt.secureMQTT = true
+//            }
+//            
+//            ViewController.mqtt?.connect()
+//            
+//        })
     }
     
     private static func deviceParamsToString(parameters: Parameters) -> String {

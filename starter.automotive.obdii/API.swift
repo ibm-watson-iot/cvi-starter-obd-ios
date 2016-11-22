@@ -11,11 +11,11 @@ import UIKit
 
 struct API {
     // Platform API URLs
-    static let orgId: String = "kibb33";
+    static let orgId: String = "musqld"; // kibb33
     static let platformAPI: String = "https://" + orgId + ".internetofthings.ibmcloud.com/api/v0002";
     
-    static let apiKey: String = "a-kibb33-rkhexfo7ml";
-    static let apiToken: String = "lDfjTThkWv*@Ea_!4d";
+    static let apiKey: String = "a-musqld-v2ehir8q4k"; // a-kibb33-rkhexfo7ml
+    static let apiToken: String = "(BPVjpJgH2!?a?MUN!"; // lDfjTThkWv*@Ea_!4d
     static let credentials: String = apiKey + ":" + apiToken;
     static let credentialsData = (credentials).data(using: String.Encoding.utf8)
     static let credentialsBase64 = API.credentialsData!.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
