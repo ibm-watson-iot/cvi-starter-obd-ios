@@ -136,18 +136,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     print("Check Device Registry: \(response)");
                     print("Check Device Registry: ***Already Registered***");
                     
-//                    if let result = response.result.value {
-//                        let resultDictionary = result as! NSDictionary
-//                        authToken = (((resultDictionary["registration"] as! NSDictionary)["auth"] as! NSDictionary)["id"]!)
-//                    }
-                    
-                    self.navigationBar?.topItem?.title = "Device Already Registered"
-                    
-                    self.deviceRegistered()
+                    if let result = response.result.value {
+                        let resultDictionary = result as! NSDictionary
+                        self.currentDeviceId = resultDictionary["deviceId"] as! String
+                        
+                        self.navigationBar?.topItem?.title = "Device Already Registered"
+                        
+                        self.deviceRegistered()
+                    }
 //                    progressBar.setVisibility(View.GONE);
-                    
-//                    currentDevice = result.getJSONObject(0);
-//                    deviceRegistered();
                     
                     break;
                 case 404, 405:
@@ -338,21 +335,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func deviceRegistered() {
-        DispatchQueue.main.sync(execute: {
-            let clientIdPid = "d:\(API.orgId):\(API.typeId):\(deviceBSSID)"
-            mqtt = CocoaMQTT(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
-            
-            if let mqtt = mqtt {
-                mqtt.username = "use-token-auth"
-                mqtt.password = API.getStoredData("iota-obdii-auth-" + currentDevice.getString("deviceId")).toCharArray()
-                mqtt.keepAlive = 90
-                mqtt.delegate = self
-                mqtt.secureMQTT = true
-            }
-            
-            ViewController.mqtt?.connect()
-            
-        })
+        let clientIdPid = "d:\(API.orgId):\(API.typeId):\(currentDeviceId)"
+        mqtt = CocoaMQTT(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
+        
+        print("Password \(API.getStoredData(key: ("iota-obdii-auth-" + currentDeviceId)))")
+        
+        if let mqtt = mqtt {
+            mqtt.username = "use-token-auth"
+            mqtt.password = API.getStoredData(key: ("iota-obdii-auth-" + currentDeviceId))
+            mqtt.keepAlive = 90
+            mqtt.delegate = self
+            mqtt.secureMQTT = true
+        }
+        
+        mqtt?.connect()
     }
     
     private static func deviceParamsToString(parameters: Parameters) -> String {
@@ -385,3 +381,57 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
 }
 
+extension ViewController: CocoaMQTTDelegate {
+    func mqtt(_ mqtt: CocoaMQTT, didConnect host: String, port: Int) {
+        print("didConnect \(host):\(port)")
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Void) {
+        completionHandler(true)
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck) {
+        print("didConnectAck: \(ack)，rawValue: \(ack.rawValue)")
+        
+        if ack == .accept {
+            
+        }
+        
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
+        print("didPublishMessage with message: \(message.string)")
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {
+        print("didPublishAck with id: \(id)")
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 ) {
+        print("didReceivedMessage: \(message.string) with id \(id)")
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didSubscribeTopic topic: String) {
+        print("didSubscribeTopic to \(topic)")
+    }
+    
+    func mqtt(_ mqtt: CocoaMQTT, didUnsubscribeTopic topic: String) {
+        print("didUnsubscribeTopic to \(topic)")
+    }
+    
+    func mqttDidPing(_ mqtt: CocoaMQTT) {
+        print("didPing")
+    }
+    
+    func mqttDidReceivePong(_ mqtt: CocoaMQTT) {
+        _console("didReceivePong")
+    }
+    
+    func mqttDidDisconnect(_ mqtt: CocoaMQTT, withError err: Error?) {
+        _console("mqttDidDisconnect")
+    }
+    
+    func _console(_ info: String) {
+        print("Delegate: \(info)")
+    }
+}
