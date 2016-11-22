@@ -36,4 +36,16 @@ struct API {
             return value
         }
     }
+    
+    static func storeData(key: String, value: String) {
+        UserDefaults.standard.setValue(value, forKey: key)
+    }
+    
+    static func getStoredData(key: String) -> String {
+        if let value = UserDefaults.standard.string(forKey: key) {
+            return value
+        } else {
+            return DOESNOTEXIST
+        }
+    }
 }

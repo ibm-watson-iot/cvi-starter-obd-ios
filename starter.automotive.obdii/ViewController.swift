@@ -29,6 +29,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     private var location: CLLocation?
     
     private var deviceBSSID: String = ""
+    private var currentDeviceId: String = ""
     
     private let credentialHeaders: HTTPHeaders = [
         "Content-Type": "application/json",
@@ -232,11 +233,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     let resultDictionary = (result as! [NSDictionary])[0]
                     
                     let authToken = (resultDictionary["authToken"] ?? "N/A") as? String
+                    let deviceId = (resultDictionary["deviceId"] ?? "N/A") as? String
+                    let userDefaultsKey = "iota-obdii-auth-" + deviceId!
+                    
+                    if (API.getStoredData(key: userDefaultsKey) != authToken) {
+                        API.storeData(key: userDefaultsKey, value: authToken!)
+                    }
                     
                     let alertController = UIAlertController(title: "Your Device is Now Registered!", message: "Please take note of this Autentication Token as you will need it in the future", preferredStyle: UIAlertControllerStyle.alert)
                     
                     alertController.addAction(UIAlertAction(title: "Copy to my Clipboard", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
                         UIPasteboard.general.string = authToken
+                        
+                        self.deviceRegistered()
                     })
                     
                     alertController.addTextField(configurationHandler: {(textField: UITextField!) in
@@ -329,21 +338,21 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func deviceRegistered() {
-//        DispatchQueue.main.sync(execute: {
-//            let clientIdPid = "d:\(API.orgId):\(API.typeId):\(deviceBSSID)"
-//            mqtt = CocoaMQTT(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
-//            
-//            if let mqtt = mqtt {
-//                mqtt.username = "use-token-auth"
-//                mqtt.password = deviceCredentials.objectForKey("token") as? String
-//                mqtt.keepAlive = 90
-//                mqtt.delegate = self
-//                mqtt.secureMQTT = true
-//            }
-//            
-//            ViewController.mqtt?.connect()
-//            
-//        })
+        DispatchQueue.main.sync(execute: {
+            let clientIdPid = "d:\(API.orgId):\(API.typeId):\(deviceBSSID)"
+            mqtt = CocoaMQTT(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
+            
+            if let mqtt = mqtt {
+                mqtt.username = "use-token-auth"
+                mqtt.password = API.getStoredData("iota-obdii-auth-" + currentDevice.getString("deviceId")).toCharArray()
+                mqtt.keepAlive = 90
+                mqtt.delegate = self
+                mqtt.secureMQTT = true
+            }
+            
+            ViewController.mqtt?.connect()
+            
+        })
     }
     
     private static func deviceParamsToString(parameters: Parameters) -> String {
