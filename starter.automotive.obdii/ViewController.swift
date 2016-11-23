@@ -25,7 +25,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var engineCoolantLabel: UILabel!
     @IBOutlet weak var fuelLevelLabel: UILabel!
     
-    private var navigationBar: UINavigationBar?
+    public var navigationBar: UINavigationBar?
     
     let locationManager = CLLocationManager()
     private var location: CLLocation?
@@ -61,7 +61,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
         
         navigationBar = self.navigationController?.navigationBar
-        navigationBar?.barStyle = UIBarStyle.black
+        navigationBar?.barStyle = UIBarStyle.blackOpaque
         
         startApp()
     }
@@ -485,6 +485,8 @@ extension ViewController: CocoaMQTTDelegate {
         
         if ack == .accept {
             print("ACCEPTED")
+            
+            navigationBar?.topItem?.title = "Connected, Preparing to Send Data"
             
             timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(ViewController.mqttPublish), userInfo: nil, repeats: true)
         }
