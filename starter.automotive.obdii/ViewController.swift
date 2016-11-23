@@ -417,6 +417,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         let stringData: String = jsonToString(data: data, props: props)
         
+        self.navigationBar?.topItem?.title = "Live Data is Being Sent"
         mqtt!.publish("iot-2/evt/fuelAndCoolant/fmt/format_string", withString: stringData)
     }
     
