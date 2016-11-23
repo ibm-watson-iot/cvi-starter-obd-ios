@@ -15,8 +15,10 @@ import CocoaMQTT
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
     private var reachability = Reachability()!
-    private let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5);
-    private let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20);
+    private let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
+    private let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20)
+    private let randomEngineRPM: Double = Double(arc4random_uniform(600) + 600)
+    private let randomEngineOilTemp: Double = Double(arc4random_uniform(120) + 20)
     
     private var simulation: Bool = false
     
@@ -30,6 +32,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     private var deviceBSSID: String = ""
     private var currentDeviceId: String = ""
+    
+    public var timer = Timer()
+    
+    private var trip_id: String = ""
     
     private let credentialHeaders: HTTPHeaders = [
         "Content-Type": "application/json",
@@ -230,8 +236,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     let resultDictionary = (result as! [NSDictionary])[0]
                     
                     let authToken = (resultDictionary["authToken"] ?? "N/A") as? String
-                    let deviceId = (resultDictionary["deviceId"] ?? "N/A") as? String
-                    let userDefaultsKey = "iota-obdii-auth-" + deviceId!
+                    self.currentDeviceId = ((resultDictionary["deviceId"] ?? "N/A") as? String)!
+                    let userDefaultsKey = "iota-obdii-auth-" + self.currentDeviceId
                     
                     if (API.getStoredData(key: userDefaultsKey) != authToken) {
                         API.storeData(key: userDefaultsKey, value: authToken!)
@@ -335,6 +341,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func deviceRegistered() {
+        trip_id = createTripId()
+        
         let clientIdPid = "d:\(API.orgId):\(API.typeId):\(currentDeviceId)"
         mqtt = CocoaMQTT(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
         
@@ -376,6 +384,75 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         }
     }
     
+    func mqttPublish() {
+        if(mqtt == nil || mqtt!.connState != CocoaMQTTConnState.connected){
+            mqtt?.connect()
+        }
+        
+        let data: [String: String] = [
+            "trip_id": trip_id
+        ]
+        
+        let props: [String: String] = [
+            "engineRPM": "\(randomEngineRPM)",
+            "speed": "\(Double(arc4random_uniform(70) + 5))",
+            "engineOilTemp": "\(randomEngineOilTemp)",
+            "engineTemp": "\(randomEngineCoolant)",
+            "fuelLevel": "\(randomFuelLevel)",
+            "lng": "\((location?.coordinate.longitude)!)",
+            "lat": "\((location?.coordinate.latitude)!)"
+        ]
+        
+        let stringData: String = jsonToString(data: data, props: props)
+        
+        mqtt!.publish("iot-2/evt/fuelAndCoolant/fmt/format_string", withString: stringData)
+    }
+    
+    func createTripId() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        let currentDate = NSDate()
+        
+        var tid = dateFormatter.string(from: currentDate as Date)
+        
+        tid += "-" + NSUUID().uuidString
+        
+        return tid;
+    }
+    
+    func jsonToString(data: [String: String], props: [String: String]) -> String {
+        var temp: String = "{\"d\":{"
+        var accum: Int = 0
+        
+        for i in data {
+            if accum == (data.count - 1) && props.count == 0 {
+                temp += "\"\(i.0)\": \"\(i.1)\"}}"
+            } else {
+                temp += "\"\(i.0)\": \"\(i.1)\", "
+            }
+            
+            accum += 1
+        }
+        
+        if props.count > 0 {
+            temp += "\"props\":{"
+            var propsAccum: Int = 0
+            
+            for i in props {
+                if propsAccum == (props.count - 1) {
+                    temp += "\"\(i.0)\": \"\(i.1)\"}}}"
+                } else {
+                    temp += "\"\(i.0)\": \"\(i.1)\", "
+                }
+                
+                propsAccum += 1
+            }
+        }
+        
+        return temp
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -394,13 +471,15 @@ extension ViewController: CocoaMQTTDelegate {
         print("didConnectAck: \(ack)，rawValue: \(ack.rawValue)")
         
         if ack == .accept {
+            print("ACCEPTED")
             
+            timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(ViewController.mqttPublish), userInfo: nil, repeats: true)
         }
         
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
-        print("didPublishMessage with message: \(message.string)")
+        print("didPublishMessage with message: \((message.string)!)")
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {
