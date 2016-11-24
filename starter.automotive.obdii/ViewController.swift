@@ -12,7 +12,6 @@ import Alamofire
 import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import CocoaMQTT
-import M13ProgressSuite
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
     private var reachability = Reachability()!
@@ -28,6 +27,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var navigationRightButton: UIBarButtonItem!
     
     public var navigationBar: UINavigationBar?
+    private var activityIndicator: UIActivityIndicatorView?
     
     let locationManager = CLLocationManager()
     private var location: CLLocation?
@@ -66,9 +66,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         navigationBar?.barStyle = UIBarStyle.blackOpaque
         
         
-        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
-        activityIndicator.startAnimating()
-        
+        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
         navigationRightButton.customView = activityIndicator
         
         startApp()
@@ -135,6 +133,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     }
     
     private func checkDeviceRegistry() {
+        self.navigationBar?.topItem?.title = "Checking Device Registeration"
+        
+        progressStart()
+        
 //        getAccurateLocation();
         
         var url: String = ""
@@ -170,12 +172,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                         
                         self.deviceRegistered()
                     }
-//                    progressBar.setVisibility(View.GONE);
+                    
+                    self.progressStop()
                     
                     break;
                 case 404, 405:
-                    print("Check Device Registry: ***Not Registered***");
-//                    progressBar.setVisibility(View.GONE);
+                    print("Check Device Registry: ***Not Registered***")
+                    
+                    self.progressStop()
                     
                     let alertController = UIAlertController(title: "Your Device is NOT Registered!", message: "In order to use this application, we need to register your device to the IBM IoT Platform", preferredStyle: UIAlertControllerStyle.alert)
                     
@@ -196,7 +200,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     break;
                 default:
                     print("Failed to connect IoTP: statusCode: \(statusCode)");
-//                    progressBar.setVisibility(View.GONE);
+                    
+                    self.progressStop()
                     
                     let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
                     
@@ -236,7 +241,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         let url: URL = URL(string: API.addDevices)!
         
             self.navigationBar?.topItem?.title = "Registering Your Device";
-//        progressBar.setVisibility(View.VISIBLE);
+        
+            progressStart()
         
         let parameters: Parameters = [
             "typeId": API.typeId,
@@ -285,8 +291,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 
                 break;
             default:
-                print("Failed to connect IoTP: statusCode: \(statusCode)");
-                //                    progressBar.setVisibility(View.GONE);
+                print("Failed to connect IoTP: statusCode: \(statusCode)")
+                
+                self.progressStop()
                 
                 let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
                 
@@ -425,7 +432,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         let stringData: String = jsonToString(data: data, props: props)
         
-        self.navigationBar?.topItem?.title = "Live Data is Being Sent"
         mqtt!.publish("iot-2/evt/fuelAndCoolant/fmt/format_string", withString: stringData)
     }
     
@@ -474,6 +480,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         return temp
     }
     
+    func progressStart() {
+        activityIndicator?.startAnimating()
+    }
+    
+    func progressStop() {
+        activityIndicator?.stopAnimating()
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -496,13 +510,27 @@ extension ViewController: CocoaMQTTDelegate {
             
             navigationBar?.topItem?.title = "Connected, Preparing to Send Data"
             
+            progressStart()
+            
             timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(ViewController.mqttPublish), userInfo: nil, repeats: true)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.navigationBar?.topItem?.title = "Live Data is Being Sent"
+            }
         }
         
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
         print("didPublishMessage with message: \((message.string)!)")
+        
+        self.navigationBar?.topItem?.title = "Successfully Published to Server"
+        progressStop()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.navigationBar?.topItem?.title = "Live Data is Being Sent"
+            self.progressStart()
+        }
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {
