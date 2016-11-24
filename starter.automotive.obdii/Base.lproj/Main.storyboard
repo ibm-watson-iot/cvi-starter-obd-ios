@@ -73,10 +73,13 @@
                             <constraint firstItem="n5h-VJ-V6A" firstAttribute="top" secondItem="j6f-TZ-aRY" secondAttribute="bottom" constant="42" id="vcJ-iI-UzH"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="IBM IoT4a - OBDII" id="qeM-4p-eCM"/>
+                    <navigationItem key="navigationItem" title="IBM IoT4a - OBDII" id="qeM-4p-eCM">
+                        <barButtonItem key="rightBarButtonItem" title="Spinner" id="tel-Z6-eUx"/>
+                    </navigationItem>
                     <connections>
                         <outlet property="engineCoolantLabel" destination="eQa-gB-UV6" id="WLr-04-JXd"/>
                         <outlet property="fuelLevelLabel" destination="j6f-TZ-aRY" id="ZNH-ie-2ld"/>
+                        <outlet property="navigationRightButton" destination="tel-Z6-eUx" id="65f-1e-Vch"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

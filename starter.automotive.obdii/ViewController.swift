@@ -12,6 +12,7 @@ import Alamofire
 import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import CocoaMQTT
+import M13ProgressSuite
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
     private var reachability = Reachability()!
@@ -24,6 +25,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     @IBOutlet weak var engineCoolantLabel: UILabel!
     @IBOutlet weak var fuelLevelLabel: UILabel!
+    @IBOutlet weak var navigationRightButton: UIBarButtonItem!
     
     public var navigationBar: UINavigationBar?
     
@@ -62,6 +64,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         
         navigationBar = self.navigationController?.navigationBar
         navigationBar?.barStyle = UIBarStyle.blackOpaque
+        
+        
+        let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
+        activityIndicator.startAnimating()
+        
+        navigationRightButton.customView = activityIndicator
         
         startApp()
     }
