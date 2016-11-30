@@ -13,7 +13,7 @@ import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import CocoaMQTT
 
-class ViewController: UIViewController, CLLocationManagerDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
     private var reachability = Reachability()!
     private let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
     private let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20)
@@ -25,6 +25,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var engineCoolantLabel: UILabel!
     @IBOutlet weak var fuelLevelLabel: UILabel!
     @IBOutlet weak var navigationRightButton: UIBarButtonItem!
+    
     @IBOutlet weak var tableView: UITableView!
     
     public var navigationBar: UINavigationBar?
@@ -49,6 +50,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.dataSource = self
+        tableView.delegate = self
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -489,6 +493,19 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         activityIndicator?.stopAnimating()
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = UITableViewCell(style: UITableViewCellStyle.value1, reuseIdentifier: "HomeTableCells")
+        
+        cell.textLabel?.text = "Property"
+        cell.detailTextLabel?.text = "Value"
+        
+        return cell
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -564,31 +581,5 @@ extension ViewController: CocoaMQTTDelegate {
     
     func _console(_ info: String) {
         print("Delegate: \(info)")
-    }
-}
-
-// MARK: - UITableViewDataSource
-extension ViewController: UITableViewDataSource {
-    
-    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellIdentifier = "CarTableViewCell"
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)
-        
-        cell?.backgroundColor = UIColor.white
-        
-        let backgroundView = UIView()
-        backgroundView.backgroundColor = UIColor.black
-        cell?.selectedBackgroundView = backgroundView
-                
-        return cell!
     }
 }

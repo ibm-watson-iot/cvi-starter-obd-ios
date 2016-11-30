@@ -17,6 +17,8 @@
 		61AB543A1DDA5EAA00D60E67 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61AB54391DDA5EAA00D60E67 /* Assets.xcassets */; };
 		61AB543D1DDA5EAA00D60E67 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61AB543B1DDA5EAA00D60E67 /* LaunchScreen.storyboard */; };
 		61BDF6DB1DDCBFA300793CD2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */; };
+		61EA796E1DEF42B500E19865 /* HomeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61EA796C1DEF42B500E19865 /* HomeTableViewCell.swift */; };
+		61EA796F1DEF42B500E19865 /* HomeTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 61EA796D1DEF42B500E19865 /* HomeTableViewCell.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,8 @@
 		61AB543C1DDA5EAA00D60E67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		61AB543E1DDA5EAA00D60E67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "Pods/../build/Debug-iphoneos/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
+		61EA796C1DEF42B500E19865 /* HomeTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeTableViewCell.swift; sourceTree = "<group>"; };
+		61EA796D1DEF42B500E19865 /* HomeTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = HomeTableViewCell.xib; sourceTree = "<group>"; };
 		ABD1DA47B34BFE20485504F5 /* Pods-starter.automotive.obdii.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-starter.automotive.obdii.debug.xcconfig"; path = "Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -79,6 +83,8 @@
 				61AB54391DDA5EAA00D60E67 /* Assets.xcassets */,
 				61AB543B1DDA5EAA00D60E67 /* LaunchScreen.storyboard */,
 				61AB543E1DDA5EAA00D60E67 /* Info.plist */,
+				61EA796C1DEF42B500E19865 /* HomeTableViewCell.swift */,
+				61EA796D1DEF42B500E19865 /* HomeTableViewCell.xib */,
 			);
 			path = starter.automotive.obdii;
 			sourceTree = "<group>";
@@ -168,6 +174,7 @@
 				61AB543D1DDA5EAA00D60E67 /* LaunchScreen.storyboard in Resources */,
 				61AB543A1DDA5EAA00D60E67 /* Assets.xcassets in Resources */,
 				61A806AD1DDBA875008540CE /* Podfile in Resources */,
+				61EA796F1DEF42B500E19865 /* HomeTableViewCell.xib in Resources */,
 				61AB54381DDA5EAA00D60E67 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -229,6 +236,7 @@
 			files = (
 				61AB54351DDA5EAA00D60E67 /* ViewController.swift in Sources */,
 				61A806B11DDBAFE4008540CE /* API.swift in Sources */,
+				61EA796E1DEF42B500E19865 /* HomeTableViewCell.swift in Sources */,
 				61AB54331DDA5EAA00D60E67 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
