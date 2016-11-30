@@ -25,6 +25,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var engineCoolantLabel: UILabel!
     @IBOutlet weak var fuelLevelLabel: UILabel!
     @IBOutlet weak var navigationRightButton: UIBarButtonItem!
+    @IBOutlet weak var tableView: UITableView!
     
     public var navigationBar: UINavigationBar?
     private var activityIndicator: UIActivityIndicatorView?
@@ -426,8 +427,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             "engineOilTemp": "\(randomEngineOilTemp)",
             "engineTemp": "\(randomEngineCoolant)",
             "fuelLevel": "\(randomFuelLevel)",
-            "lng": "\((location?.coordinate.longitude)!)",
-            "lat": "\((location?.coordinate.latitude)!)"
+            "lng": location != nil ? "\((location?.coordinate.longitude)!)" : "",
+            "lat": location != nil ? "\((location?.coordinate.latitude)!)" : ""
         ]
         
         let stringData: String = jsonToString(data: data, props: props)
@@ -563,5 +564,31 @@ extension ViewController: CocoaMQTTDelegate {
     
     func _console(_ info: String) {
         print("Delegate: \(info)")
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension ViewController: UITableViewDataSource {
+    
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 5
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cellIdentifier = "CarTableViewCell"
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier)
+        
+        cell?.backgroundColor = UIColor.white
+        
+        let backgroundView = UIView()
+        backgroundView.backgroundColor = UIColor.black
+        cell?.selectedBackgroundView = backgroundView
+                
+        return cell!
     }
 }
