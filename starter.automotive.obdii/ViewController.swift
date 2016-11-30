@@ -103,7 +103,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         if reachability.isReachable {
             self.navigationBar?.topItem?.title = "Starting the Simulation"
             
-            tableItemsValues = ["\(randomEngineCoolant)C", "\(randomFuelLevel)%", "\(randomEngineCoolant)C", "\(randomEngineRPM)", "\(randomEngineOilTemp)C"]
+            tableItemsValues = ["\(randomEngineCoolant) C", "\(randomFuelLevel)%", "\(randomEngineCoolant) C", "\(randomEngineRPM)", "\(randomEngineOilTemp) C"]
             
             tableView.reloadData()
             
@@ -512,6 +512,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         }
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+            return 50
     }
     
     override func didReceiveMemoryWarning() {
