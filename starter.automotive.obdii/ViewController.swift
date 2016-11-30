@@ -19,6 +19,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20)
     private let randomEngineRPM: Double = Double(arc4random_uniform(600) + 600)
     private let randomEngineOilTemp: Double = Double(arc4random_uniform(120) + 20)
+
+    private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Engine Coolant Temperature", "Engine RPM", "Engine Oil Temperature"]
     
     private var simulation: Bool = false
     
@@ -494,14 +496,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        return tableItemsTitles.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: UITableViewCellStyle.value1, reuseIdentifier: "HomeTableCells")
         
-        cell.textLabel?.text = "Property"
-        cell.detailTextLabel?.text = "Value"
+        cell.textLabel?.text = tableItemsTitles[indexPath.row]
+        cell.detailTextLabel?.text = "N/A"
         
         return cell
     }
