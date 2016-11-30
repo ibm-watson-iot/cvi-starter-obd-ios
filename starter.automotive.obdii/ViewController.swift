@@ -22,10 +22,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
 
     private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Engine Coolant Temperature", "Engine RPM", "Engine Oil Temperature"]
     
+    private var tableItemsValues: [String] = []
+    
     private var simulation: Bool = false
     
-    @IBOutlet weak var engineCoolantLabel: UILabel!
-    @IBOutlet weak var fuelLevelLabel: UILabel!
     @IBOutlet weak var navigationRightButton: UIBarButtonItem!
     
     @IBOutlet weak var tableView: UITableView!
@@ -103,8 +103,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         if reachability.isReachable {
             self.navigationBar?.topItem?.title = "Starting the Simulation"
             
-            engineCoolantLabel.text = randomEngineCoolant.description + "C"
-            fuelLevelLabel.text = randomFuelLevel.description + "%"
+            tableItemsValues = ["\(randomEngineCoolant)C", "\(randomFuelLevel)%", "\(randomEngineCoolant)C", "\(randomEngineRPM)", "\(randomEngineOilTemp)C"]
+            
+            tableView.reloadData()
             
             checkDeviceRegistry()
         } else {
@@ -503,7 +504,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         let cell = UITableViewCell(style: UITableViewCellStyle.value1, reuseIdentifier: "HomeTableCells")
         
         cell.textLabel?.text = tableItemsTitles[indexPath.row]
-        cell.detailTextLabel?.text = "N/A"
+        
+        if simulation {
+            cell.detailTextLabel?.text = tableItemsValues[indexPath.row]
+        } else {
+            cell.detailTextLabel?.text = "N/A"
+        }
         
         return cell
     }
