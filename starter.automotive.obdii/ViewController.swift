@@ -12,8 +12,9 @@ import Alamofire
 import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import CocoaMQTT
+import CocoaAsyncSocket
 
-class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, StreamDelegate, GCDAsyncSocketDelegate {
     private var reachability = Reachability()!
     private let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
     private let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20)
@@ -58,17 +59,36 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func talkToSocket() {
-        let host = "10.26.188.114"
+        let host = "10.26.188.177"
         let port = 35000
         
-//        var inp: InputStream?
-        var outputStream: OutputStream?
+        let mSocket = GCDAsyncSocket.init(delegate: self, delegateQueue: DispatchQueue.main)
+        do {
+            print("Connecing to Device")
+            
+            try mSocket.connect(toHost: host, onPort: UInt16(port))
+        } catch let error {
+            print(error)
+        }
         
-        Stream.getStreamsToHost(withName: host, port: port, inputStream: nil, outputStream: &outputStream)
+//        var inputStream: InputStream?
+//        var outputStream: OutputStream?
+//        
+//        Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
+//        
+//        inputStream?.delegate = self
+//        inputStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+//        inputStream?.open()
+//        
+////        outputStream?.delegate = self
+////        outputStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+////        outputStream?.open()
+    }
+    
+    @objc public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
+        self.navigationBar?.topItem?.title = "Successfully Connected to Device"
         
-//        outputStream?.delegate = self
-        outputStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
-        outputStream?.open()
+        print("Success")
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -128,30 +148,31 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     private func actualDevice() {
-        let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            let alertController = UIAlertController(title: "Coming Soon", message: nil, preferredStyle: UIAlertControllerStyle.alert)
-            
-            alertController.addAction(UIAlertAction(title: "Try the simulator", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                self.startApp()
-            })
-            
-            alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                exit(0)
-            })
-            
-            self.present(alertController, animated: true, completion: nil)
-        })
-        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-            let toast = UIAlertController(title: nil, message: "You would need to connect to your OBDII dongle in order to use this feature!", preferredStyle: UIAlertControllerStyle.alert)
-            
-            self.present(toast, animated: true, completion: nil)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                exit(0)
-            }
-        })
-        self.present(alertController, animated: true, completion: nil)
+        talkToSocket()
+//        let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
+//        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+//            let alertController = UIAlertController(title: "Coming Soon", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+//            
+//            alertController.addAction(UIAlertAction(title: "Try the simulator", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+//                self.startApp()
+//            })
+//            
+//            alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+//                exit(0)
+//            })
+//            
+//            self.present(alertController, animated: true, completion: nil)
+//        })
+//        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+//            let toast = UIAlertController(title: nil, message: "You would need to connect to your OBDII dongle in order to use this feature!", preferredStyle: UIAlertControllerStyle.alert)
+//            
+//            self.present(toast, animated: true, completion: nil)
+//            
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                exit(0)
+//            }
+//        })
+//        self.present(alertController, animated: true, completion: nil)
     }
     
     private func checkDeviceRegistry() {
