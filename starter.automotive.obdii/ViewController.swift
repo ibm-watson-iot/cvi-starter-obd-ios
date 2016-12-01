@@ -57,6 +57,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         tableView.delegate = self
     }
     
+    func talkToSocket() {
+        let host = "10.26.188.114"
+        let port = 35000
+        
+//        var inp: InputStream?
+        var outputStream: OutputStream?
+        
+        Stream.getStreamsToHost(withName: host, port: port, inputStream: nil, outputStream: &outputStream)
+        
+//        outputStream?.delegate = self
+        outputStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        outputStream?.open()
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
