@@ -40,6 +40,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private var deviceBSSID: String = ""
     private var currentDeviceId: String = ""
     
+    private var inputStream: InputStream?
+    private var outputStream: OutputStream?
+    private var buffer: [UInt8] = [0,0,0,0]
+    
     public var timer = Timer()
     
     private var trip_id: String = ""
@@ -59,36 +63,68 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func talkToSocket() {
-        let host = "10.26.188.177"
+        let host = "10.26.191.110"
         let port = 35000
         
-        let mSocket = GCDAsyncSocket.init(delegate: self, delegateQueue: DispatchQueue.main)
-        do {
-            print("Connecing to Device")
-            
-            try mSocket.connect(toHost: host, onPort: UInt16(port))
-        } catch let error {
-            print(error)
-        }
+        Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
         
-//        var inputStream: InputStream?
-//        var outputStream: OutputStream?
-//        
-//        Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
-//        
-//        inputStream?.delegate = self
-//        inputStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
-//        inputStream?.open()
-//        
-////        outputStream?.delegate = self
-////        outputStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
-////        outputStream?.open()
+        inputStream!.delegate = self
+        inputStream!.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        inputStream!.open()
+
+        outputStream!.delegate = self
+        outputStream!.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        outputStream!.open()
+    }
+    
+    func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
+            switch eventCode {
+                case Stream.Event.openCompleted:
+                    print("Stream Opened Successfully")
+                    break
+                case Stream.Event.hasBytesAvailable:
+                    while(inputStream!.hasBytesAvailable){
+                        let bytes = inputStream!.read(&buffer, maxLength: buffer.count)
+                        if bytes > 0 {
+                            let result = NSString(bytes: buffer, length: bytes, encoding: String.Encoding.ascii.rawValue)
+                            
+                            print(result!)
+                        }
+                    }
+
+                    break
+                case Stream.Event.endEncountered:
+                    print("Stream Ended")
+
+                    break
+                case Stream.Event.errorOccurred:
+                    print("Error")
+                    
+                    break
+                case Stream.Event():
+                    break
+                default:
+                    break
+            }
     }
     
     @objc public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
         self.navigationBar?.topItem?.title = "Successfully Connected to Device"
         
         print("Success")
+        
+        sock.readData(withTimeout: -1, tag: 0)
+        sock.write("ATD".data(using: .utf8)!, withTimeout: -1, tag: 0)
+    }
+    
+    func socket(_ sender: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
+        print("Did Read")
+    }
+    
+    func socket(_ sender: GCDAsyncSocket, didWrite data: Data, withTag tag: Int) {
+        print("Did Write")
+        
+        print(data)
     }
     
     override func viewDidAppear(_ animated: Bool) {
