@@ -12,9 +12,8 @@ import Alamofire
 import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import CocoaMQTT
-import CocoaAsyncSocket
 
-class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, StreamDelegate, GCDAsyncSocketDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, StreamDelegate {
     private var reachability = Reachability()!
     private let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
     private let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20)
@@ -63,7 +62,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func talkToSocket() {
-        let host = "10.26.191.110"
+        print("Attempting to Connect to Device")
+        
+        let host = "10.26.185.245"
         let port = 35000
         
         Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
@@ -81,14 +82,32 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             switch eventCode {
                 case Stream.Event.openCompleted:
                     print("Stream Opened Successfully")
+                    
                     break
                 case Stream.Event.hasBytesAvailable:
+                    print("HAS BYTES")
+                    
                     while(inputStream!.hasBytesAvailable){
                         let bytes = inputStream!.read(&buffer, maxLength: buffer.count)
                         if bytes > 0 {
                             let result = NSString(bytes: buffer, length: bytes, encoding: String.Encoding.ascii.rawValue)
                             
                             print(result!)
+                            
+                            if (result?.contains(">"))! {
+                                print("Ready")
+                                
+                                var data: Data = "ATD".data(using: String.Encoding.utf8)!
+                                var write = outputStream?.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
+                                
+                                if write == 0 {
+                                    print("Stream at capacity")
+                                } else if write == -1 {
+                                    print("Operation failed: \(outputStream?.streamError)")
+                                } else {
+                                    print("The number of bytes written is \(write!)")
+                                }
+                            }
                         }
                     }
 
@@ -106,25 +125,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                 default:
                     break
             }
-    }
-    
-    @objc public func socket(_ sock: GCDAsyncSocket, didConnectToHost host: String, port: UInt16) {
-        self.navigationBar?.topItem?.title = "Successfully Connected to Device"
-        
-        print("Success")
-        
-        sock.readData(withTimeout: -1, tag: 0)
-        sock.write("ATD".data(using: .utf8)!, withTimeout: -1, tag: 0)
-    }
-    
-    func socket(_ sender: GCDAsyncSocket, didRead data: Data, withTag tag: Int) {
-        print("Did Read")
-    }
-    
-    func socket(_ sender: GCDAsyncSocket, didWrite data: Data, withTag tag: Int) {
-        print("Did Write")
-        
-        print(data)
     }
     
     override func viewDidAppear(_ animated: Bool) {
