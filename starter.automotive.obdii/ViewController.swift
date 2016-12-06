@@ -41,7 +41,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     private var inputStream: InputStream?
     private var outputStream: OutputStream?
-    private var buffer: [UInt8] = [0,0,0,0]
+    private var buffer: [UInt8] = [UInt8](repeating: 0, count: 1024)
+    
+    private var alreadySent: Bool = false
     
     public var timer = Timer()
     
@@ -85,28 +87,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     
                     break
                 case Stream.Event.hasBytesAvailable:
-                    print("HAS BYTES")
-                    
                     while(inputStream!.hasBytesAvailable){
                         let bytes = inputStream!.read(&buffer, maxLength: buffer.count)
+                        
                         if bytes > 0 {
                             let result = NSString(bytes: buffer, length: bytes, encoding: String.Encoding.ascii.rawValue)
                             
-                            print(result!)
+                            print("\n[Socket] - Result:\n\(result!)")
                             
                             if (result?.contains(">"))! {
-                                print("Ready")
+                                print("[Socket] - Ready, IDLE Mode")
                                 
-                                var data: Data = "ATD".data(using: String.Encoding.utf8)!
-                                var write = outputStream?.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
-                                
-                                if write == 0 {
-                                    print("Stream at capacity")
-                                } else if write == -1 {
-                                    print("Operation failed: \(outputStream?.streamError)")
-                                } else {
-                                    print("The number of bytes written is \(write!)")
+                                if !alreadySent {
+                                    writeToStream(message: "AT Z")
+
+                                    alreadySent = true
                                 }
+                                
                             }
                         }
                     }
@@ -125,6 +122,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                 default:
                     break
             }
+    }
+    
+    func writeToStream(message: String){
+        let formattedMessage = message + "\r"
+        
+        if let data = formattedMessage.data(using: String.Encoding.ascii) {
+            print("[Socket] - Writing: \"\(message)\"")
+            outputStream!.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
