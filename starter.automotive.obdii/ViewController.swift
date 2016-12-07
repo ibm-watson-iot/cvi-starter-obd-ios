@@ -218,9 +218,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     private func checkDeviceRegistry() {
-        showStatus(title: "Checking Device Registeration")
-        
-        progressStart()
+        showStatus(title: "Checking Device Registeration", progress: true)
         
 //        getAccurateLocation();
         
@@ -325,9 +323,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private func registerDevice() {
         let url: URL = URL(string: API.addDevices)!
         
-            self.showStatus(title: "Registering Your Device")
-        
-            progressStart()
+            self.showStatus(title: "Registering Your Device", progress: true)
         
         let parameters: Parameters = [
             "typeId": API.typeId,
@@ -574,7 +570,25 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func showStatus(title: String) {
+        if (ViewController.navigationBar == nil) {
+            return
+        }
+        
         ViewController.navigationBar?.topItem?.title = title
+    }
+    
+    func showStatus(title: String, progress: Bool) {
+        if (activityIndicator == nil || ViewController.navigationBar == nil) {
+            return
+        }
+
+        ViewController.navigationBar?.topItem?.title = title
+        
+        if progress {
+            activityIndicator?.startAnimating()
+        } else {
+            activityIndicator?.stopAnimating()
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -619,9 +633,7 @@ extension ViewController: CocoaMQTTDelegate {
         if ack == .accept {
             print("ACCEPTED")
             
-            showStatus(title: "Connected, Preparing to Send Data")
-            
-            progressStart()
+            showStatus(title: "Connected, Preparing to Send Data", progress: true)
             
             timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(ViewController.mqttPublish), userInfo: nil, repeats: true)
             
@@ -635,12 +647,10 @@ extension ViewController: CocoaMQTTDelegate {
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
         print("didPublishMessage with message: \((message.string)!)")
         
-        showStatus(title: "Successfully Published to Server")
-        progressStop()
+        showStatus(title: "Successfully Published to Server", progress: false)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.showStatus(title: "Live Data is Being Sent")
-            self.progressStart()
+            self.showStatus(title: "Live Data is Being Sent", progress: true)
         }
     }
     
