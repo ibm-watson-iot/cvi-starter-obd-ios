@@ -30,7 +30,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     @IBOutlet weak var tableView: UITableView!
     
-    public var navigationBar: UINavigationBar?
+    static var navigationBar: UINavigationBar?
     private var activityIndicator: UIActivityIndicatorView?
     
     let locationManager = CLLocationManager()
@@ -145,8 +145,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             locationManager.startUpdatingLocation()
         }
         
-        navigationBar = self.navigationController?.navigationBar
-        navigationBar?.barStyle = UIBarStyle.blackOpaque
+        ViewController.navigationBar = self.navigationController?.navigationBar
+        ViewController.navigationBar?.barStyle = UIBarStyle.blackOpaque
         
         
         activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
@@ -177,7 +177,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     private func startSimulation() {
         if reachability.isReachable {
-            self.navigationBar?.topItem?.title = "Starting the Simulation"
+            showStatus(title: "Starting the Simulation")
             
             tableItemsValues = ["\(randomEngineCoolant) C", "\(randomFuelLevel)%", "\(randomEngineCoolant) C", "\(randomEngineRPM)", "\(randomEngineOilTemp) C"]
             
@@ -185,7 +185,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             
             checkDeviceRegistry()
         } else {
-            self.navigationBar?.topItem?.title = "No Internet Connection Available"
+            showStatus(title: "No Internet Connection Available")
         }
     }
     
@@ -218,7 +218,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     private func checkDeviceRegistry() {
-        self.navigationBar?.topItem?.title = "Checking Device Registeration"
+        showStatus(title: "Checking Device Registeration")
         
         progressStart()
         
@@ -253,7 +253,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                         let resultDictionary = result as! NSDictionary
                         self.currentDeviceId = resultDictionary["deviceId"] as! String
                         
-                        self.navigationBar?.topItem?.title = "Device Already Registered"
+                        self.showStatus(title: "Device Already Registered")
                         
                         self.deviceRegistered()
                     }
@@ -291,7 +291,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
                     
                     alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                        self.navigationBar?.topItem?.title = "Failed to connect to IBM IoT Platform"
+                        self.showStatus(title: "Failed to connect to IBM IoT Platform")
                     })
                     
                     alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
@@ -325,7 +325,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private func registerDevice() {
         let url: URL = URL(string: API.addDevices)!
         
-            self.navigationBar?.topItem?.title = "Registering Your Device";
+            self.showStatus(title: "Registering Your Device")
         
             progressStart()
         
@@ -383,7 +383,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                 let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
                 
                 alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    self.navigationBar?.topItem?.title = "Failed to connect to IBM IoT Platform"
+                    self.showStatus(title: "Failed to connect to IBM IoT Platform")
                 })
                 
                 alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
@@ -573,6 +573,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         activityIndicator?.stopAnimating()
     }
     
+    func showStatus(title: String) {
+        ViewController.navigationBar?.topItem?.title = title
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableItemsTitles.count
     }
@@ -615,14 +619,14 @@ extension ViewController: CocoaMQTTDelegate {
         if ack == .accept {
             print("ACCEPTED")
             
-            navigationBar?.topItem?.title = "Connected, Preparing to Send Data"
+            showStatus(title: "Connected, Preparing to Send Data")
             
             progressStart()
             
             timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(ViewController.mqttPublish), userInfo: nil, repeats: true)
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.navigationBar?.topItem?.title = "Live Data is Being Sent"
+                self.showStatus(title: "Live Data is Being Sent")
             }
         }
         
@@ -631,11 +635,11 @@ extension ViewController: CocoaMQTTDelegate {
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
         print("didPublishMessage with message: \((message.string)!)")
         
-        self.navigationBar?.topItem?.title = "Successfully Published to Server"
+        showStatus(title: "Successfully Published to Server")
         progressStop()
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.navigationBar?.topItem?.title = "Live Data is Being Sent"
+            self.showStatus(title: "Live Data is Being Sent")
             self.progressStart()
         }
     }
