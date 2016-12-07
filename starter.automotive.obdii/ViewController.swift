@@ -271,11 +271,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     })
                     
                     alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                        let toast = UIAlertController(title: nil, message: "Cannot continue without registering your device!", preferredStyle: UIAlertControllerStyle.alert)
-                        self.present(toast, animated: true, completion: nil)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            exit(0)
-                        }
+                        self.showToast(message: "Cannot continue without registering your device!")
                     })
                     
                     self.present(alertController, animated: true, completion: nil)
@@ -293,11 +289,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     })
                     
                     alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                        let toast = UIAlertController(title: nil, message: "Cannot continue without connecting to IBM IoT Platform!", preferredStyle: UIAlertControllerStyle.alert)
-                        self.present(toast, animated: true, completion: nil)
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            exit(0)
-                        }
+                        self.showToast(message: "Cannot continue without connecting to IBM IoT Platform!")
                     })
                     self.present(alertController, animated: true, completion: nil)
                     
@@ -383,11 +375,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                 })
                 
                 alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                    let toast = UIAlertController(title: nil, message: "Cannot continue without connecting to IBM IoT Platform!", preferredStyle: UIAlertControllerStyle.alert)
-                    self.present(toast, animated: true, completion: nil)
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        exit(0)
-                    }
+                    self.showToast(message: "Cannot continue without connecting to IBM IoT Platform!")
                 })
                 self.present(alertController, animated: true, completion: nil)
                 
@@ -588,6 +576,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             activityIndicator?.startAnimating()
         } else {
             activityIndicator?.stopAnimating()
+        }
+    }
+    
+    func showToast(message: String) {
+        let toast = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        self.present(toast, animated: true, completion: nil)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            exit(0)
         }
     }
     
