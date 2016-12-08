@@ -20,7 +20,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private let randomEngineRPM: Double = Double(arc4random_uniform(600) + 600)
     private let randomEngineOilTemp: Double = Double(arc4random_uniform(120) + 20)
 
-    private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Engine Coolant Temperature", "Engine RPM", "Engine Oil Temperature"]
+    private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
+    private let obdCommands: [String] = ["0105", "012F", "010D", "010C", "015C"]
     
     private var tableItemsValues: [String] = []
     
@@ -66,7 +67,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     func talkToSocket() {
         print("Attempting to Connect to Device")
         
-        let host = "10.26.185.245"
+        let host = "10.26.190.85"
         let port = 35000
         
         Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
@@ -100,6 +101,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                 
                                 if !alreadySent {
                                     writeToStream(message: "AT Z")
+                                    
+                                    writeToStream(message: "012F")
+                                    
+                                    writeToStream(message: "0100")
 
                                     alreadySent = true
                                 }
@@ -381,58 +386,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                 
                 break;
             }
-            
-//            switch (statusCode) {
-//            case 201, 202:
-////                final String authToken = result.getJSONObject(0).getString("authToken");
-////                final String deviceId = result.getJSONObject(0).getString("deviceId");
-////                final String sharedPrefsKey = "iota-obdii-auth-" + deviceId;
-////                
-////                if (!API.getStoredData(sharedPrefsKey).equals(authToken)) {
-////                    API.storeData(sharedPrefsKey, authToken);
-////                }
-////                
-////                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(Home.this, R.style.AppCompatAlertDialogStyle);
-////                View authTokenAlert = getLayoutInflater().inflate(R.layout.activity_home_authtokenalert, null, false);
-////                
-////                EditText authTokenField = (EditText) authTokenAlert.findViewById(R.id.authTokenField);
-////                authTokenField.setText(authToken);
-////                
-////                Button copyToClipboard = (Button) authTokenAlert.findViewById(R.id.copyToClipboard);
-////                copyToClipboard.setOnClickListener(new View.OnClickListener() {
-////                    @Override
-////                    public void onClick(View view) {
-////                        ClipboardManager clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-////                        ClipData clipData = ClipData.newPlainText("authToken", authToken);
-////                        clipboardManager.setPrimaryClip(clipData);
-////                        
-////                        Toast.makeText(Home.this, "Successfully copied to your Clipboard!", Toast.LENGTH_SHORT).show();
-////                    }
-////                });
-////                
-////                alertDialog.setView(authTokenAlert);
-////                alertDialog
-////                    .setCancelable(false)
-////                    .setTitle("Your Device is Now Registered!")
-////                    .setMessage("Please take note of this Autentication Token as you will need it in the future")
-////                    .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-////                        @Override
-////                        public void onClick(DialogInterface dialogInterface, int which) {
-////                            try {
-////                            currentDevice = result.getJSONObject(0);
-////                            deviceRegistered();
-////                            } catch (JSONException e) {
-////                            e.printStackTrace();
-////                            }
-////                        }
-////                    })
-////                    .show();
-////                break;
-//            default:
-//                break;
-//            }
-//            
-//            progressBar.setVisibility(View.GONE);
         }
     }
     
