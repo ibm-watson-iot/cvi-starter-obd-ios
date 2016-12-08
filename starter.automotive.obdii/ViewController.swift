@@ -70,6 +70,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     func talkToSocket() {
         print("Attempting to Connect to Device")
+        showStatus(title: "Connecting to Device", progress: true)
         
         let host = "10.26.190.85"
         let port = 35000
@@ -89,6 +90,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             switch eventCode {
                 case Stream.Event.openCompleted:
                     print("Stream Opened Successfully")
+                    showStatus(title: "Connection Established", progress: false)
                     
                     break
                 case Stream.Event.hasBytesAvailable:
@@ -100,6 +102,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                 print("\n[Socket] - Result:\n\(result)")
                                 
                                 if (result.contains(">")) {
+                                    if counter == 0 {
+                                        showStatus(title: "Retrieving Information", progress: true)
+                                    }
+                                    
                                     if counter < obdCommands.count {
                                         print("[Socket] - Ready, IDLE Mode")
                                         
@@ -114,6 +120,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                         print(tableItemsValues)
                                         
                                         tableView.reloadData()
+                                        
+                                        showStatus(title: "Updated Values", progress: false)
                                     }
                                 }
                             }
