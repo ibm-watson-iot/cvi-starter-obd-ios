@@ -16,9 +16,10 @@ import CocoaMQTT
 class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, StreamDelegate {
     private var reachability = Reachability()!
     private let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
-    private let randomEngineCoolant: Double = Double(arc4random_uniform(120) + 20)
+    private let randomSpeed: Double = Double(arc4random_uniform(150))
+    private let randomEngineCoolant: Double = Double(-40 + Int(arc4random_uniform(UInt32(215 - (-40) + 1))))
     private let randomEngineRPM: Double = Double(arc4random_uniform(600) + 600)
-    private let randomEngineOilTemp: Double = Double(arc4random_uniform(120) + 20)
+    private let randomEngineOilTemp: Double = Double(-40 + Int(arc4random_uniform(UInt32(210 - (-40) + 1))))
 
     private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
     private let obdCommands: [String] = ["0105", "012F", "010D", "010C", "015C"]
@@ -184,7 +185,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         if reachability.isReachable {
             showStatus(title: "Starting the Simulation")
             
-            tableItemsValues = ["\(randomEngineCoolant) C", "\(randomFuelLevel)%", "\(randomEngineCoolant) C", "\(randomEngineRPM)", "\(randomEngineOilTemp) C"]
+            tableItemsValues = ["\(randomEngineCoolant) C", "\(randomFuelLevel)%", "\(randomSpeed) KM/h", "\(randomEngineRPM)", "\(randomEngineOilTemp) C"]
             
             tableView.reloadData()
             
