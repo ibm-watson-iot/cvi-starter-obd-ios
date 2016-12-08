@@ -22,7 +22,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private let randomEngineOilTemp: Double = Double(-40 + Int(arc4random_uniform(UInt32(210 - (-40) + 1))))
 
     private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
-    private let obdCommands: [String] = ["0105", "012F", "010D", "010C", "015C"]
+    private let obdCommands: [String] = ["05", "2F", "0D", "0C", "5C"]
     
     private var tableItemsValues: [String] = []
     
@@ -44,6 +44,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private var inputStream: InputStream?
     private var outputStream: OutputStream?
     private var buffer: [UInt8] = [UInt8](repeating: 0, count: 1024)
+    private var counter: Int = 0
     
     private var alreadySent: Bool = false
     
@@ -63,6 +64,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         tableView.dataSource = self
         tableView.delegate = self
+        
+        tableItemsValues = [String](repeating: "N/A", count: obdCommands.count)
     }
     
     func talkToSocket() {
@@ -93,23 +96,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                         let bytes = inputStream!.read(&buffer, maxLength: buffer.count)
                         
                         if bytes > 0 {
-                            let result = NSString(bytes: buffer, length: bytes, encoding: String.Encoding.ascii.rawValue)
-                            
-                            print("\n[Socket] - Result:\n\(result!)")
-                            
-                            if (result?.contains(">"))! {
-                                print("[Socket] - Ready, IDLE Mode")
+                            if let result = NSString(bytes: buffer, length: bytes, encoding: String.Encoding.ascii.rawValue) {
+                                print("\n[Socket] - Result:\n\(result)")
                                 
-                                if !alreadySent {
-                                    writeToStream(message: "AT Z")
-                                    
-                                    writeToStream(message: "012F")
-                                    
-                                    writeToStream(message: "0100")
-
-                                    alreadySent = true
+                                if (result.contains(">")) {
+                                    if counter < obdCommands.count {
+                                        print("[Socket] - Ready, IDLE Mode")
+                                        
+                                        if counter != 0 && result.contains(obdCommands[counter - 1]) {
+                                            parseValue(from: String(result), index: counter - 1)
+                                        }
+                                        
+                                        writeToStream(message: "01 \(obdCommands[counter])")
+                                        
+                                        counter += 1
+                                    } else {
+                                        print(tableItemsValues)
+                                        
+                                        tableView.reloadData()
+                                    }
                                 }
-                                
                             }
                         }
                     }
@@ -136,6 +142,47 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         if let data = formattedMessage.data(using: String.Encoding.ascii) {
             print("[Socket] - Writing: \"\(message)\"")
             outputStream!.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
+        }
+    }
+    
+    func parseValue(from: String, index: Int) {
+        from.enumerateLines { (line, stop) -> () in
+            if !line.contains(">") {
+                let lineArray = line.components(separatedBy: " ")
+                let hexValue = lineArray[lineArray.count - 1]
+                var result: Double = -1
+                
+                if let decimalValue = UInt8(hexValue, radix: 16) {
+                    switch lineArray[1] {
+                        case "2F":
+                            result = Double(decimalValue)/2.55
+                            self.tableItemsValues[index] = "\(String(format: "%.2f", result))%"
+                            
+                            break
+                        case "05":
+                            self.tableItemsValues[index] = "\(decimalValue)°C"
+                            
+                            break
+                        case "0D":
+                            self.tableItemsValues[index] = "\(decimalValue) KM/h"
+                            
+                            break
+                        case "0C":
+                            result = Double(decimalValue)/4.0
+                            self.tableItemsValues[index] = "\(result) RPM"
+                        
+                            break
+                        case "5C":
+                            self.tableItemsValues[index] = "\(decimalValue)°C"
+                            
+                            break
+                        default:
+                            result = Double(decimalValue)
+                    }
+                    
+                    print("Result \(result)")
+                }
+            }
         }
     }
     
@@ -552,11 +599,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         cell.textLabel?.text = tableItemsTitles[indexPath.row]
         
-        if simulation {
-            cell.detailTextLabel?.text = tableItemsValues[indexPath.row]
-        } else {
-            cell.detailTextLabel?.text = "N/A"
-        }
+        cell.detailTextLabel?.text = tableItemsValues[indexPath.row]
         
         return cell
     }
