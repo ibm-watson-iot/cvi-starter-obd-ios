@@ -45,6 +45,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private var outputStream: OutputStream?
     private var buffer: [UInt8] = [UInt8](repeating: 0, count: 1024)
     private var counter: Int = 0
+    private var inProgress: Bool = false
     
     private var alreadySent: Bool = false
     
@@ -72,7 +73,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         print("Attempting to Connect to Device")
         showStatus(title: "Connecting to Device", progress: true)
         
-        let host = "10.26.190.85"
+        let host = "10.26.187.26"
         let port = 35000
         
         Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
@@ -102,12 +103,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                 print("\n[Socket] - Result:\n\(result)")
                                 
                                 if (result.contains(">")) {
-                                    if counter == 0 {
-                                        showStatus(title: "Retrieving Information", progress: true)
-                                    }
-                                    
                                     if counter < obdCommands.count {
                                         print("[Socket] - Ready, IDLE Mode")
+                                        
+                                        if counter == 0 {
+                                            showStatus(title: "Retrieving Information", progress: true)
+                                            
+                                            inProgress = true
+                                        }
                                         
                                         if counter != 0 && result.contains(obdCommands[counter - 1]) {
                                             parseValue(from: String(result), index: counter - 1)
@@ -122,6 +125,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                         tableView.reloadData()
                                         
                                         showStatus(title: "Updated Values", progress: false)
+                                        
+                                        inProgress = false
+                                        
+                                        counter = 0
                                     }
                                 }
                             }
@@ -135,6 +142,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     break
                 case Stream.Event.errorOccurred:
                     print("Error")
+                    
+                    let alertController = UIAlertController(title: "Connection Failed", message: "Did you want to try again?", preferredStyle: UIAlertControllerStyle.alert)
+                    alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                        self.talkToSocket()
+                    })
+                    alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                        self.startApp()
+                    })
+                    self.present(alertController, animated: true, completion: nil)
                     
                     break
                 case Stream.Event():
