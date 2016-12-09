@@ -97,6 +97,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     print("Stream Opened Successfully")
                     showStatus(title: "Connection Established", progress: false)
                     
+                    self.checkDeviceRegistry()
+                    
                     break
                 case Stream.Event.hasBytesAvailable:
                     while(inputStream!.hasBytesAvailable){
@@ -262,6 +264,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             self.startSimulation()
         })
         alertController.addAction(UIAlertAction(title: "I have a real OBDII dongle", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+            self.deviceBSSID = self.getBSSID()
+            
             self.actualDevice()
         })
         self.present(alertController, animated: true, completion: nil)
@@ -282,10 +286,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     private func actualDevice() {
-        talkToSocket()
         let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
         alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            self.checkDeviceRegistry()
+            self.talkToSocket()
         })
         alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
             let toast = UIAlertController(title: nil, message: "You would need to connect to your OBDII dongle in order to use this feature!", preferredStyle: UIAlertControllerStyle.alert)
@@ -312,6 +315,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID.replacingOccurrences(of: ":", with: "-")
         }
         
+        print("BSSID \(deviceBSSID)")
+        
         
         
         // TODO - Remove
@@ -331,6 +336,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     
                     if let result = response.result.value {
                         let resultDictionary = result as! NSDictionary
+                        print("\n\n\n \(resultDictionary)\n\n\n")
                         self.currentDeviceId = resultDictionary["deviceId"] as! String
                         
                         self.showStatus(title: "Device Already Registered")
@@ -519,17 +525,36 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             "trip_id": trip_id
         ]
         
-        let props: [String: String] = [
-            "engineRPM": "\(randomEngineRPM)",
-            "speed": "\(Double(arc4random_uniform(70) + 5))",
-            "engineOilTemp": "\(randomEngineOilTemp)",
-            "engineTemp": "\(randomEngineCoolant)",
-            "fuelLevel": "\(randomFuelLevel)",
-            "lng": location != nil ? "\((location?.coordinate.longitude)!)" : "",
-            "lat": location != nil ? "\((location?.coordinate.latitude)!)" : ""
-        ]
+        var stringData: String = ""
         
-        let stringData: String = jsonToString(data: data, props: props)
+        if ViewController.simulation {
+            let props: [String: String] = [
+                "engineRPM": "\(randomEngineRPM)",
+                "speed": "\(Double(arc4random_uniform(70) + 5))",
+                "engineOilTemp": "\(randomEngineOilTemp)",
+                "engineTemp": "\(randomEngineCoolant)",
+                "fuelLevel": "\(randomFuelLevel)",
+                "lng": location != nil ? "\((location?.coordinate.longitude)!)" : "",
+                "lat": location != nil ? "\((location?.coordinate.latitude)!)" : ""
+            ]
+            
+            stringData = jsonToString(data: data, props: props)
+        } else {
+            if (ViewController.sessionStarted) {
+                let props: [String: String] = [
+                    "engineRPM": tableItemsValues[3],
+                    "speed": tableItemsValues[2],
+                    "engineOilTemp": tableItemsValues[4],
+                    "engineTemp": tableItemsValues[0],
+                    "fuelLevel": tableItemsValues[1],
+                    "lng": location != nil ? "\((location?.coordinate.longitude)!)" : "",
+                    "lat": location != nil ? "\((location?.coordinate.latitude)!)" : ""
+                ]
+                
+                stringData = jsonToString(data: data, props: props)
+            }
+        }
+        
         
         mqtt!.publish("iot-2/evt/fuelAndCoolant/fmt/format_string", withString: stringData)
     }
