@@ -114,14 +114,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                         
                                         ViewController.sessionStarted = true
                                         canWrite = true
+                                        
+                                        showStatus(title: "Updating Values", progress: true)
                                     }
                                     
                                     if counter < obdCommands.count {
                                         print("[Socket] - Ready, IDLE Mode")
                                         
                                         if counter == 0 {
-                                            showStatus(title: "Updating Values", progress: true)
-                                            
                                             inProgress = true
                                         }
                                         
