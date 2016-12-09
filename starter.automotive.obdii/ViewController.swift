@@ -255,17 +255,15 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     private func startApp() {
+        self.deviceBSSID = self.getBSSID()
+        
         let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
         alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
             ViewController.simulation = true
             
-            self.deviceBSSID = self.getBSSID()
-            
             self.startSimulation()
         })
         alertController.addAction(UIAlertAction(title: "I have a real OBDII dongle", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-            self.deviceBSSID = self.getBSSID()
-            
             self.actualDevice()
         })
         self.present(alertController, animated: true, completion: nil)
@@ -315,9 +313,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID.replacingOccurrences(of: ":", with: "-")
         }
         
-        print("BSSID \(deviceBSSID)")
-        
-        
         
         // TODO - Remove
         print(url)
@@ -336,7 +331,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     
                     if let result = response.result.value {
                         let resultDictionary = result as! NSDictionary
-                        print("\n\n\n \(resultDictionary)\n\n\n")
                         self.currentDeviceId = resultDictionary["deviceId"] as! String
                         
                         self.showStatus(title: "Device Already Registered")
