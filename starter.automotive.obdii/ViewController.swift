@@ -46,10 +46,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private var buffer: [UInt8] = [UInt8](repeating: 0, count: 1024)
     private var counter: Int = 0
     private var inProgress: Bool = false
+    private var sessionStarted: Bool = false
+    private var canWrite: Bool = false
     
     private var alreadySent: Bool = false
     
     public var timer = Timer()
+    public var obdTimer = Timer()
     
     private var trip_id: String = ""
     
@@ -103,6 +106,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                 print("\n[Socket] - Result:\n\(result)")
                                 
                                 if (result.contains(">")) {
+                                    if !sessionStarted {
+                                        obdTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(writeQueries), userInfo: nil, repeats: true)
+                                        
+                                        sessionStarted = true
+                                        canWrite = true
+                                    }
+                                    
                                     if counter < obdCommands.count {
                                         print("[Socket] - Ready, IDLE Mode")
                                         
@@ -138,6 +148,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     break
                 case Stream.Event.endEncountered:
                     print("Stream Ended")
+                    
+                    sessionStarted = false
 
                     break
                 case Stream.Event.errorOccurred:
@@ -158,6 +170,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                 default:
                     break
             }
+    }
+    
+    func writeQueries() {
+        if (sessionStarted && canWrite) {
+            writeToStream(message: "AT Z")
+        }
     }
     
     func writeToStream(message: String){
