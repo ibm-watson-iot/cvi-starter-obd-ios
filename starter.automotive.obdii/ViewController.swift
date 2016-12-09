@@ -22,11 +22,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private let randomEngineOilTemp: Double = Double(-40 + Int(arc4random_uniform(UInt32(210 - (-40) + 1))))
 
     private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
+    private let tableItemsUnits: [String] = ["°C", "%", " KM/hr", " RPM", "°C"]
     private let obdCommands: [String] = ["05", "2F", "0D", "0C", "5C"]
     
     private var tableItemsValues: [String] = []
     
-    private var simulation: Bool = false
+    static var simulation: Bool = false
     
     @IBOutlet weak var navigationRightButton: UIBarButtonItem!
     
@@ -46,7 +47,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private var buffer: [UInt8] = [UInt8](repeating: 0, count: 1024)
     private var counter: Int = 0
     private var inProgress: Bool = false
-    private var sessionStarted: Bool = false
+    static var sessionStarted: Bool = false
     private var canWrite: Bool = false
     
     private var alreadySent: Bool = false
@@ -106,10 +107,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                 print("\n[Socket] - Result:\n\(result)")
                                 
                                 if (result.contains(">")) {
-                                    if !sessionStarted {
-                                        obdTimer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(writeQueries), userInfo: nil, repeats: true)
+                                    if !ViewController.sessionStarted {
+                                        obdTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(writeQueries), userInfo: nil, repeats: true)
                                         
-                                        sessionStarted = true
+                                        ViewController.sessionStarted = true
                                         canWrite = true
                                     }
                                     
@@ -117,7 +118,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                         print("[Socket] - Ready, IDLE Mode")
                                         
                                         if counter == 0 {
-                                            showStatus(title: "Retrieving Information", progress: true)
+                                            showStatus(title: "Updating Values", progress: true)
                                             
                                             inProgress = true
                                         }
@@ -130,11 +131,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                                         
                                         counter += 1
                                     } else {
-                                        print(tableItemsValues)
-                                        
                                         tableView.reloadData()
-                                        
-                                        showStatus(title: "Updated Values", progress: false)
                                         
                                         inProgress = false
                                         
@@ -149,7 +146,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                 case Stream.Event.endEncountered:
                     print("Stream Ended")
                     
-                    sessionStarted = false
+                    showStatus(title: "Connection Ended", progress: false)
+                    
+                    ViewController.sessionStarted = false
 
                     break
                 case Stream.Event.errorOccurred:
@@ -173,7 +172,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func writeQueries() {
-        if (sessionStarted && canWrite) {
+        if (ViewController.sessionStarted && canWrite && !inProgress) {
             writeToStream(message: "AT Z")
         }
     }
@@ -198,31 +197,29 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     switch lineArray[1] {
                         case "2F":
                             result = Double(decimalValue)/2.55
-                            self.tableItemsValues[index] = "\(String(format: "%.2f", result))%"
+                            self.tableItemsValues[index] = "\(String(format: "%.2f", result))"
                             
                             break
                         case "05":
-                            self.tableItemsValues[index] = "\(decimalValue)°C"
+                            self.tableItemsValues[index] = "\(decimalValue)"
                             
                             break
                         case "0D":
-                            self.tableItemsValues[index] = "\(decimalValue) KM/h"
+                            self.tableItemsValues[index] = "\(decimalValue)"
                             
                             break
                         case "0C":
                             result = Double(decimalValue)/4.0
-                            self.tableItemsValues[index] = "\(result) RPM"
+                            self.tableItemsValues[index] = "\(result)"
                         
                             break
                         case "5C":
-                            self.tableItemsValues[index] = "\(decimalValue)°C"
+                            self.tableItemsValues[index] = "\(decimalValue)"
                             
                             break
                         default:
                             result = Double(decimalValue)
                     }
-                    
-                    print("Result \(result)")
                 }
             }
         }
@@ -258,7 +255,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private func startApp() {
         let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
         alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            self.simulation = true
+            ViewController.simulation = true
             
             self.deviceBSSID = self.getBSSID()
             
@@ -274,7 +271,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         if reachability.isReachable {
             showStatus(title: "Starting the Simulation")
             
-            tableItemsValues = ["\(randomEngineCoolant) C", "\(randomFuelLevel)%", "\(randomSpeed) KM/h", "\(randomEngineRPM)", "\(randomEngineOilTemp) C"]
+            tableItemsValues = ["\(randomEngineCoolant)", "\(randomFuelLevel)", "\(randomSpeed)", "\(randomEngineRPM)", "\(randomEngineOilTemp)"]
             
             tableView.reloadData()
             
@@ -286,30 +283,20 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     private func actualDevice() {
         talkToSocket()
-//        let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
-//        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-//            let alertController = UIAlertController(title: "Coming Soon", message: nil, preferredStyle: UIAlertControllerStyle.alert)
-//            
-//            alertController.addAction(UIAlertAction(title: "Try the simulator", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-//                self.startApp()
-//            })
-//            
-//            alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-//                exit(0)
-//            })
-//            
-//            self.present(alertController, animated: true, completion: nil)
-//        })
-//        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-//            let toast = UIAlertController(title: nil, message: "You would need to connect to your OBDII dongle in order to use this feature!", preferredStyle: UIAlertControllerStyle.alert)
-//            
-//            self.present(toast, animated: true, completion: nil)
-//            
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//                exit(0)
-//            }
-//        })
-//        self.present(alertController, animated: true, completion: nil)
+        let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
+        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+            self.checkDeviceRegistry()
+        })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+            let toast = UIAlertController(title: nil, message: "You would need to connect to your OBDII dongle in order to use this feature!", preferredStyle: UIAlertControllerStyle.alert)
+            
+            self.present(toast, animated: true, completion: nil)
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                exit(0)
+            }
+        })
+        self.present(alertController, animated: true, completion: nil)
     }
     
     private func checkDeviceRegistry() {
@@ -319,7 +306,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         var url: String = ""
         
-        if (simulation) {
+        if (ViewController.simulation) {
             url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + API.getUUID()
         } else {
             url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID.replacingOccurrences(of: ":", with: "-")
@@ -414,7 +401,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         let parameters: Parameters = [
             "typeId": API.typeId,
-            "deviceId": simulation ? API.getUUID() : deviceBSSID.replacingOccurrences(of: ":", with: "-"),
+            "deviceId": ViewController.simulation ? API.getUUID() : deviceBSSID.replacingOccurrences(of: ":", with: "-"),
             "authToken": API.apiToken
         ]
         
@@ -641,7 +628,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         cell.textLabel?.text = tableItemsTitles[indexPath.row]
         
-        cell.detailTextLabel?.text = tableItemsValues[indexPath.row]
+        if tableItemsValues[indexPath.row] == "N/A" {
+            cell.detailTextLabel?.text = tableItemsValues[indexPath.row]
+        } else {
+            cell.detailTextLabel?.text = tableItemsValues[indexPath.row] + tableItemsUnits[indexPath.row]
+        }
         
         return cell
     }
@@ -672,7 +663,9 @@ extension ViewController: CocoaMQTTDelegate {
             
             showStatus(title: "Connected, Preparing to Send Data", progress: true)
             
-            timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(ViewController.mqttPublish), userInfo: nil, repeats: true)
+            if ViewController.simulation || ViewController.sessionStarted {
+                timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(ViewController.mqttPublish), userInfo: nil, repeats: true)
+            }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.showStatus(title: "Live Data is Being Sent")
