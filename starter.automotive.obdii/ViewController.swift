@@ -44,7 +44,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     private var inputStream: InputStream?
     private var outputStream: OutputStream?
-    private var buffer: [UInt8] = [UInt8](repeating: 0, count: 1024)
+    private var buffer = [UInt8](repeating: 0, count: 1024)
+    private let host: String = "192.168.0.10"
+    private let port: Int = 35000
+    
     private var counter: Int = 0
     private var inProgress: Bool = false
     static var sessionStarted: Bool = false
@@ -76,101 +79,116 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     func talkToSocket() {
         print("Attempting to Connect to Device")
         showStatus(title: "Connecting to Device", progress: true)
-        
-        let host = "10.26.187.26"
-        let port = 35000
-        
+
         Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
         
         inputStream!.delegate = self
         inputStream!.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
         inputStream!.open()
-
+        
         outputStream!.delegate = self
         outputStream!.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
         outputStream!.open()
     }
     
     func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
-            switch eventCode {
-                case Stream.Event.openCompleted:
-                    print("Stream Opened Successfully")
-                    showStatus(title: "Connection Established", progress: false)
-                    
-                    self.checkDeviceRegistry()
-                    
-                    break
-                case Stream.Event.hasBytesAvailable:
-                    while(inputStream!.hasBytesAvailable){
-                        let bytes = inputStream!.read(&buffer, maxLength: buffer.count)
+        switch eventCode {
+        case Stream.Event.hasBytesAvailable:
+            while(inputStream!.hasBytesAvailable){
+                let bytes = inputStream!.read(&buffer, maxLength: buffer.count)
+                
+                if bytes > 0 {
+                    if let result = NSString(bytes: buffer, length: bytes, encoding: String.Encoding.ascii.rawValue) {
+                        print("\n[Socket] - Result:\n\(result)")
                         
-                        if bytes > 0 {
-                            if let result = NSString(bytes: buffer, length: bytes, encoding: String.Encoding.ascii.rawValue) {
-                                print("\n[Socket] - Result:\n\(result)")
+                        if result.contains(">") {
+                            canWrite = true
+                            
+                            if !ViewController.sessionStarted {
+                                obdTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(writeQueries), userInfo: nil, repeats: true)
                                 
-                                if (result.contains(">")) {
-                                    if !ViewController.sessionStarted {
-                                        obdTimer = Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(writeQueries), userInfo: nil, repeats: true)
-                                        
-                                        ViewController.sessionStarted = true
-                                        canWrite = true
-                                        
-                                        showStatus(title: "Updating Values", progress: true)
-                                    }
-                                    
-                                    if counter < obdCommands.count {
-                                        print("[Socket] - Ready, IDLE Mode")
-                                        
-                                        if counter == 0 {
-                                            inProgress = true
-                                        }
-                                        
-                                        if counter != 0 && result.contains(obdCommands[counter - 1]) {
-                                            parseValue(from: String(result), index: counter - 1)
-                                        }
-                                        
-                                        writeToStream(message: "01 \(obdCommands[counter])")
-                                        
-                                        counter += 1
-                                    } else {
-                                        tableView.reloadData()
-                                        
-                                        inProgress = false
-                                        
-                                        counter = 0
-                                    }
-                                }
+                                ViewController.sessionStarted = true
+                                canWrite = true
+                                
+                                showStatus(title: "Updating Values", progress: true)
                             }
                         }
+                        
+                        if ViewController.sessionStarted && counter < obdCommands.count {
+                            if counter == 0 {
+                                inProgress = true
+                            } else {
+                                if result.contains(obdCommands[counter - 1]) {
+                                    parseValue(from: String(result), index: counter - 1)
+                                }
+                            }
+                            
+                            if canWrite {
+                                writeToStream(message: "01 \(obdCommands[counter])")
+                                
+                                canWrite = false
+                                
+                                counter += 1
+                            }
+                        }
+                        
+                        if (counter == obdCommands.count) {
+                            tableView.reloadData()
+                            
+                            inProgress = false
+                            
+                            counter = 0
+                            
+                            print("DONE \(tableItemsValues)")
+                        }
                     }
-
-                    break
-                case Stream.Event.endEncountered:
-                    print("Stream Ended")
-                    
-                    showStatus(title: "Connection Ended", progress: false)
-                    
-                    ViewController.sessionStarted = false
-
-                    break
-                case Stream.Event.errorOccurred:
-                    print("Error")
-                    
-                    let alertController = UIAlertController(title: "Connection Failed", message: "Did you want to try again?", preferredStyle: UIAlertControllerStyle.alert)
-                    alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                        self.talkToSocket()
-                    })
-                    alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                        self.startApp()
-                    })
-                    self.present(alertController, animated: true, completion: nil)
-                    
-                    break
-                case Stream.Event():
-                    break
-                default:
-                    break
+                }
             }
+            
+            break
+        case Stream.Event.hasSpaceAvailable:
+            print("Space Available")
+            
+            if (!alreadySent) {
+                writeToStream(message: "AT Z")
+                
+                alreadySent = true
+            }
+            
+            break
+        case Stream.Event.openCompleted:
+            print("Stream Opened Successfully")
+            showStatus(title: "Connection Established", progress: false)
+            
+            self.checkDeviceRegistry()
+            
+            break
+        case Stream.Event.endEncountered:
+            print("Stream Ended")
+            
+            showStatus(title: "Connection Ended", progress: false)
+            
+            ViewController.sessionStarted = false
+            
+            break
+        case Stream.Event.errorOccurred:
+            print("Error")
+            
+            let alertController = UIAlertController(title: "Connection Failed", message: "Did you want to try again?", preferredStyle: UIAlertControllerStyle.alert)
+            alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                self.talkToSocket()
+            })
+            alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                self.startApp()
+            })
+            self.present(alertController, animated: true, completion: nil)
+            
+            break
+        case Stream.Event():
+            break
+        default:
+            break
+        }
     }
     
     func writeQueries() {
@@ -188,15 +206,28 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         }
     }
     
+    func sendMessage(_ message: String){
+        let message = "\(message)\r"
+        let data = message.data(using: String.Encoding.ascii)
+        
+        if let data = data {
+            outputStream!.write((data as NSData).bytes.bindMemory(to: UInt8.self, capacity: data.count), maxLength: data.count)
+            
+            return
+        }
+    }
+    
     func parseValue(from: String, index: Int) {
         from.enumerateLines { (line, stop) -> () in
             if !line.contains(">") {
                 let lineArray = line.components(separatedBy: " ")
-                let hexValue = lineArray[lineArray.count - 1]
-                var result: Double = -1
                 
-                if let decimalValue = UInt8(hexValue, radix: 16) {
-                    switch lineArray[1] {
+                if lineArray.count > 2 {
+                    let hexValue = lineArray[lineArray.count - 2]
+                    var result: Double = -1
+                    
+                    if let decimalValue = UInt8(hexValue, radix: 16) {
+                        switch lineArray[1] {
                         case "2F":
                             result = Double(decimalValue)/2.55
                             self.tableItemsValues[index] = "\(String(format: "%.2f", result))"
@@ -213,7 +244,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                         case "0C":
                             result = Double(decimalValue)/4.0
                             self.tableItemsValues[index] = "\(result)"
-                        
+                            
                             break
                         case "5C":
                             self.tableItemsValues[index] = "\(decimalValue)"
@@ -221,6 +252,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                             break
                         default:
                             result = Double(decimalValue)
+                        }
                     }
                 }
             }
