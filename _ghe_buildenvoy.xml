@@ -176,7 +176,7 @@
 			match="static\s+let\s+orgId:\s+String\s*=.*$"
 			replace="static let orgId: String = &quot;${iotp.orgid}&quot;;"
 			byline="true">
-			<fileset id="fileset.API.swift" dir="${dest.clone}">
+			<fileset id="fileset.API.swift" dir="${src.clone}">
 				<include name="**/starter.automotive.obdii/API.swift"/>
 			</fileset>
 		</replaceregexp>
