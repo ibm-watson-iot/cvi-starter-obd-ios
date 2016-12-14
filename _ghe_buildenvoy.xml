@@ -40,7 +40,7 @@
 	
 	<property name="src.depth" value="--depth=50"/>
 
-	<property name="src.url" value="https://github.ibm.com/WAKAO/IoT-Automotive-OBD2-iOS"/>
+	<property name="src.url" value="https://github.ibm.com/Watson-IoT/IoT-Automotive-OBD2-iOS"/>
 	<property name="src.opts" value="${src.depth} -b ${buildenvoy.src.branch} --single-branch"/>
 	<property name="src.clone" location="_tmp.buildenvoy_clone.${TAG_NAME}"/>
 	
