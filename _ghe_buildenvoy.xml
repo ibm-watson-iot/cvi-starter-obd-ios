@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="project" default="main" basedir=".">
+	<description>
+		NOTE: This file is only for GHE
+		Overwrite the dest repo content with the 'release' branch in the source repo
+	</description>
+
+	<property file="_ghe_buildenvoy.properties"/>
+	<!-- 0. review the reposiroty urls
+	      - src.url for repositories
+	-->
+	<!-- 1. provide credentials in _ghe_buildenvoy.properties
+	# src (dev)
+	src.user=<ghe user>
+	src.pass=<ghe access token> (from GHE - settings from top-right icon - personal access tokens)
+	# intranet credentials (optional. this script brings prompt if missing)
+	IBMIntranetID=<w3 id>
+	IBMIntranetPW=<ws pass> (not recommended to put raw password here)
+	-->
+	<!-- 2. or define properties here
+	<property name="src.user" value=""/>
+	<property name="src.pass" value=""/>
+	-->
+	<!-- 3. dry-run and check the result (w/ -Ddry-run=true argument)
+	     4. run the script
+	     5. delete temporary directories
+	        - _tmp.buildenvoy_clone.YYYYMMDD
+	-->
+	
+	<property name="dry-run" value="false"/>
+	
+	<tstamp>
+		<format property="TAG_NAME" pattern="yyyyMMdd_HHmm" locale="en" timezone="Etc/GMT-9"/>
+		<format property="TAG_DATE" pattern="yyyyMMdd" locale="en" timezone="Etc/GMT-9"/>
+	</tstamp>
+	
+	<!-- for buildenvoy build content -->
+	<property name="buildenvoy.src.branch" value="release"/>
+	<property name="buildenvoy.build.branch" value="buildenvoy"/>
+	
+	<property name="src.depth" value="--depth=50"/>
+
+	<property name="src.url" value="https://github.ibm.com/WAKAO/IoT-Automotive-OBD2-iOS"/>
+	<property name="src.opts" value="${src.depth} -b ${buildenvoy.src.branch} --single-branch"/>
+	<property name="src.clone" location="_tmp.buildenvoy_clone.${TAG_NAME}"/>
+	
+	<!-- for buildenvoy -->
+	<property name="buildenvoy.bundle.id" value="com.ibm.cio.be.iphone.iot.automotive.starter.obd2"/>
+	<property name="buildenvoy.build.version" value="${TAG_DATE}"/>
+	
+	<!-- ================================= 
+          target: main              
+         ================================= -->
+	<target name="main" depends="" description="description">
+		<echo>Start buildenvoy w/ tag ${TAG_NAME}...</echo>
+		<antcall target="git.clone">
+			<param name="repo.url" value="${src.url}"/>
+			<param name="repo.user" value="${src.user}"/>
+			<param name="repo.pass" value="${src.pass}"/>
+			<param name="repo.opts" value="${src.opts}"/>
+			<param name="repo.clone" value="${src.clone}"/>
+		</antcall>
+		
+		<!-- git checkout -->
+		<echo>Checking out the ${buildenvoy.build.branch} branch...</echo>
+		<exec executable="git" dir="${src.clone}" failonerror="true">
+			<arg line="remote set-branches --add origin ${buildenvoy.build.branch}"/>
+		</exec>
+		<exec executable="git" dir="${src.clone}" failonerror="true">
+			<arg line="fetch ${src.depth} origin"/>
+		</exec>
+		<exec executable="git" dir="${src.clone}" failonerror="true">
+			<arg line="checkout -b ${buildenvoy.build.branch} origin/${buildenvoy.build.branch}"/>
+		</exec>
+		<!-- check if the depth is enough for successful merge -->
+		<exec executable="git" dir="${src.clone}"  failonerror="false" resultproperty="rc.check.merge-base">
+			<arg line="merge-base ${buildenvoy.build.branch} ${buildenvoy.src.branch}"/>
+		</exec>
+		<fail message="Issue on the script's git fetch setting. The fetch depth specified by the 'src.depth' property is too shallow to merge ${buildenvoy.build.branch} and ${buildenvoy.src.branch} (current: ${src.depth}). Please increase the value and retry.">
+			<condition><not><equals arg1="${rc.check.merge-base}" arg2="0"/></not></condition>
+		</fail>
+		
+		
+		<!-- git merge -->
+		<exec executable="git" dir="${src.clone}" failonerror="true">
+			<arg line="merge --no-ff ${buildenvoy.src.branch}"/>
+		</exec>
+		
+		<!-- tag changes to buildenvoy branch with tag -->
+		<exec executable="git" dir="${src.clone}" failonerror="true">
+			<arg line="tag -a"/>
+			<arg value="buildenvoy-${TAG_NAME}"/>
+			<arg line="-m"/>
+			<arg value="Version ${TAG_NAME}"/>
+		</exec>
+		
+		<!-- set working directory -->
+		<property name="work" location="${src.clone}"/>
+		
+		<!-- update contents -->
+		<antcall target="update_contents_for_buildenvoy">
+			<param name="work" value="${src.clone}"/>
+		</antcall>
+		
+		<!-- run buildenvoy -->
+		<echo>Correcting credentials passed to buildenvoy ant script...:</echo>
+		<input message="Please enter your IBM Intranet ID:"  addproperty="IBMIntranetID" defaultvalue="youribmid@us.ibm.com"/>
+		<input message="Please enter your IBM Intranet password:"  addproperty="IBMIntranetPW" defaultvalue="enter_your_password" >
+			<handler type="secure"/>
+		</input>
+		
+		<antcall target="execute_buildenvoy">
+			<param name="app.center" value="IBM_EXTERNAL_DST_APPCENTER_2"/>
+		</antcall>
+<!--
+		<antcall target="execute_buildenvoy">
+			<param name="app.center" value="IBM_EXTERNAL_OFFICIAL_DEMOS_APPCENTER"/>
+		</antcall>
+-->
+		
+		<!-- push changes -->
+		<echo>Buildenvoy build complited. Pushing contents to GHE...</echo>
+		<antcall target="push_contents"/>
+		
+		<!-- Change the App name on the console -->
+		<echo>=============================================</echo>
+		<echo>=============================================</echo>
+		<echo>Change the App name on the console.</echo>
+		<echo>=============================================</echo>
+		<echo>=============================================</echo>
+		
+		<!--
+		<echo>Cleaning up tmp...</echo>
+		<delete dir="${src.clone}"/>
+		-->
+		<echo>Done.</echo>
+	</target>
+	
+	<!--
+		Run the buildenvoy ant script for a specified ${app.center}
+	-->
+	<target name="execute_buildenvoy">
+		<echo>Starting the BuildEnvoy Ant script... for app store ${app.center}</echo>
+		<!-- rename *.ipa just in case-->
+		<move todir="${work}">
+			<fileset dir="${work}">
+				<include name="*.ipa"/>
+				<include name="*.ipa.*"/>
+			</fileset>
+			<mapper type="glob" from="*" to="*.1"/>
+		</move>
+		<!--
+			Invoke the Ant script
+		-->
+		<ant dir="${work}" inheritall="false" useNativeBasedir="true"
+			antfile="RemoteBuildAndDeploy_DST_For_MAC_Only.xml">
+			<property name="IBMIntranetID" value="${IBMIntranetID}"/>
+			<property name="IBMIntranetPW" value="${IBMIntranetPW}"/>
+			<property name="AppCenter" value="${app.center}"/>
+			<property name="be.temp.dir" location="${work}/../buildenvoy_temp"/>
+		</ant>
+	</target>
+	
+	<!--
+		Prepare Buildenvoy ant environment
+		https://apps.na.collabserv.com/wikis/home?lang=en-us#!/wiki/W381f3e880ff8_49e3_9f54_a897a2c118c8/page/Build%20Envoy
+	-->
+	<target name="update_contents_for_buildenvoy">
+		<!-- API.swift (should be done by git merge) -->
+		<!-- Project file  project.pbxproj (should be done by git merge) -->
+		<!-- * Bundle ID should be com.ibm.cio.be.iphone.iot.automotive.starter.carsharing -->
+		<replaceregexp flags="m" file="${work}/starter.automotive.obdii.xcodeproj/project.pbxproj"
+			match="PRODUCT_BUNDLE_IDENTIFIER\s*=.*$"
+			replace="PRODUCT_BUNDLE_IDENTIFIER = ${buildenvoy.bundle.id};"
+			byline="true" />
+		<!-- * clear provisioning profile -->
+		<replaceregexp flags="m" file="${work}/starter.automotive.obdii.xcodeproj/project.pbxproj"
+			match="PROVISIONING_PROFILE\s*=.*$"
+			replace="PROVISIONING_PROFILE = &quot;&quot;;"
+			byline="true" />
+		<!-- * remove "CODE_SIGN_IDENTITY[sdk=iphoneos*] =" line next to the CODE_SIGN_IDENTITY line -->
+		<replaceregexp flags="mg" file="${work}/starter.automotive.obdii.xcodeproj/project.pbxproj"
+			match="(CODE_SIGN_IDENTITY\s*=.*)$\s+&quot;CODE_SIGN_IDENTITY.*$"
+			replace="\1"
+			/>
+		<!-- Team -->
+		<replaceregexp flags="m" file="${work}/starter.automotive.obdii.xcodeproj/project.pbxproj"
+			match="DEVELOPMENT_TEAM\s*=.*$"
+			replace="DEVELOPMENT_TEAM = &quot;&quot;;"
+			byline="true" />
+		<replaceregexp flags="m" file="${work}/starter.automotive.obdii.xcodeproj/project.pbxproj"
+			match="^[ \t]*DevelopmentTeam\s*=.*[\r\n]"
+			replace=""/>
+
+		<!-- Remove entitlement -->
+		<replaceregexp flags="mg" file="${work}/starter.automotive.obdii.xcodeproj/project.pbxproj"
+			match="^.*starter\.automotive\.obdii\.entitlements.*[\r\n]"
+			replace=""/>
+		<!-- Remove push --> 
+		<replaceregexp flags="m" file="${work}/starter.automotive.obdii.xcodeproj/project.pbxproj"
+			match="^[ \t]*com.apple.Push = \{[\r\n][ \t]*enabled = 1;[\r\n][ \t]\};[\r\n]"
+			replace=""/>
+
+		<!-- 
+			* Set correct version (starter.automotive.obdii/Info.plist)
+			  - update <key>CFBundleVersion</key><value>[VERSION HERE]</version>
+		-->
+		<replaceregexp flags="g" file="${work}/starter.automotive.obdii/Info.plist"
+			match="(&lt;key&gt;CFBundleVersion&lt;/key&gt;\s*&lt;string&gt;)[^&lt;]*(&lt;/string&gt;)"
+			replace="\1${buildenvoy.build.version}\2"
+			/>
+		
+		<!-- Remove files -->
+		<!-- * Remove IPA file -->
+		<delete>
+			<fileset dir="${work}">
+				<include name="*.ipa"/>
+			</fileset>
+		</delete>
+		<!-- Podfile -->
+		<antcall target="append_post_to_podfile"/>
+		
+		<!-- install pods -->
+		<!--
+		<exec osfamily="mac" command="pod install" dir="${src.clone}"/>
+		-->
+		<!-- * modify Pods/*.frameworks file https://w3-connections.ibm.com/wikis/home?lang=en-us#!/wiki/116614e8-6ba5-420d-9e72-e10aabeea514/page/Build%20Envoy%20Known%20Issues?section=podFrameworkIssue -->
+		<replaceregexp flags="m" 
+			file="${work}/Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii-frameworks.sh"
+			match="(&quot;\$CONFIGURATION&quot; == &quot;)Release(&quot;)"
+			replace="\1Distribution\2"
+			byline="true" />
+		
+	</target>
+	
+	<!--
+		Append post process to Podfile if "com.ibm.cio.be.gisclge" is missing in the Podfile
+	-->
+	<target name="append_post_to_podfile" depends="check_podfile_post_process" unless="podfile_post_process_exists">
+		<!-- * add post process https://w3-connections.ibm.com/wikis/home?lang=en-us#!/wiki/Wbc976ba0cb9b_48c3_a6b6_1433acb19fdb/page/%28iOS%29%20Using%20CocoaPods -->
+		<echo append="true" file="${work}/Podfile">
+post_install do |installer|
+  # change bundle id of each pod to 'com.ibm.cio.be.gisclge.*'
+  bundle_id = 'com.ibm.cio.be.iphone.iot.automotive.starter.obd2'
+  
+  directory = installer.config.project_pods_root + 'Target Support Files/'
+  Dir.foreach(directory) do |path|
+    
+    full_path = directory + path
+    if File.directory?(full_path)
+      
+      info_plist_path = full_path + 'Info.plist'
+      if File.exist?(info_plist_path)
+      
+        text = File.read(info_plist_path)
+        new_contents = text.gsub('org.cocoapods', bundle_id)
+        File.open(info_plist_path, "w") {|file| file.puts new_contents }
+      end
+    end
+  end
+end
+</echo>
+	</target>
+	<target name="check_podfile_post_process">
+		<!-- check if there is postproces -->
+		<condition property="podfile_post_process_exists">
+			<resourcecontains resource="${work}/Podfile" substring="com.ibm.cio.be.gisclge"/>
+		</condition>
+	</target>
+	
+	
+	<!--
+	==============================================
+	            GIT related targets
+	==============================================
+	-->
+	
+	<!-- git push -->
+	<target name="push_contents" depends="" unless="${dry-run}">
+		<echo>Pushing the changes...</echo>
+		<exec executable="git" dir="${src.clone}">
+			<arg line="push"/>
+		</exec>
+		<exec executable="git" dir="${src.clone}">
+			<arg line="push --tags"/>
+		</exec>
+		<echo>Source repo is updated with the content tagged as buildenvoy-${TAG_NAME}.</echo>
+	</target>
+
+	<!-- check if "repo.clone" is a valid clone repo -->
+	<target name="check.clone">
+		<available type="dir" file="${repo.clone}/.git" property="clone_valid" />
+		<fail unless="clone_valid" message="The clone ${repo.clone} is not a Git repository."/>
+	</target>
+
+	<!-- git clone utility -->
+	<target name="git.clone" depends="git.clone.check,git.clone.reset" unless="git.clone.exists">
+		<echo>Cloning repo ${repo.url} to ${repo.clone}...</echo>
+		<fail unless="repo.url" />
+		<fail unless="repo.clone" />
+		<property name="repo.opts" value=""/>
+		<!-- default options -->
+		<script language="javascript">
+			var repo = project.getProperty("repo.url");
+			var user = project.getProperty("repo.user");
+			var pass = project.getProperty("repo.pass");
+			var auth = '' + (user ? user : '') + (pass ? ':'+pass : '');
+			if(auth){
+				repo = repo.replace('://', '://' + auth + '@');
+			}
+			project.setProperty("_repo", repo);
+		</script>
+		<exec executable="git" failonerror="true">
+			<arg value="clone"/>
+			<arg line="${repo.opts}"/>
+			<arg value="${_repo}"/>
+			<arg path="${repo.clone}"/>
+		</exec>
+	</target>
+	<target name="git.clone.reset" depends="git.clone.check" if="git.clone.exists">
+		<echo>Resetting repo ${repo.clone}...</echo>
+		<exec dir="${repo.clone}" executable="git" failonerror="true">
+			<arg line="fetch --update-shallow -f origin"/>
+		</exec>
+		<echo>  resetting ${buildenvoy.build.branch}...</echo>
+		<exec dir="${repo.clone}" executable="git" failonerror="true">
+			<arg line="checkout ${buildenvoy.build.branch}"/>
+		</exec>
+		<exec dir="${repo.clone}" executable="git" failonerror="true">
+			<arg line="reset --hard origin/${buildenvoy.build.branch}"/>
+		</exec>
+		<exec dir="${repo.clone}" executable="git" failonerror="true">
+			<arg line="clean -fdx"/>
+		</exec>
+		<echo>  resetting ${buildenvoy.src.branch}...</echo>
+		<exec dir="${repo.clone}" executable="git" failonerror="true">
+			<arg line="checkout ${buildenvoy.src.branch}"/>
+		</exec>
+		<exec dir="${repo.clone}" executable="git" failonerror="true">
+			<arg line="reset --hard origin/${buildenvoy.src.branch}"/>
+		</exec>
+		<exec dir="${repo.clone}" executable="git" failonerror="true">
+			<arg line="clean -fdx"/>
+		</exec>
+	</target>
+	<target name="git.clone.check">
+		<available type="dir" file="${repo.clone}/.git" property="git.clone.exists" />
+	</target>
+	
+</project>
