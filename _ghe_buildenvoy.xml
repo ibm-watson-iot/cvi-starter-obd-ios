@@ -184,13 +184,13 @@
 			match="static\s+let\s+apiKey:\s+String\s*=.*$"
 			replace="static let apiKey: String = &quot;${iotp.apikey}&quot;;"
 			byline="true">
-			<fileset refid="fileset.API.java"></fileset>
+			<fileset refid="fileset.API.swift"></fileset>
 		</replaceregexp>
 		<replaceregexp flags="m"
 			match="static\s+let\s+apiToken:\s+String\s*=.*$"
 			replace="static let apiToken: String = &quot;${iotp.apitoken}&quot;;"
 			byline="true">
-			<fileset refid="fileset.API.java"></fileset>
+			<fileset refid="fileset.API.swift"></fileset>
 		</replaceregexp>
 
 		<!-- Project file  project.pbxproj (should be done by git merge) -->
