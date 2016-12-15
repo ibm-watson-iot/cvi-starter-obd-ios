@@ -16,6 +16,7 @@ class MQTTConnection {
     weak var delegate: MQTTConnectionDelegate?
     private var mqtt: CocoaMQTT?
     public var timer = Timer()
+    static var timerInterval: Double = 5.0
     
     init(clientId: String, host: String, port: Int) {
         self.mqtt = CocoaMQTT(clientId: clientId, host: host, port: UInt16(port))
@@ -76,7 +77,17 @@ class MQTTConnection {
         mqtt!.publish("iot-2/evt/fuelAndCoolant/fmt/format_string", withString: stringData)
     }
     
-    func createTripId() -> String {
+    func updateTimer(interval: Double) {
+        if interval != MQTTConnection.timerInterval {
+            MQTTConnection.timerInterval = interval
+            
+            timer.invalidate()
+            
+            timer = Timer.scheduledTimer(timeInterval: MQTTConnection.timerInterval, target: self, selector: #selector(MQTTConnection.mqttPublish), userInfo: nil, repeats: true)
+        }
+    }
+    
+    private func createTripId() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         
@@ -89,7 +100,7 @@ class MQTTConnection {
         return tid;
     }
     
-    func jsonToString(data: [String: String], props: [String: String]) -> String {
+    private func jsonToString(data: [String: String], props: [String: String]) -> String {
         var temp: String = "{\"d\":{"
         var accum: Int = 0
         
@@ -140,14 +151,13 @@ extension MQTTConnection: CocoaMQTTDelegate {
             delegate?.showStatus(title: "Connected, Preparing to Send Data", progress: true)
             
             if ViewController.simulation || ViewController.sessionStarted {
-                timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(MQTTConnection.mqttPublish), userInfo: nil, repeats: true)
+                timer = Timer.scheduledTimer(timeInterval: MQTTConnection.timerInterval, target: self, selector: #selector(MQTTConnection.mqttPublish), userInfo: nil, repeats: true)
             }
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                 self.delegate?.showStatus(title: "Live Data is Being Sent", progress: true)
             }
         }
-        
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {

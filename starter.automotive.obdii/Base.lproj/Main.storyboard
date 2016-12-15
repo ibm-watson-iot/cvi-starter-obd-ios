@@ -20,20 +20,12 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qMb-fY-dM5">
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qMb-fY-dM5">
                                 <rect key="frame" x="145" y="550" width="84" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="End Session"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n5h-VJ-V6A">
-                                <rect key="frame" x="230" y="498" width="130" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Change Frequency"/>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sph-Ya-ZbR">
-                                <rect key="frame" x="16" y="498" width="115" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Change Network"/>
+                                <connections>
+                                    <action selector="endSession:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tHn-Ku-gJH"/>
+                                </connections>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Pf2-YJ-ZLS">
                                 <rect key="frame" x="0.0" y="64" width="375" height="426"/>
@@ -68,13 +60,26 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n5h-VJ-V6A">
+                                <rect key="frame" x="122" y="506" width="130" height="30"/>
+                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="15"/>
+                                <size key="titleShadowOffset" width="0.0" height="3"/>
+                                <state key="normal" title="Change Frequency"/>
+                                <connections>
+                                    <action selector="changeFrequency:" destination="BYZ-38-t0r" eventType="touchUpInside" id="44f-pY-zGe"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="n5h-VJ-V6A" firstAttribute="top" secondItem="Pf2-YJ-ZLS" secondAttribute="bottom" constant="16" id="3lm-tZ-Qug"/>
+                            <constraint firstItem="qMb-fY-dM5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Cw7-Jw-eDC"/>
                             <constraint firstItem="Pf2-YJ-ZLS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="HKE-5M-qEK"/>
                             <constraint firstItem="Pf2-YJ-ZLS" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="NV7-9b-taz"/>
                             <constraint firstAttribute="trailing" secondItem="Pf2-YJ-ZLS" secondAttribute="trailing" id="OdI-Et-G7N"/>
                             <constraint firstItem="Pf2-YJ-ZLS" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="QKZ-EO-gxE"/>
+                            <constraint firstItem="n5h-VJ-V6A" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="VeY-B8-QSY"/>
+                            <constraint firstItem="qMb-fY-dM5" firstAttribute="top" secondItem="n5h-VJ-V6A" secondAttribute="bottom" constant="16" id="kAT-Ae-AlQ"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="IBM IoT4a - OBDII" id="qeM-4p-eCM">
