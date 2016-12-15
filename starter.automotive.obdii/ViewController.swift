@@ -15,17 +15,17 @@ import CocoaMQTT
 
 class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, StreamDelegate {
     private var reachability = Reachability()!
-    private let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
-    private let randomSpeed: Double = Double(arc4random_uniform(150))
-    private let randomEngineCoolant: Double = Double(-40 + Int(arc4random_uniform(UInt32(215 - (-40) + 1))))
-    private let randomEngineRPM: Double = Double(arc4random_uniform(600) + 600)
-    private let randomEngineOilTemp: Double = Double(-40 + Int(arc4random_uniform(UInt32(210 - (-40) + 1))))
+    static let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
+    static let randomSpeed: Double = Double(arc4random_uniform(150))
+    static let randomEngineCoolant: Double = Double(-40 + Int(arc4random_uniform(UInt32(215 - (-40) + 1))))
+    static let randomEngineRPM: Double = Double(arc4random_uniform(600) + 600)
+    static let randomEngineOilTemp: Double = Double(-40 + Int(arc4random_uniform(UInt32(210 - (-40) + 1))))
 
     private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
     private let tableItemsUnits: [String] = ["°C", "%", " KM/hr", " RPM", "°C"]
     private let obdCommands: [String] = ["05", "2F", "0D", "0C", "5C"]
     
-    private var tableItemsValues: [String] = []
+    static var tableItemsValues: [String] = []
     
     static var simulation: Bool = false
     
@@ -37,10 +37,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private var activityIndicator: UIActivityIndicatorView?
     
     let locationManager = CLLocationManager()
-    private var location: CLLocation?
+    static var location: CLLocation?
     
     private var deviceBSSID: String = ""
     private var currentDeviceId: String = ""
+    
+    private var mqttConnection: MQTTConnection?
     
     private var inputStream: InputStream?
     private var outputStream: OutputStream?
@@ -55,17 +57,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     private var alreadySent: Bool = false
     
-    public var timer = Timer()
     public var obdTimer = Timer()
-    
-    private var trip_id: String = ""
     
     private let credentialHeaders: HTTPHeaders = [
         "Content-Type": "application/json",
         "Authorization": "Basic " + API.credentialsBase64
     ]
-    
-    private var mqtt: CocoaMQTT?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,7 +70,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         tableView.dataSource = self
         tableView.delegate = self
         
-        tableItemsValues = [String](repeating: "N/A", count: obdCommands.count)
+        ViewController.tableItemsValues = [String](repeating: "N/A", count: obdCommands.count)
     }
     
     func talkToSocket() {
@@ -139,7 +136,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                             
                             counter = 0
                             
-                            print("DONE \(tableItemsValues)")
+                            print("DONE \(ViewController.tableItemsValues)")
                         }
                     }
                 }
@@ -230,24 +227,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                         switch lineArray[1] {
                         case "2F":
                             result = Double(decimalValue)/2.55
-                            self.tableItemsValues[index] = "\(String(format: "%.2f", result))"
+                            ViewController.tableItemsValues[index] = "\(String(format: "%.2f", result))"
                             
                             break
                         case "05":
-                            self.tableItemsValues[index] = "\(decimalValue)"
+                            ViewController.tableItemsValues[index] = "\(decimalValue)"
                             
                             break
                         case "0D":
-                            self.tableItemsValues[index] = "\(decimalValue)"
+                            ViewController.tableItemsValues[index] = "\(decimalValue)"
                             
                             break
                         case "0C":
                             result = Double(decimalValue)/4.0
-                            self.tableItemsValues[index] = "\(result)"
+                            ViewController.tableItemsValues[index] = "\(result)"
                             
                             break
                         case "5C":
-                            self.tableItemsValues[index] = "\(decimalValue)"
+                            ViewController.tableItemsValues[index] = "\(decimalValue)"
                             
                             break
                         default:
@@ -282,7 +279,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        location = manager.location!
+        ViewController.location = manager.location!
         print("New Location: \(manager.location!.coordinate.longitude), \(manager.location!.coordinate.latitude)")
     }
     
@@ -305,7 +302,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         if reachability.isReachable {
             showStatus(title: "Starting the Simulation")
             
-            tableItemsValues = ["\(randomEngineCoolant)", "\(randomFuelLevel)", "\(randomSpeed)", "\(randomEngineRPM)", "\(randomEngineOilTemp)"]
+            ViewController.tableItemsValues = ["\(ViewController.randomEngineCoolant)", "\(ViewController.randomFuelLevel)", "\(ViewController.randomSpeed)", "\(ViewController.randomEngineRPM)", "\(ViewController.randomEngineOilTemp)"]
             
             tableView.reloadData()
             
@@ -335,8 +332,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private func checkDeviceRegistry() {
         showStatus(title: "Checking Device Registeration", progress: true)
         
-//        getAccurateLocation();
-        
         var url: String = ""
         
         if (ViewController.simulation) {
@@ -344,11 +339,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         } else {
             url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID.replacingOccurrences(of: ":", with: "-")
         }
-        
-        
-        // TODO - Remove
-        print(url)
-        print(credentialHeaders)
         
         Alamofire.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: credentialHeaders).responseJSON { (response) in
             print(response)
@@ -429,7 +419,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private func registerDevice() {
         let url: URL = URL(string: API.addDevices)!
         
-            self.showStatus(title: "Registering Your Device", progress: true)
+        self.showStatus(title: "Registering Your Device", progress: true)
         
         let parameters: Parameters = [
             "typeId": API.typeId,
@@ -499,22 +489,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     private func deviceRegistered() {
-        trip_id = createTripId()
-        
         let clientIdPid = "d:\(API.orgId):\(API.typeId):\(currentDeviceId)"
-        mqtt = CocoaMQTT(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
+        
+        mqttConnection = MQTTConnection(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
         
         print("Password \(API.getStoredData(key: ("iota-obdii-auth-" + currentDeviceId)))")
         
-        if let mqtt = mqtt {
-            mqtt.username = "use-token-auth"
-            mqtt.password = API.getStoredData(key: ("iota-obdii-auth-" + currentDeviceId))
-            mqtt.keepAlive = 90
-            mqtt.delegate = self
-            mqtt.secureMQTT = true
-        }
-        
-        mqtt?.connect()
+        mqttConnection?.connect(deviceId: currentDeviceId)
     }
     
     private static func deviceParamsToString(parameters: Parameters) -> String {
@@ -540,94 +521,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             
             return request
         }
-    }
-    
-    func mqttPublish() {
-        if(mqtt == nil || mqtt!.connState != CocoaMQTTConnState.connected){
-            mqtt?.connect()
-        }
-        
-        let data: [String: String] = [
-            "trip_id": trip_id
-        ]
-        
-        var stringData: String = ""
-        
-        if ViewController.simulation {
-            let props: [String: String] = [
-                "engineRPM": "\(randomEngineRPM)",
-                "speed": "\(Double(arc4random_uniform(70) + 5))",
-                "engineOilTemp": "\(randomEngineOilTemp)",
-                "engineTemp": "\(randomEngineCoolant)",
-                "fuelLevel": "\(randomFuelLevel)",
-                "lng": location != nil ? "\((location?.coordinate.longitude)!)" : "",
-                "lat": location != nil ? "\((location?.coordinate.latitude)!)" : ""
-            ]
-            
-            stringData = jsonToString(data: data, props: props)
-        } else {
-            if (ViewController.sessionStarted) {
-                let props: [String: String] = [
-                    "engineRPM": tableItemsValues[3],
-                    "speed": tableItemsValues[2],
-                    "engineOilTemp": tableItemsValues[4],
-                    "engineTemp": tableItemsValues[0],
-                    "fuelLevel": tableItemsValues[1],
-                    "lng": location != nil ? "\((location?.coordinate.longitude)!)" : "",
-                    "lat": location != nil ? "\((location?.coordinate.latitude)!)" : ""
-                ]
-                
-                stringData = jsonToString(data: data, props: props)
-            }
-        }
-        
-        
-        mqtt!.publish("iot-2/evt/fuelAndCoolant/fmt/format_string", withString: stringData)
-    }
-    
-    func createTripId() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        let currentDate = NSDate()
-        
-        var tid = dateFormatter.string(from: currentDate as Date)
-        
-        tid += "-" + NSUUID().uuidString
-        
-        return tid;
-    }
-    
-    func jsonToString(data: [String: String], props: [String: String]) -> String {
-        var temp: String = "{\"d\":{"
-        var accum: Int = 0
-        
-        for i in data {
-            if accum == (data.count - 1) && props.count == 0 {
-                temp += "\"\(i.0)\": \"\(i.1)\"}}"
-            } else {
-                temp += "\"\(i.0)\": \"\(i.1)\", "
-            }
-            
-            accum += 1
-        }
-        
-        if props.count > 0 {
-            temp += "\"props\":{"
-            var propsAccum: Int = 0
-            
-            for i in props {
-                if propsAccum == (props.count - 1) {
-                    temp += "\"\(i.0)\": \"\(i.1)\"}}}"
-                } else {
-                    temp += "\"\(i.0)\": \"\(i.1)\", "
-                }
-                
-                propsAccum += 1
-            }
-        }
-        
-        return temp
     }
     
     func progressStart() {
@@ -679,10 +572,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         cell.textLabel?.text = tableItemsTitles[indexPath.row]
         
-        if tableItemsValues[indexPath.row] == "N/A" {
-            cell.detailTextLabel?.text = tableItemsValues[indexPath.row]
+        if ViewController.tableItemsValues[indexPath.row] == "N/A" {
+            cell.detailTextLabel?.text = ViewController.tableItemsValues[indexPath.row]
         } else {
-            cell.detailTextLabel?.text = tableItemsValues[indexPath.row] + tableItemsUnits[indexPath.row]
+            cell.detailTextLabel?.text = ViewController.tableItemsValues[indexPath.row] + tableItemsUnits[indexPath.row]
         }
         
         return cell
@@ -694,76 +587,5 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-    }
-}
-
-extension ViewController: CocoaMQTTDelegate {
-    func mqtt(_ mqtt: CocoaMQTT, didConnect host: String, port: Int) {
-        print("didConnect \(host):\(port)")
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didReceive trust: SecTrust, completionHandler: @escaping (Bool) -> Void) {
-        completionHandler(true)
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didConnectAck ack: CocoaMQTTConnAck) {
-        print("didConnectAck: \(ack)，rawValue: \(ack.rawValue)")
-        
-        if ack == .accept {
-            print("ACCEPTED")
-            
-            showStatus(title: "Connected, Preparing to Send Data", progress: true)
-            
-            if ViewController.simulation || ViewController.sessionStarted {
-                timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(ViewController.mqttPublish), userInfo: nil, repeats: true)
-            }
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.showStatus(title: "Live Data is Being Sent")
-            }
-        }
-        
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
-        print("didPublishMessage with message: \((message.string)!)")
-        
-        showStatus(title: "Successfully Published to Server", progress: false)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.showStatus(title: "Live Data is Being Sent", progress: true)
-        }
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {
-        print("didPublishAck with id: \(id)")
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didReceiveMessage message: CocoaMQTTMessage, id: UInt16 ) {
-        print("didReceivedMessage: \(message.string) with id \(id)")
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didSubscribeTopic topic: String) {
-        print("didSubscribeTopic to \(topic)")
-    }
-    
-    func mqtt(_ mqtt: CocoaMQTT, didUnsubscribeTopic topic: String) {
-        print("didUnsubscribeTopic to \(topic)")
-    }
-    
-    func mqttDidPing(_ mqtt: CocoaMQTT) {
-        print("didPing")
-    }
-    
-    func mqttDidReceivePong(_ mqtt: CocoaMQTT) {
-        _console("didReceivePong")
-    }
-    
-    func mqttDidDisconnect(_ mqtt: CocoaMQTT, withError err: Error?) {
-        _console("mqttDidDisconnect")
-    }
-    
-    func _console(_ info: String) {
-        print("Delegate: \(info)")
     }
 }
