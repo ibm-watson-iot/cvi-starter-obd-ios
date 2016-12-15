@@ -15,7 +15,7 @@ import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import CocoaMQTT
 
-class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, StreamDelegate, MQTTConnectionDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, StreamDelegate, MQTTConnectionDelegate {
     private var reachability = Reachability()!
     static let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
     static let randomSpeed: Double = Double(arc4random_uniform(150))
@@ -42,6 +42,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     private var deviceBSSID: String = ""
     private var currentDeviceId: String = ""
+    
+    private var frequencyArray: [Int] = Array(5...60)
     
     private var mqttConnection: MQTTConnection?
     
@@ -528,7 +530,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     @IBAction func changeFrequency(_ sender: Any) {
+        let alertController = UIAlertController(title: "Change the Frequency of Data Being Sent (in Seconds)", message: nil, preferredStyle: UIAlertControllerStyle.alert)
         
+        let uiViewController = UIViewController()
+        uiViewController.preferredContentSize = CGSize(width: 250,height: 275)
+        
+        let pickerView = UIPickerView(frame: CGRect(x: 0, y: 0, width: 250, height: 275))
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        
+        uiViewController.view.addSubview(pickerView)
+        alertController.setValue(uiViewController, forKey: "contentViewController")
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in})
+        
+        alertController.addAction(UIAlertAction(title: "Update", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+            let newInterval: Double = Double(self.frequencyArray[pickerView.selectedRow(inComponent: 0)])
+            self.mqttConnection?.updateTimer(interval: newInterval)
+        })
+        
+        self.present(alertController, animated: true, completion: nil)
     }
     
     @IBAction func endSession(_ sender: Any) {
@@ -599,5 +620,17 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    public func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return frequencyArray.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return "\(frequencyArray[row])"
     }
 }
