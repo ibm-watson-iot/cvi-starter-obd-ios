@@ -8,7 +8,12 @@
 
 import CocoaMQTT
 
+protocol MQTTConnectionDelegate: class {
+    func showStatus(title: String, progress: Bool)
+}
+
 class MQTTConnection {
+    weak var delegate: MQTTConnectionDelegate?
     private var mqtt: CocoaMQTT?
     public var timer = Timer()
     
@@ -132,15 +137,15 @@ extension MQTTConnection: CocoaMQTTDelegate {
         if ack == .accept {
             print("ACCEPTED")
             
-//            showStatus(title: "Connected, Preparing to Send Data", progress: true)
+            delegate?.showStatus(title: "Connected, Preparing to Send Data", progress: true)
             
             if ViewController.simulation || ViewController.sessionStarted {
                 timer = Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(MQTTConnection.mqttPublish), userInfo: nil, repeats: true)
             }
             
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//                self.showStatus(title: "Live Data is Being Sent")
-//            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.delegate?.showStatus(title: "Live Data is Being Sent", progress: true)
+            }
         }
         
     }
@@ -148,11 +153,11 @@ extension MQTTConnection: CocoaMQTTDelegate {
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
         print("didPublishMessage with message: \((message.string)!)")
         
-//        showStatus(title: "Successfully Published to Server", progress: false)
+        delegate?.showStatus(title: "Successfully Published to Server", progress: false)
         
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//            self.showStatus(title: "Live Data is Being Sent", progress: true)
-//        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.delegate?.showStatus(title: "Live Data is Being Sent", progress: true)
+        }
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {

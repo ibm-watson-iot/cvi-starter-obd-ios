@@ -13,7 +13,7 @@ import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import CocoaMQTT
 
-class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, StreamDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, StreamDelegate, MQTTConnectionDelegate {
     private var reachability = Reachability()!
     static let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
     static let randomSpeed: Double = Double(arc4random_uniform(150))
@@ -63,6 +63,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         "Content-Type": "application/json",
         "Authorization": "Basic " + API.credentialsBase64
     ]
+    
+    static let sharedInstance = ViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -492,6 +494,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         let clientIdPid = "d:\(API.orgId):\(API.typeId):\(currentDeviceId)"
         
         mqttConnection = MQTTConnection(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
+        mqttConnection?.delegate = self
         
         print("Password \(API.getStoredData(key: ("iota-obdii-auth-" + currentDeviceId)))")
         
@@ -539,7 +542,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         ViewController.navigationBar?.topItem?.title = title
     }
     
-    func showStatus(title: String, progress: Bool) {
+    internal func showStatus(title: String, progress: Bool) {
         if (activityIndicator == nil || ViewController.navigationBar == nil) {
             return
         }
