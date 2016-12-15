@@ -147,7 +147,6 @@ extension MQTTConnection: CocoaMQTTDelegate {
                 self.delegate?.showStatus(title: "Live Data is Being Sent", progress: true)
             }
         }
-        
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishMessage message: CocoaMQTTMessage, id: UInt16) {
