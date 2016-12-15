@@ -32,7 +32,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     static var simulation: Bool = false
     
     @IBOutlet weak var navigationRightButton: UIBarButtonItem!
-    
     @IBOutlet weak var tableView: UITableView!
     
     static var navigationBar: UINavigationBar?
@@ -526,6 +525,14 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             
             return request
         }
+    }
+    
+    @IBAction func changeFrequency(_ sender: Any) {
+        
+    }
+    
+    @IBAction func endSession(_ sender: Any) {
+        showToast(message: "Session Ended, application will close now!")
     }
     
     func progressStart() {
