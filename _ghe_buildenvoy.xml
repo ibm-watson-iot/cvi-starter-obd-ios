@@ -47,6 +47,10 @@
 	<!-- for buildenvoy -->
 	<property name="buildenvoy.bundle.id" value="com.ibm.cio.be.iphone.iot.automotive.starter.obd2"/>
 	<property name="buildenvoy.build.version" value="${TAG_DATE}"/>
+	<property name="iotp.orgid" value="kibb33"/>
+	<property name="iotp.apikey" value="a-kibb33-rkhexfo7ml"/>
+	<property name="iotp.apitoken" value="lDfjTThkWv*@Ea_!4d"/>
+
 	
 	<!-- ================================= 
           target: main              
@@ -167,6 +171,28 @@
 	-->
 	<target name="update_contents_for_buildenvoy">
 		<!-- API.swift (should be done by git merge) -->
+		<!-- replace IoT Platform credentials -->
+		<replaceregexp flags="m"
+			match="static\s+let\s+orgId:\s+String\s*=.*$"
+			replace="static let orgId: String = &quot;${iotp.orgid}&quot;;"
+			byline="true">
+			<fileset id="fileset.API.swift" dir="${src.clone}">
+				<include name="**/starter.automotive.obdii/API.swift"/>
+			</fileset>
+		</replaceregexp>
+		<replaceregexp flags="m"
+			match="static\s+let\s+apiKey:\s+String\s*=.*$"
+			replace="static let apiKey: String = &quot;${iotp.apikey}&quot;;"
+			byline="true">
+			<fileset refid="fileset.API.swift"></fileset>
+		</replaceregexp>
+		<replaceregexp flags="m"
+			match="static\s+let\s+apiToken:\s+String\s*=.*$"
+			replace="static let apiToken: String = &quot;${iotp.apitoken}&quot;;"
+			byline="true">
+			<fileset refid="fileset.API.swift"></fileset>
+		</replaceregexp>
+
 		<!-- Project file  project.pbxproj (should be done by git merge) -->
 		<!-- * Bundle ID should be com.ibm.cio.be.iphone.iot.automotive.starter.carsharing -->
 		<replaceregexp flags="m" file="${work}/starter.automotive.obdii.xcodeproj/project.pbxproj"

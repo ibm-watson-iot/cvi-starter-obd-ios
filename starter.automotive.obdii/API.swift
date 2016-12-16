@@ -1,21 +1,23 @@
-//
-//  API.swift
-//  starter.automotive.obdii
-//
-//  Created by Eliad Moosavi on 2016-11-15.
-//  Copyright © 2016 IBM. All rights reserved.
-//
+/**
+ * Copyright 2016 IBM Corp. All Rights Reserved.
+ *
+ * Licensed under the IBM License, a copy of which may be obtained at:
+ *
+ * http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?li_formnum=L-DDIN-ADRVKF&popup=y&title=IBM%20IoT%20for%20Automotive%20Sample%20Starter%20Apps
+ *
+ * You may not use this file except in compliance with the license.
+ */
 
 import Foundation
 import UIKit
 
 struct API {
     // Platform API URLs
-    static let orgId: String = "musqld"; // kibb33
+    static let orgId: String = "756r98"; // musqld
     static let platformAPI: String = "https://" + orgId + ".internetofthings.ibmcloud.com/api/v0002";
     
-    static let apiKey: String = "a-musqld-v2ehir8q4k"; // a-kibb33-rkhexfo7ml
-    static let apiToken: String = "(BPVjpJgH2!?a?MUN!"; // lDfjTThkWv*@Ea_!4d
+    static let apiKey: String = "a-756r98-zok6f9nhc5"; // a-musqld-v2ehir8q4k
+    static let apiToken: String = "4EYZjMwTPF!QQ5ebyc"; // (BPVjpJgH2!?a?MUN!
     static let credentials: String = apiKey + ":" + apiToken;
     static let credentialsData = (credentials).data(using: String.Encoding.utf8)
     static let credentialsBase64 = API.credentialsData!.base64EncodedString(options: NSData.Base64EncodingOptions(rawValue: 0))
