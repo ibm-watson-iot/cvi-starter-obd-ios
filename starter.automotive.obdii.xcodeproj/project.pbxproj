@@ -19,6 +19,8 @@
 		61AB543D1DDA5EAA00D60E67 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61AB543B1DDA5EAA00D60E67 /* LaunchScreen.storyboard */; };
 		61BDF6DB1DDCBFA300793CD2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */; };
 		61DEBE6B1DF8995300779408 /* IoTPlatformDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DEBE6A1DF8995300779408 /* IoTPlatformDevice.swift */; };
+		7077A0391E07C67500E73A10 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7077A0381E07C67500E73A10 /* LICENSE */; };
+		7077A03B1E07C76200E73A10 /* LicenseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7077A03A1E07C76200E73A10 /* LicenseViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +39,8 @@
 		61AB543E1DDA5EAA00D60E67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "Pods/../build/Debug-iphoneos/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		61DEBE6A1DF8995300779408 /* IoTPlatformDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IoTPlatformDevice.swift; sourceTree = "<group>"; };
+		7077A0381E07C67500E73A10 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		7077A03A1E07C76200E73A10 /* LicenseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LicenseViewController.swift; sourceTree = "<group>"; };
 		ABD1DA47B34BFE20485504F5 /* Pods-starter.automotive.obdii.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-starter.automotive.obdii.debug.xcconfig"; path = "Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -57,6 +61,7 @@
 		61AB54261DDA5EAA00D60E67 = {
 			isa = PBXGroup;
 			children = (
+				7077A0381E07C67500E73A10 /* LICENSE */,
 				61A806AC1DDBA875008540CE /* Podfile */,
 				61AB54311DDA5EAA00D60E67 /* starter.automotive.obdii */,
 				61AB54301DDA5EAA00D60E67 /* Products */,
@@ -76,6 +81,7 @@
 		61AB54311DDA5EAA00D60E67 /* starter.automotive.obdii */ = {
 			isa = PBXGroup;
 			children = (
+				7077A03A1E07C76200E73A10 /* LicenseViewController.swift */,
 				61A806B01DDBAFE4008540CE /* API.swift */,
 				61AB54321DDA5EAA00D60E67 /* AppDelegate.swift */,
 				61AB54341DDA5EAA00D60E67 /* ViewController.swift */,
@@ -171,6 +177,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7077A0391E07C67500E73A10 /* LICENSE in Resources */,
 				61AB543D1DDA5EAA00D60E67 /* LaunchScreen.storyboard in Resources */,
 				61AB543A1DDA5EAA00D60E67 /* Assets.xcassets in Resources */,
 				61A806AD1DDBA875008540CE /* Podfile in Resources */,
@@ -237,6 +244,7 @@
 				613AE1C81E01D0FD002EA6B7 /* MQTTConnection.swift in Sources */,
 				61A806B11DDBAFE4008540CE /* API.swift in Sources */,
 				61AB54331DDA5EAA00D60E67 /* AppDelegate.swift in Sources */,
+				7077A03B1E07C76200E73A10 /* LicenseViewController.swift in Sources */,
 				61DEBE6B1DF8995300779408 /* IoTPlatformDevice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,13 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="2Q5-5h-7Rr">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2555" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="2Q5-5h-7Rr">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--License View Controller-->
+        <scene sceneID="C2C-5d-6a4">
+            <objects>
+                <viewController storyboardIdentifier="licenseViewController" id="bdu-WJ-gaI" customClass="LicenseViewController" customModule="IoT4a___OBDII" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="GzJ-PI-rrJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="IvR-aM-Qxd"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Lyr-8f-pZj">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disclaimer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MLi-Wv-4Dr">
+                                <rect key="frame" x="148" y="20" width="80" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Loading License..." textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="twb-fX-uvK">
+                                <rect key="frame" x="20" y="61" width="335" height="506"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S0N-3K-naL">
+                                <rect key="frame" x="167" y="587" width="41" height="30"/>
+                                <state key="normal" title="Agree"/>
+                                <connections>
+                                    <action selector="onAgree" destination="bdu-WJ-gaI" eventType="touchUpInside" id="wcu-U6-PoT"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PVG-wE-sXL">
+                                <rect key="frame" x="157" y="617" width="61" height="30"/>
+                                <state key="normal" title="Disagree"/>
+                                <connections>
+                                    <action selector="onDisagree" destination="bdu-WJ-gaI" eventType="touchUpInside" id="tNB-sj-Lpk"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="twb-fX-uvK" firstAttribute="top" secondItem="MLi-Wv-4Dr" secondAttribute="bottom" constant="20" id="27g-il-BvZ"/>
+                            <constraint firstItem="twb-fX-uvK" firstAttribute="centerX" secondItem="Lyr-8f-pZj" secondAttribute="centerX" id="FEO-d8-rfr"/>
+                            <constraint firstItem="PVG-wE-sXL" firstAttribute="centerX" secondItem="Lyr-8f-pZj" secondAttribute="centerX" id="JGN-s1-6nz"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="PVG-wE-sXL" secondAttribute="bottom" constant="20" id="YuY-Mb-K5s"/>
+                            <constraint firstItem="MLi-Wv-4Dr" firstAttribute="top" secondItem="Lyr-8f-pZj" secondAttribute="topMargin" constant="20" id="aRQ-Lz-oVm"/>
+                            <constraint firstAttribute="trailing" secondItem="twb-fX-uvK" secondAttribute="trailing" constant="20" id="gpr-Yc-Hxt"/>
+                            <constraint firstItem="twb-fX-uvK" firstAttribute="leading" secondItem="Lyr-8f-pZj" secondAttribute="leading" constant="20" id="h0G-z7-esY"/>
+                            <constraint firstItem="S0N-3K-naL" firstAttribute="centerX" secondItem="Lyr-8f-pZj" secondAttribute="centerX" id="ivC-xw-uEA"/>
+                            <constraint firstItem="S0N-3K-naL" firstAttribute="top" secondItem="twb-fX-uvK" secondAttribute="bottom" constant="20" id="kmh-6n-LY7"/>
+                            <constraint firstItem="PVG-wE-sXL" firstAttribute="top" secondItem="S0N-3K-naL" secondAttribute="bottom" id="o1j-ts-X8Z"/>
+                            <constraint firstItem="MLi-Wv-4Dr" firstAttribute="centerX" secondItem="Lyr-8f-pZj" secondAttribute="centerX" id="vCQ-9w-QNp"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="licenseText" destination="twb-fX-uvK" id="pf4-ET-CXP"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="g4v-wb-qK8" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1080.8" y="-626.53673163418296"/>
+        </scene>
         <!--IBM IoT4a - OBDII-->
         <scene sceneID="tne-QT-ifu">
             <objects>
