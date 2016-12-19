@@ -47,9 +47,9 @@
 	<property name="dest.clone" location="_tmp.dest_clone.${TAG_NAME}"/>
 	
 	<!-- for public GitHub -->
-	<property name="common.server.url" value="https://iota-starter-server.mybluemix.net"/>
-	<property name="common.server.pushguid" value=""/>
-	<property name="common.server.pushsecret" value=""/>
+	<property name="iotp.orgid" value="Set Your IoT Platform Organization ID"/>
+	<property name="iotp.apikey" value="Set Your IoT Platform API Key"/>
+	<property name="iotp.apitoken" value="Set Your IoT Platform API Token"/>
 	<property name="common.bundle.id" value="com.ibm.iot.automotive.starter.obd.ios"/>
 	
 	<!-- ================================= 
@@ -167,46 +167,55 @@
 		</copy>
 		
 		<!-- replace -dev server url w/ common server's -->
-		<replaceregexp flags="m" file="${dest.clone}/MobileStarterApp/API.swift"
-			match="static\s+let\s+defaultAppURL\s*=.*$"
-			replace="//static let defaultAppURL = &quot;${common.server.url}&quot;"
-			byline="true" />
-		<replaceregexp flags="m" file="${dest.clone}/MobileStarterApp/API.swift"
-			match="static\s+let\s+defaultPushAppGUID\s*=.*$"
-			replace="static let defaultPushAppGUID = &quot;${common.server.pushguid}&quot;"
-			byline="true" />
-		<replaceregexp flags="m" file="${dest.clone}/MobileStarterApp/API.swift"
-			match="static\s+let\s+defaultPushClientSecret\s*=.*$"
-			replace="static let defaultPushClientSecret = &quot;${common.server.pushsecret}&quot;"
-			byline="true" />
+		<!-- replace IoT Platform credentials -->
+		<replaceregexp flags="m"
+			match="static\s+let\s+orgId:\s+String\s*=.*$"
+			replace="static let orgId: String = &quot;${iotp.orgid}&quot;;"
+			byline="true">
+			<fileset id="fileset.API.swift" dir="${dest.clone}">
+				<include name="**/starter.automotive.obdii/API.swift"/>
+			</fileset>
+		</replaceregexp>
+		<replaceregexp flags="m"
+			match="static\s+let\s+apiKey:\s+String\s*=.*$"
+			replace="static let apiKey: String = &quot;${iotp.apikey}&quot;;"
+			byline="true">
+			<fileset refid="fileset.API.swift"></fileset>
+		</replaceregexp>
+		<replaceregexp flags="m"
+			match="static\s+let\s+apiToken:\s+String\s*=.*$"
+			replace="static let apiToken: String = &quot;${iotp.apitoken}&quot;;"
+			byline="true">
+			<fileset refid="fileset.API.swift"></fileset>
+		</replaceregexp>
 		
 		<!-- Bundle ID should be com.ibm.cio.be.iphone.iot.automotive.starter.carsharing -->
-		<replaceregexp flags="m" file="${dest.clone}/MobileStarterApp.xcodeproj/project.pbxproj"
+		<replaceregexp flags="m" file="${dest.clone}/starter.automotive.obdii.xcodeproj/project.pbxproj"
 			match="PRODUCT_BUNDLE_IDENTIFIER\s*=.*$"
 			replace="PRODUCT_BUNDLE_IDENTIFIER = ${common.bundle.id};"
 			byline="true" />
-		<replaceregexp flags="m" file="${dest.clone}/MobileStarterApp.xcodeproj/project.pbxproj"
+		<replaceregexp flags="m" file="${dest.clone}/starter.automotive.obdii.xcodeproj/project.pbxproj"
 			match="PROVISIONING_PROFILE\s*=.*$"
 			replace="PROVISIONING_PROFILE = &quot;&quot;;"
 			byline="true" />
-		<replaceregexp flags="mg" file="${dest.clone}/MobileStarterApp.xcodeproj/project.pbxproj"
+		<replaceregexp flags="mg" file="${dest.clone}/starter.automotive.obdii.xcodeproj/project.pbxproj"
 			match="(CODE_SIGN_IDENTITY\s*=.*)$\s+&quot;CODE_SIGN_IDENTITY.*$"
 			replace="\1"
 			/>
 		<!-- Team -->
-		<replaceregexp flags="m" file="${dest.clone}/MobileStarterApp.xcodeproj/project.pbxproj"
+		<replaceregexp flags="m" file="${dest.clone}/starter.automotive.obdii.xcodeproj/project.pbxproj"
 			match="DEVELOPMENT_TEAM\s*=.*$"
 			replace="DEVELOPMENT_TEAM = &quot;&quot;;"
 			byline="true" />
-		<replaceregexp flags="m" file="${dest.clone}/MobileStarterApp.xcodeproj/project.pbxproj"
+		<replaceregexp flags="m" file="${dest.clone}/starter.automotive.obdii.xcodeproj/project.pbxproj"
 			match="^[ \t]*DevelopmentTeam\s*=.*[\r\n]"
 			replace=""/>
 		<!-- Remove entitlement -->
-		<replaceregexp flags="mg" file="${dest.clone}/MobileStarterApp.xcodeproj/project.pbxproj"
-			match="^.*MobilityStarterApp\.entitlements.*[\r\n]"
+		<replaceregexp flags="mg" file="${dest.clone}/starter.automotive.obdii.xcodeproj/project.pbxproj"
+			match="^.*starter\.automotive\.obdii\.entitlements.*[\r\n]"
 			replace=""/>
 		<!-- Remove push -->
-		<replaceregexp flags="m" file="${dest.clone}/MobileStarterApp.xcodeproj/project.pbxproj"
+		<replaceregexp flags="m" file="${dest.clone}/starter.automotive.obdii.xcodeproj/project.pbxproj"
 			match="^[ \t]*com.apple.Push = \{[\r\n][ \t]*enabled = 1;[\r\n][ \t]*\};[\r\n]"
 			replace=""/>
 	</target>
