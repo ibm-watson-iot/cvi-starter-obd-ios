@@ -39,34 +39,34 @@ class MQTTConnection {
             mqtt?.connect()
         }
         
-        let data: [String: String] = [
-            "trip_id": createTripId()
+        var data: [String: Any] = [
+            "trip_id": createTripId(),
+            "lng": ViewController.location != nil ? ((ViewController.location?.coordinate.longitude)!) : 0,
+            "lat": ViewController.location != nil ? ((ViewController.location?.coordinate.latitude)!) : 0
         ]
         
         var stringData: String = ""
         
         if ViewController.simulation {
+            data["speed"] = Double(arc4random_uniform(700) + 50) / 10
+            
             let props: [String: String] = [
                 "engineRPM": "\(ViewController.randomEngineRPM)",
-                "speed": "\(Double(arc4random_uniform(70) + 5))",
                 "engineOilTemp": "\(ViewController.randomEngineOilTemp)",
                 "engineTemp": "\(ViewController.randomEngineCoolant)",
-                "fuelLevel": "\(ViewController.randomFuelLevel)",
-                "lng": ViewController.location != nil ? "\((ViewController.location?.coordinate.longitude)!)" : "",
-                "lat": ViewController.location != nil ? "\((ViewController.location?.coordinate.latitude)!)" : ""
+                "fuelLevel": "\(ViewController.randomFuelLevel)"
             ]
             
             stringData = jsonToString(data: data, props: props)
         } else {
             if (ViewController.sessionStarted) {
+                data["speed"] = Double(ViewController.tableItemsValues[2])
+
                 let props: [String: String] = [
                     "engineRPM": ViewController.tableItemsValues[3],
-                    "speed": ViewController.tableItemsValues[2],
                     "engineOilTemp": ViewController.tableItemsValues[4],
                     "engineTemp": ViewController.tableItemsValues[0],
-                    "fuelLevel": ViewController.tableItemsValues[1],
-                    "lng": ViewController.location != nil ? "\((ViewController.location?.coordinate.longitude)!)" : "",
-                    "lat": ViewController.location != nil ? "\((ViewController.location?.coordinate.latitude)!)" : ""
+                    "fuelLevel": ViewController.tableItemsValues[1]
                 ]
                 
                 stringData = jsonToString(data: data, props: props)
@@ -74,7 +74,7 @@ class MQTTConnection {
         }
         
         
-        mqtt!.publish("iot-2/evt/fuelAndCoolant/fmt/format_string", withString: stringData)
+        mqtt!.publish("iot-2/evt/status/fmt/json", withString: stringData)
     }
     
     func updateTimer(interval: Double) {
@@ -100,15 +100,17 @@ class MQTTConnection {
         return tid;
     }
     
-    private func jsonToString(data: [String: String], props: [String: String]) -> String {
+    private func jsonToString(data: [String: Any], props: [String: String]) -> String {
         var temp: String = "{\"d\":{"
         var accum: Int = 0
         
         for i in data {
+            let valType = type(of: (i.1))
+            let val = valType == Double.self || valType == Int.self ? i.1 : "\"\(i.1)\""
             if accum == (data.count - 1) && props.count == 0 {
-                temp += "\"\(i.0)\": \"\(i.1)\"}}"
+                temp += "\"\(i.0)\": \(val)}}"
             } else {
-                temp += "\"\(i.0)\": \"\(i.1)\", "
+                temp += "\"\(i.0)\": \(val), "
             }
             
             accum += 1
