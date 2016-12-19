@@ -37,6 +37,7 @@
                                 <rect key="frame" x="167" y="587" width="41" height="30"/>
                                 <state key="normal" title="Agree"/>
                                 <connections>
+                                    <action selector="_onAgree" destination="bdu-WJ-gaI" eventType="touchUpInside" id="gNr-YV-Lvx"/>
                                     <action selector="onAgree" destination="bdu-WJ-gaI" eventType="touchUpInside" id="wcu-U6-PoT"/>
                                 </connections>
                             </button>
@@ -44,6 +45,7 @@
                                 <rect key="frame" x="157" y="617" width="61" height="30"/>
                                 <state key="normal" title="Disagree"/>
                                 <connections>
+                                    <action selector="_onDisagree" destination="bdu-WJ-gaI" eventType="touchUpInside" id="pR4-pk-GUA"/>
                                     <action selector="onDisagree" destination="bdu-WJ-gaI" eventType="touchUpInside" id="tNB-sj-Lpk"/>
                                 </connections>
                             </button>

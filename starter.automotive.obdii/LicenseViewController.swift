@@ -11,6 +11,8 @@ import UIKit
 
 class LicenseViewController: UIViewController {
     @IBOutlet weak var licenseText: UITextView!
+    var onAgree = {}
+    var onDisagree = {}
     override func viewDidLoad(){
         var message = ""
         
@@ -27,12 +29,12 @@ class LicenseViewController: UIViewController {
         super.viewDidLayoutSubviews()
         licenseText.setContentOffset(CGPoint.zero, animated: false)
     }
-    
-    @IBAction func onAgree() {
-        self.dismiss(animated: true, completion: nil)
+    @IBAction func _onAgree() {
+        self.dismiss(animated: true, completion: onAgree)
     }
-    @IBAction func onDisagree() {
+    @IBAction func _onDisagree() {
         self.dismiss(animated: true, completion: {Void in
+            self.onDisagree()
             exit(-1)
         })
     }

@@ -80,9 +80,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         ViewController.tableItemsValues = [String](repeating: "N/A", count: obdCommands.count)
     }
     func confirmDisclaimer() {
-        let licenseVC: UIViewController = self.storyboard!.instantiateViewController(withIdentifier: "licenseViewController")
+        let licenseVC: LicenseViewController = self.storyboard!.instantiateViewController(withIdentifier: "licenseViewController") as! LicenseViewController
         licenseVC.modalPresentationStyle = .custom
         licenseVC.transitioningDelegate = self
+        licenseVC.onAgree = {() -> Void in
+            self.startApp()
+        }
         self.present(licenseVC, animated: true, completion: nil)
     }
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
@@ -290,8 +293,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
         navigationRightButton.customView = activityIndicator
-        
-        startApp()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
