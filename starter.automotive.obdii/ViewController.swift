@@ -15,7 +15,7 @@ import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import CocoaMQTT
 
-class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, StreamDelegate, MQTTConnectionDelegate {
+class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, StreamDelegate, MQTTConnectionDelegate, UIViewControllerTransitioningDelegate{
     private var reachability = Reachability()!
     static let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
     static let randomSpeed: Double = Double(arc4random_uniform(150))
@@ -72,12 +72,26 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        confirmDisclaimer()
+        
         tableView.dataSource = self
         tableView.delegate = self
         
         ViewController.tableItemsValues = [String](repeating: "N/A", count: obdCommands.count)
     }
-    
+    func confirmDisclaimer() {
+        let licenseVC: LicenseViewController = self.storyboard!.instantiateViewController(withIdentifier: "licenseViewController") as! LicenseViewController
+        licenseVC.modalPresentationStyle = .custom
+        licenseVC.transitioningDelegate = self
+        licenseVC.onAgree = {() -> Void in
+            self.startApp()
+        }
+        self.present(licenseVC, animated: true, completion: nil)
+    }
+    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
+        return LicensePresentationController(presentedViewController: presented, presenting: presenting)
+    }
+
     func talkToSocket() {
         print("Attempting to Connect to Device")
         showStatus(title: "Connecting to Device", progress: true)
@@ -279,8 +293,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
         navigationRightButton.customView = activityIndicator
-        
-        startApp()
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -632,5 +644,35 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return "\(frequencyArray[row])"
+    }
+}
+class LicensePresentationController: UIPresentationController{
+    private static let LICENSE_VIEW_MARGIN:CGFloat = 20
+    var overlay: UIView!
+    override func presentationTransitionWillBegin() {
+        let containerView = self.containerView!
+        self.overlay = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+        self.overlay.frame = containerView.bounds
+        containerView.insertSubview(self.overlay, at: 0)
+    }
+    override func dismissalTransitionDidEnd(_ completed: Bool) {
+        if completed {
+            self.overlay.removeFromSuperview()
+        }
+    }
+    func sizeForChildContentContainer(container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
+        return CGSize(width: parentSize.width - LicensePresentationController.LICENSE_VIEW_MARGIN*2, height: parentSize.height - LicensePresentationController.LICENSE_VIEW_MARGIN*2)
+    }
+    override var frameOfPresentedViewInContainerView:CGRect {
+        var presentedViewFrame = CGRect.zero
+        let containerBounds = self.containerView!.bounds
+        presentedViewFrame.size = self.sizeForChildContentContainer(container: self.presentedViewController, withParentContainerSize: containerBounds.size)
+        presentedViewFrame.origin.x = LicensePresentationController.LICENSE_VIEW_MARGIN
+        presentedViewFrame.origin.y = LicensePresentationController.LICENSE_VIEW_MARGIN
+        return presentedViewFrame
+    }
+    override func containerViewWillLayoutSubviews() {
+        self.overlay.frame = self.containerView!.bounds
+        self.presentedView!.frame = self.frameOfPresentedViewInContainerView
     }
 }
