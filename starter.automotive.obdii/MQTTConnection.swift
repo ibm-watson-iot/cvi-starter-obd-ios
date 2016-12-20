@@ -10,6 +10,7 @@ import CocoaMQTT
 
 protocol MQTTConnectionDelegate: class {
     func showStatus(title: String, progress: Bool)
+    func updateSimulatedValues()
 }
 
 class MQTTConnection {
@@ -45,32 +46,29 @@ class MQTTConnection {
             "lat": ViewController.location != nil ? ((ViewController.location?.coordinate.latitude)!) : 0
         ]
         
-        var stringData: String = ""
+        var deviceValues: [String]? = nil
         
         if ViewController.simulation {
-            data["speed"] = Double(arc4random_uniform(700) + 50) / 10
+            delegate?.updateSimulatedValues()
+            deviceValues = ViewController.tableItemsValues
+        } else {
+            if (ViewController.sessionStarted) {
+                deviceValues = ViewController.tableItemsValues
+            }
+        }
+
+        var stringData: String = ""
+        if(deviceValues != nil){
+            data["speed"] = Double(deviceValues![2])
             
             let props: [String: String] = [
-                "engineRPM": "\(ViewController.randomEngineRPM)",
-                "engineOilTemp": "\(ViewController.randomEngineOilTemp)",
-                "engineTemp": "\(ViewController.randomEngineCoolant)",
-                "fuelLevel": "\(ViewController.randomFuelLevel)"
+                "engineRPM": deviceValues![3],
+                "engineOilTemp": deviceValues![4],
+                "engineTemp": deviceValues![0],
+                "fuelLevel": deviceValues![1]
             ]
             
             stringData = jsonToString(data: data, props: props)
-        } else {
-            if (ViewController.sessionStarted) {
-                data["speed"] = Double(ViewController.tableItemsValues[2])
-
-                let props: [String: String] = [
-                    "engineRPM": ViewController.tableItemsValues[3],
-                    "engineOilTemp": ViewController.tableItemsValues[4],
-                    "engineTemp": ViewController.tableItemsValues[0],
-                    "fuelLevel": ViewController.tableItemsValues[1]
-                ]
-                
-                stringData = jsonToString(data: data, props: props)
-            }
         }
         
         

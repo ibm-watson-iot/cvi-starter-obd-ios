@@ -17,11 +17,6 @@ import CocoaMQTT
 
 class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, StreamDelegate, MQTTConnectionDelegate, UIViewControllerTransitioningDelegate{
     private var reachability = Reachability()!
-    static let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
-    static let randomSpeed: Double = Double(arc4random_uniform(150))
-    static let randomEngineCoolant: Double = Double(-40 + Int(arc4random_uniform(UInt32(215 - (-40) + 1))))
-    static let randomEngineRPM: Double = Double(arc4random_uniform(600) + 600)
-    static let randomEngineOilTemp: Double = Double(-40 + Int(arc4random_uniform(UInt32(210 - (-40) + 1))))
 
     private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
     private let tableItemsUnits: [String] = ["°C", "%", " KM/hr", " RPM", "°C"]
@@ -315,13 +310,23 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         self.present(alertController, animated: true, completion: nil)
     }
     
+    public func updateSimulatedValues(){
+        let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
+        let randomSpeed: Double = Double(arc4random_uniform(150))
+        let randomEngineCoolant: Double = Double(-40 + Int(arc4random_uniform(UInt32(215 - (-40) + 1))))
+        let randomEngineRPM: Double = Double(arc4random_uniform(600) + 600)
+        let randomEngineOilTemp: Double = Double(-40 + Int(arc4random_uniform(UInt32(210 - (-40) + 1))))
+        
+        ViewController.tableItemsValues = ["\(randomEngineCoolant)", "\(randomFuelLevel)", "\(randomSpeed)", "\(randomEngineRPM)", "\(randomEngineOilTemp)"]
+        
+        tableView.reloadData()
+    }
+    
     private func startSimulation() {
         if reachability.isReachable {
             showStatus(title: "Starting the Simulation")
             
-            ViewController.tableItemsValues = ["\(ViewController.randomEngineCoolant)", "\(ViewController.randomFuelLevel)", "\(ViewController.randomSpeed)", "\(ViewController.randomEngineRPM)", "\(ViewController.randomEngineOilTemp)"]
-            
-            tableView.reloadData()
+            updateSimulatedValues()
             
             checkDeviceRegistry()
         } else {
