@@ -52,7 +52,7 @@ class MQTTConnection {
             delegate?.updateSimulatedValues()
             deviceValues = ViewController.tableItemsValues
         } else {
-            if (ViewController.sessionStarted) {
+            if (OBDStream.sessionStarted) {
                 deviceValues = ViewController.tableItemsValues
             }
         }
@@ -150,7 +150,7 @@ extension MQTTConnection: CocoaMQTTDelegate {
             
             delegate?.showStatus(title: "Connected, Preparing to Send Data", progress: true)
             
-            if ViewController.simulation || ViewController.sessionStarted {
+            if ViewController.simulation || OBDStream.sessionStarted {
                 timer = Timer.scheduledTimer(timeInterval: MQTTConnection.timerInterval, target: self, selector: #selector(MQTTConnection.mqttPublish), userInfo: nil, repeats: true)
             }
             
