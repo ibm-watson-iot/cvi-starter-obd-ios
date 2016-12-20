@@ -1,28 +1,20 @@
-/**
- * Copyright 2016 IBM Corp. All Rights Reserved.
- *
- * Licensed under the IBM License, a copy of which may be obtained at:
- *
- * http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?li_formnum=L-DDIN-ADRVKF&popup=y&title=IBM%20IoT%20for%20Automotive%20Sample%20Starter%20Apps
- *
- * You may not use this file except in compliance with the license.
- */
+//
+//  OBDStream.swift
+//  starter.automotive.obdii
+//
+//  Created by Eliad Moosavi on 2016-12-14.
+//  Copyright © 2016 IBM. All rights reserved.
+//
 
 import UIKit
-
-protocol OBDStreamDelegate: class {
-    func showStatus(title: String, progress: Bool)
-    func checkDeviceRegistry()
-    func obdStreamError()
-}
+import Foundation
 
 class OBDStream: NSObject, StreamDelegate {
-    weak var delegate: OBDStreamDelegate?
     private var buffer = [UInt8](repeating: 0, count: 1024)
     private var inputStream: InputStream?
     private var outputStream: OutputStream?
-    private var host: String = "192.168.0.10"
-    private var port: Int = 35000
+    private let host: String
+    private let port: Int
     
     private var counter: Int = 0
     private var inProgress: Bool = false
@@ -39,9 +31,6 @@ class OBDStream: NSObject, StreamDelegate {
     }
     
     func connect() {
-        print("Attempting to Connect to Device")
-        delegate?.showStatus(title: "Connecting to Device", progress: true)
-        
         Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
         
         inputStream!.delegate = self
@@ -72,7 +61,7 @@ class OBDStream: NSObject, StreamDelegate {
                                 OBDStream.sessionStarted = true
                                 canWrite = true
                                 
-                                delegate?.showStatus(title: "Updating Values", progress: true)
+                                ViewController.showStatus(title: "Updating Values", progress: true)
                             }
                         }
                         
@@ -95,7 +84,7 @@ class OBDStream: NSObject, StreamDelegate {
                         }
                         
                         if (counter == ViewController.obdCommands.count) {
-                            ViewController.sharedInstance.tableView.reloadData()
+                            ViewController.reloadTable()
                             
                             inProgress = false
                             
@@ -120,15 +109,15 @@ class OBDStream: NSObject, StreamDelegate {
             break
         case Stream.Event.openCompleted:
             print("Stream Opened Successfully")
-            delegate?.showStatus(title: "Connection Established", progress: false)
+            ViewController.showStatus(title: "Connection Established", progress: false)
             
-            delegate?.checkDeviceRegistry()
+//            checkDeviceRegistry()
             
             break
         case Stream.Event.endEncountered:
             print("Stream Ended")
             
-            delegate?.showStatus(title: "Connection Ended", progress: false)
+            ViewController.showStatus(title: "Connection Ended", progress: false)
             
             OBDStream.sessionStarted = false
             
@@ -136,7 +125,16 @@ class OBDStream: NSObject, StreamDelegate {
         case Stream.Event.errorOccurred:
             print("Error")
             
-            delegate?.obdStreamError()
+            /*
+            let alertController = UIAlertController(title: "Connection Failed", message: "Did you want to try again?", preferredStyle: UIAlertControllerStyle.alert)
+            alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                ViewController.talkToSocket()
+            })
+            alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                ViewController.startApp()
+            })
+            self.present(alertController, animated: true, completion: nil)
+            */
             
             break
         case Stream.Event():
