@@ -49,6 +49,17 @@ To try the iOS application using iOS Emulator, complete the following steps:
 
 5. To deploy the mobile app on your device, see [Launching Your App on Devices](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/LaunchingYourApponDevices/LaunchingYourApponDevices.html).
 
+## Running the mobile app
+Before running the mobile app with a real OBDII dongle, you need to set up WiFi connection between your phone and the OBDII device to use a static IP address, unless the instruction given from the device manufacturer directs otherwise. Do the following steps:
+
+1. Connect your iPhone to the WiFi for your OBD2 dongle
+
+2. Go to "Settings" and select Wi-Fi then select the blue INFO icon to the right of the name of your OBD2 Wi-Fi
+
+3. Make note of both the IP Address and the Subnet Mask address (e.g. 192.168.0.11, 255.255.255.0)
+
+4. Select the "Static" option and enter only the IP and Subnet Mask addresses from Step 3; leave everything else blank
+
 ## Reporting defects
 To report a defect with the IoT for Automotive - Mobility Starter Application mobile app, go to the [Issues](https://github.com/ibm-watson-iot/iota-obdii-fleetmanagement-ios/issues) section.
 
