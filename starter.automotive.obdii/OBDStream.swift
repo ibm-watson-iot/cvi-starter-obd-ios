@@ -175,13 +175,23 @@ class OBDStream: NSObject, StreamDelegate {
     func parseValue(from: String, index: Int) {
         from.enumerateLines { (line, stop) -> () in
             if !line.contains(">") {
-                let lineArray = line.components(separatedBy: " ")
+                var lineArray = line.components(separatedBy: " ")
+                var hexValue = ""
+                
+                for (index, item) in lineArray.enumerated() {
+                    if item == "" {
+                        lineArray.remove(at: index)
+                    } else {
+                        if index > 1 {
+                            hexValue += item
+                        }
+                    }
+                }
                 
                 if lineArray.count > 2 {
-                    let hexValue = lineArray[lineArray.count - 2]
                     var result: Double = -1
                     
-                    if let decimalValue = UInt8(hexValue, radix: 16) {
+                    if let decimalValue = UInt64(hexValue, radix: 16) {
                         switch lineArray[1] {
                         case "2F":
                             result = Double(decimalValue)/2.55
