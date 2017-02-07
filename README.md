@@ -19,6 +19,10 @@ You can currently download and install the mobile app on your iOS mobile device.
 ### Server component
 The "IoT for Automotive - OBDII Fleet Management App" interacts with a server component. The server component provides the back-end fleet management and system monitoring service that provides more features for fleet management companies. By default, the mobile app connects to a test server that is provided by IBM. You can also choose to deploy your own server instance to IBM Bluemix and connect your mobile app to that instance instead of the test system. For more information about deploying the fleet management server component, see [ibm-watson-iot/iota-starter-server-fm](https://github.com/ibm-watson-iot/iota-starter-server-fm).
 
+### OBDII Parsing Library
+The application uses a small library made in-house to initiate OBDII connection and parse values. It can currently only parse the variables used in this application, but can easily be scaled to support more commands.
+[OBDStream.swift](https://github.ibm.com/Watson-IoT/IoT-Automotive-OBD2-iOS/blob/master/starter.automotive.obdii/OBDStream.swift)
+
 
 ## Prerequisites
 
