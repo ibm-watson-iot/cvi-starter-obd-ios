@@ -2,13 +2,11 @@ INFORMACIÓN SOBRE LICENCIA
 
 Los Programas que se enumeran a continuación se licencian bajo los siguientes términos y condiciones de Licencia, además de los términos de licencia del Programa acordados previamente entre el Cliente e IBM. Si el Cliente no ha aceptado con anterioridad los términos de la licencia aplicables al Programa, se aplicará Acuerdo Internacional de Licencia para Programas sin Garantía (Z125-5589-05).
 
-Nombre de Programa: IBM IoT for Automotive - Mobility Starter Application
-Número de Programa: TOOL
+Nombre de Programa (Número de Programa):
+IBM IoT for Automotive - Mobility Starter Application (TOOL)
+IBM IoT for Automotive - Fleet Management Starter Application (TOOL)
 
-Nombre de Programa: IBM IoT for Automotive - Fleet Management Starter Application
-Número de Programa: TOOL
-
-Términos Exclusivos del Programa
+Además de lo indicado, los términos siguientes se aplican al uso por parte del Licenciatario del Programa.
 
 Aviso legal sobre privacidad de datos
 
@@ -18,13 +16,13 @@ Los componentes incluidos en este Programa pueden requerir el procesamiento de d
 
 El Licenciatario debe asegurarse de que su uso del Programa y cualquier solución desplegada cumpla los requisitos legales y normativos aplicables. Para ello, es posible que sea necesario implementar características y funciones adicionales no incluidas en el Programa.
 
-Licencia de Apple
+Cuestiones sobre la licencia de Apple
 
 Este Programa ha sido diseñado únicamente para su uso con un producto iOS de Apple y se debe utilizar junto con herramientas de desarrollo Apple con licencia oficial y personal y distribuir según los términos y condiciones de la licencia del Licenciatario para Apple iOS Developer Program o Apple iOS Enterprise Program.
 
 El Licenciatario acepta utilizar el Programa para personalizar y crear la aplicación para sus propios fines y distribuirlo según los términos del programa de desarrolador de Apple del Licenciatario
 
-Cuestiones sobre Reducción de riesgos / Responsabilidad de producto
+Aviso legal y declaración de limitación de responsabilidad
 
 El Programa y las aplicaciones resultantes no han sido diseñados para diseñar, construir, controlar o mantener sistemas de control de automoción en los que el código de ejemplo o la aplicación resultante pudieran provocar una amenaza material de muerte o daños personales graves.
 
@@ -32,11 +30,13 @@ IBM no asume ninguna responsabilidad en relación con el cumplimiento de las leye
 
 Tal como sucede con los procesos de desarrollo, el Licenciatario es responsable del desarrollo, de la realización de pruebas suficientes y de la corrección de los productos y aplicaciones del Licenciatario y es el único responsable de las consecuencias intencionadas o inesperadas o de los fallos de los productos o aplicaciones del Licenciatario.
 
+El Licenciatario debe asegurarse de que los dispositivos o el hardware utilizado con este Programa cumpla los requisitos legales y normativos aplicables; el Licenciatario es el único responsable de toda responsabilidad derivada del no cumplimiento de los dispositivos o el hardware o de la imprecisión o el mal funcionamiento del Programa como resultado del mal funcionamiento de los dispositivos o el hardware.
+
 REDISTRIBUIBLES
 
 Si el Programa incluye componentes que son Redistribuibles, se identificarán en el archivo REDIST que acompaña al Programa. Además de los derechos de licencia que se otorgan en el Acuerdo, el Licenciatario puede distribuir los Redistribuibles sujeto a los siguientes términos:
 
-1) La redistribución debe ser sólo en formato de código abierto y debe cumplir todas las directrices, instrucciones y especificaciones de la documentación que acompaña al Programa;
+1) La redistribución debe ser sólo en formato de código abierto y debe cumplir todas las directrices, instrucciones y especificaciones de la documentación  o REDIST que acompaña al Programa;
 2) Si la documentación que acompaña al Programa permite expresamente al Licenciatario modificar los Redistribuibles, dichas modificaciones deben cumplir con todas las directrices, instrucciones y especificaciones de dicha documentación y estas modificaciones, si las hubiere, deben considerarse como Redistribuibles;
 3) El Licenciatario puede distribuir los Redistribuibles únicamente como parte de la aplicación del Licenciatario que se desarrolló utilizando el Programa ("Aplicación del Licenciatario") y únicamente para ofrecer soporte a los clientes del Licenciatario en relación con el uso que hagan de la Aplicación del Licenciatario. La Aplicación del Licenciatario debe representar un valor añadido significativo, de modo que los Redistribuibles no sean una motivación importante en la adquisición del producto software por parte de los usuarios finales;
 4) Si los Redistribuibles incluyen un Java Runtime Environment, el Licenciatario debe incluir también otros Redistribuibles que no sean Java con la Aplicación del Licenciatario, a menos que la aplicación del Licenciatario se haya diseñado para ejecutarse sólo en dispositivos generales de sistemas (ordenadores portátiles, sistemas de sobremesa y servidores, por ejemplo) y no en dispositivos portátiles u otros dispositivos generales (es decir, dispositivos que contienen un microprocesador pero cuya finalidad principal no es el sistema informático);
@@ -52,10 +52,9 @@ Licencia de comentarios
 
 Si el Licenciatario envía comentarios a IBM en referencia al Programa, el Licenciatario cede a IBM todos los derechos, títulos e intereses (incluida la propiedad de derechos de autor (copyright)) respecto a todos los datos, sugerencias o materiales escritos que 1) estén relacionados con el Programa y que 2) el Licenciatario proporcione a IBM.
 
-
-L/N:  L-DDIN-ADRVKF
-D/N:  L-DDIN-ADRVKF
-P/N:  L-DDIN-ADRVKF
+L/N:  L-DDIN-AHKQ8X
+D/N:  L-DDIN-AHKQ8X
+P/N:  L-DDIN-AHKQ8X
 
 
 Acuerdo Internacional de Licencia para Programas sin Garantía
