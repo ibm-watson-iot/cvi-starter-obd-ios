@@ -65,7 +65,7 @@ Before running the mobile app with a real OBDII dongle, you need to set up WiFi 
 4. Select the "Static" option and enter only the IP and Subnet Mask addresses from Step 3; leave everything else blank
 
 ## Reporting defects
-To report a defect with the IoT for Automotive - Mobility Starter Application mobile app, go to the [Issues](https://github.com/ibm-watson-iot/iota-obdii-fleetmanagement-ios/issues) section.
+To report a defect with the IoT for Automotive - Mobility Starter Application mobile app, go to the [Issues](https://github.com/ibm-watson-iot/iota-starter-obd-ios/issues) section.
 
 ## Privacy notice
 The "IoT for Automotive - OBDII Fleet Management App for iOS" on Bluemix stores all of the driving data that is obtained while you use the mobile app.
