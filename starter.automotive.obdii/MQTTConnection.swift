@@ -73,7 +73,7 @@ class MQTTConnection {
         }
         
         
-        mqtt!.publish("iot-2/evt/status/fmt/json", withString: stringData)
+        mqtt!.publish("iot-2/evt/carprobe/fmt/json", withString: stringData)
     }
     
     func updateTimer(interval: Double) {

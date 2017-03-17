@@ -152,8 +152,8 @@
 				TargetAttributes = {
 					61AB542E1DDA5EAA00D60E67 = {
 						CreatedOnToolsVersion = 8.1;
-						DevelopmentTeam = 73424325YV;
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = PP64RT7P8Z;
+						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -373,7 +373,7 @@
 			baseConfigurationReference = ABD1DA47B34BFE20485504F5 /* Pods-starter.automotive.obdii.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 73424325YV;
+				DEVELOPMENT_TEAM = PP64RT7P8Z;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
@@ -384,6 +384,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "iot.ibm.com.starter-automotive-obdii";
 				PRODUCT_NAME = "IoT4a - OBDII";
+				PROVISIONING_PROFILE = "4bd42824-c97b-4bb2-8ba4-18e6865ebf73";
+				PROVISIONING_PROFILE_SPECIFIER = "@IBM MobileFirst Wildcard App ID Dev Profile";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -393,7 +395,7 @@
 			baseConfigurationReference = 3D01C5A92CAF67CA67CF61C1 /* Pods-starter.automotive.obdii.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 73424325YV;
+				DEVELOPMENT_TEAM = PP64RT7P8Z;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
@@ -404,6 +406,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "iot.ibm.com.starter-automotive-obdii";
 				PRODUCT_NAME = "IoT4a - OBDII";
+				PROVISIONING_PROFILE = "4bd42824-c97b-4bb2-8ba4-18e6865ebf73";
+				PROVISIONING_PROFILE_SPECIFIER = "@IBM MobileFirst Wildcard App ID Dev Profile";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
