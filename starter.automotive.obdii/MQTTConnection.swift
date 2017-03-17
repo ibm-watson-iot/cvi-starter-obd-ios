@@ -1,11 +1,12 @@
-//
-//  MQTTConnection.swift
-//  starter.automotive.obdii
-//
-//  Created by Eliad Moosavi on 2016-12-14.
-//  Copyright © 2016 IBM. All rights reserved.
-//
-
+/**
+ * Copyright 2016 IBM Corp. All Rights Reserved.
+ *
+ * Licensed under the IBM License, a copy of which may be obtained at:
+ *
+ * http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?li_formnum=L-DDIN-AHKQ8X&popup=n&title=IBM%20IoT%20for%20Automotive%20Sample%20Starter%20Apps%20%28iOS%20Mobile%29
+ *
+ * You may not use this file except in compliance with the license.
+ */
 import CocoaMQTT
 
 protocol MQTTConnectionDelegate: class {
@@ -52,7 +53,7 @@ class MQTTConnection {
             delegate?.updateSimulatedValues()
             deviceValues = ViewController.tableItemsValues
         } else {
-            if (ViewController.sessionStarted) {
+            if (OBDStream.sessionStarted) {
                 deviceValues = ViewController.tableItemsValues
             }
         }
@@ -72,7 +73,7 @@ class MQTTConnection {
         }
         
         
-        mqtt!.publish("iot-2/evt/status/fmt/json", withString: stringData)
+        mqtt!.publish("iot-2/evt/carprobe/fmt/json", withString: stringData)
     }
     
     func updateTimer(interval: Double) {
@@ -150,7 +151,7 @@ extension MQTTConnection: CocoaMQTTDelegate {
             
             delegate?.showStatus(title: "Connected, Preparing to Send Data", progress: true)
             
-            if ViewController.simulation || ViewController.sessionStarted {
+            if ViewController.simulation || OBDStream.sessionStarted {
                 timer = Timer.scheduledTimer(timeInterval: MQTTConnection.timerInterval, target: self, selector: #selector(MQTTConnection.mqttPublish), userInfo: nil, repeats: true)
             }
             

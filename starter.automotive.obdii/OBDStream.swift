@@ -1,20 +1,28 @@
-//
-//  OBDStream.swift
-//  starter.automotive.obdii
-//
-//  Created by Eliad Moosavi on 2016-12-14.
-//  Copyright © 2016 IBM. All rights reserved.
-//
+/**
+ * Copyright 2016 IBM Corp. All Rights Reserved.
+ *
+ * Licensed under the IBM License, a copy of which may be obtained at:
+ *
+ * http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?li_formnum=L-DDIN-AHKQ8X&popup=n&title=IBM%20IoT%20for%20Automotive%20Sample%20Starter%20Apps%20%28iOS%20Mobile%29
+ *
+ * You may not use this file except in compliance with the license.
+ */
 
 import UIKit
-import Foundation
+
+protocol OBDStreamDelegate: class {
+    func showStatus(title: String, progress: Bool)
+    func checkDeviceRegistry()
+    func obdStreamError()
+}
 
 class OBDStream: NSObject, StreamDelegate {
+    weak var delegate: OBDStreamDelegate?
     private var buffer = [UInt8](repeating: 0, count: 1024)
     private var inputStream: InputStream?
     private var outputStream: OutputStream?
-    private let host: String
-    private let port: Int
+    private var host: String = "192.168.0.10"
+    private var port: Int = 35000
     
     private var counter: Int = 0
     private var inProgress: Bool = false
@@ -31,6 +39,9 @@ class OBDStream: NSObject, StreamDelegate {
     }
     
     func connect() {
+        print("Attempting to Connect to Device")
+        delegate?.showStatus(title: "Connecting to Device", progress: true)
+        
         Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
         
         inputStream!.delegate = self
@@ -61,7 +72,7 @@ class OBDStream: NSObject, StreamDelegate {
                                 OBDStream.sessionStarted = true
                                 canWrite = true
                                 
-                                ViewController.showStatus(title: "Updating Values", progress: true)
+                                delegate?.showStatus(title: "Updating Values", progress: true)
                             }
                         }
                         
@@ -84,7 +95,7 @@ class OBDStream: NSObject, StreamDelegate {
                         }
                         
                         if (counter == ViewController.obdCommands.count) {
-                            ViewController.reloadTable()
+                            ViewController.sharedInstance.tableView.reloadData()
                             
                             inProgress = false
                             
@@ -109,15 +120,15 @@ class OBDStream: NSObject, StreamDelegate {
             break
         case Stream.Event.openCompleted:
             print("Stream Opened Successfully")
-            ViewController.showStatus(title: "Connection Established", progress: false)
+            delegate?.showStatus(title: "Connection Established", progress: false)
             
-//            checkDeviceRegistry()
+            delegate?.checkDeviceRegistry()
             
             break
         case Stream.Event.endEncountered:
             print("Stream Ended")
             
-            ViewController.showStatus(title: "Connection Ended", progress: false)
+            delegate?.showStatus(title: "Connection Ended", progress: false)
             
             OBDStream.sessionStarted = false
             
@@ -125,16 +136,7 @@ class OBDStream: NSObject, StreamDelegate {
         case Stream.Event.errorOccurred:
             print("Error")
             
-            /*
-            let alertController = UIAlertController(title: "Connection Failed", message: "Did you want to try again?", preferredStyle: UIAlertControllerStyle.alert)
-            alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                ViewController.talkToSocket()
-            })
-            alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                ViewController.startApp()
-            })
-            self.present(alertController, animated: true, completion: nil)
-            */
+            delegate?.obdStreamError()
             
             break
         case Stream.Event():
@@ -173,13 +175,23 @@ class OBDStream: NSObject, StreamDelegate {
     func parseValue(from: String, index: Int) {
         from.enumerateLines { (line, stop) -> () in
             if !line.contains(">") {
-                let lineArray = line.components(separatedBy: " ")
+                var lineArray = line.components(separatedBy: " ")
+                var hexValue = ""
+                
+                for (index, item) in lineArray.enumerated() {
+                    if item == "" {
+                        lineArray.remove(at: index)
+                    } else {
+                        if index > 1 {
+                            hexValue += item
+                        }
+                    }
+                }
                 
                 if lineArray.count > 2 {
-                    let hexValue = lineArray[lineArray.count - 2]
                     var result: Double = -1
                     
-                    if let decimalValue = UInt8(hexValue, radix: 16) {
+                    if let decimalValue = UInt64(hexValue, radix: 16) {
                         switch lineArray[1] {
                         case "2F":
                             result = Double(decimalValue)/2.55
