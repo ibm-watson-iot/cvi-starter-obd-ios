@@ -198,6 +198,10 @@
 			match="PROVISIONING_PROFILE\s*=.*$"
 			replace="PROVISIONING_PROFILE = &quot;&quot;;"
 			byline="true" />
+		<replaceregexp flags="m" file="${dest.clone}/starter.automotive.obdii.xcodeproj/project.pbxproj"
+			match="PROVISIONING_PROFILE_SPECIFIER\s*=.*$"
+			replace="PROVISIONING_PROFILE_SPECIFIER = &quot;&quot;;"
+			byline="true" />
 		<replaceregexp flags="mg" file="${dest.clone}/starter.automotive.obdii.xcodeproj/project.pbxproj"
 			match="(CODE_SIGN_IDENTITY\s*=.*)$\s+&quot;CODE_SIGN_IDENTITY.*$"
 			replace="\1"
