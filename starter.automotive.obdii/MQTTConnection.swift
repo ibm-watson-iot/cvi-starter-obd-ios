@@ -21,7 +21,7 @@ class MQTTConnection {
     static var timerInterval: Double = 5.0
     
     init(clientId: String, host: String, port: Int) {
-        self.mqtt = CocoaMQTT(clientId: clientId, host: host, port: UInt16(port))
+        self.mqtt = CocoaMQTT(clientID: clientId, host: host, port: UInt16(port))
     }
     
     func connect(deviceId: String) {
@@ -30,7 +30,7 @@ class MQTTConnection {
             mqtt.password = API.getStoredData(key: ("iota-obdii-auth-" + deviceId))
             mqtt.keepAlive = 90
             mqtt.delegate = self
-            mqtt.secureMQTT = true
+            mqtt.enableSSL = true
         }
         
         mqtt?.connect()

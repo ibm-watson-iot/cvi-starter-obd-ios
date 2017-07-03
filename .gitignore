@@ -1,2 +1,3 @@
-/_ghe_buildenvoy.properties
+/_ghe_ciobuild.properties
 /_ghe_copy_mobile_repo.properties
+**/xcuserdata/*

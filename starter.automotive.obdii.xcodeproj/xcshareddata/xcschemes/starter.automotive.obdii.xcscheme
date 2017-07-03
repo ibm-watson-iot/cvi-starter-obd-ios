@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0700"
+   LastUpgradeVersion = "0820"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "019772967F6B6B0ACFDA900F5197178C"
-               BuildableName = "Pods_starter_automotive_obdii.framework"
-               BlueprintName = "Pods-starter.automotive.obdii"
-               ReferencedContainer = "container:Pods.xcodeproj">
+               BlueprintIdentifier = "61AB542E1DDA5EAA00D60E67"
+               BuildableName = "IoT4a - OBDII.app"
+               BlueprintName = "starter.automotive.obdii"
+               ReferencedContainer = "container:starter.automotive.obdii.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -29,6 +29,15 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
       </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "61AB542E1DDA5EAA00D60E67"
+            BuildableName = "IoT4a - OBDII.app"
+            BlueprintName = "starter.automotive.obdii"
+            ReferencedContainer = "container:starter.automotive.obdii.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -42,15 +51,16 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "019772967F6B6B0ACFDA900F5197178C"
-            BuildableName = "Pods_starter_automotive_obdii.framework"
-            BlueprintName = "Pods-starter.automotive.obdii"
-            ReferencedContainer = "container:Pods.xcodeproj">
+            BlueprintIdentifier = "61AB542E1DDA5EAA00D60E67"
+            BuildableName = "IoT4a - OBDII.app"
+            BlueprintName = "starter.automotive.obdii"
+            ReferencedContainer = "container:starter.automotive.obdii.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -60,6 +70,16 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "61AB542E1DDA5EAA00D60E67"
+            BuildableName = "IoT4a - OBDII.app"
+            BlueprintName = "starter.automotive.obdii"
+            ReferencedContainer = "container:starter.automotive.obdii.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
