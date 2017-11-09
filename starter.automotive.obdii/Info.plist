@@ -15,9 +15,9 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0M6</string>
+	<string>1.0M7</string>
 	<key>CFBundleVersion</key>
-	<string>20170703</string>
+	<string>20171109</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -25,11 +25,11 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your location info is needed for the fleet management analysis</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Your location info is needed for the fleet management analysis</string>
 	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Your location info is needed for the fleet management analysis</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location info is needed for the fleet management analysis</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
