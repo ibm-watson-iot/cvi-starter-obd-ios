@@ -49,7 +49,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         "Authorization": "Basic " + API.credentialsBase64
     ]
     
-    static let sharedInstance = ViewController()
+    static var sharedInstance = ViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,6 +101,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
         navigationRightButton.customView = activityIndicator
+        
+        ViewController.sharedInstance = self
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
