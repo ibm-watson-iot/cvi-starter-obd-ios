@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "61AB542E1DDA5EAA00D60E67"
-               BuildableName = "IoT4a - OBDII.app"
+               BuildableName = "IoTCVI - OBDII.app"
                BlueprintName = "starter.automotive.obdii"
                ReferencedContainer = "container:starter.automotive.obdii.xcodeproj">
             </BuildableReference>
@@ -33,7 +33,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "61AB542E1DDA5EAA00D60E67"
-            BuildableName = "IoT4a - OBDII.app"
+            BuildableName = "IoTCVI - OBDII.app"
             BlueprintName = "starter.automotive.obdii"
             ReferencedContainer = "container:starter.automotive.obdii.xcodeproj">
          </BuildableReference>
@@ -56,7 +56,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "61AB542E1DDA5EAA00D60E67"
-            BuildableName = "IoT4a - OBDII.app"
+            BuildableName = "IoTCVI - OBDII.app"
             BlueprintName = "starter.automotive.obdii"
             ReferencedContainer = "container:starter.automotive.obdii.xcodeproj">
          </BuildableReference>
@@ -75,7 +75,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "61AB542E1DDA5EAA00D60E67"
-            BuildableName = "IoT4a - OBDII.app"
+            BuildableName = "IoTCVI - OBDII.app"
             BlueprintName = "starter.automotive.obdii"
             ReferencedContainer = "container:starter.automotive.obdii.xcodeproj">
          </BuildableReference>
