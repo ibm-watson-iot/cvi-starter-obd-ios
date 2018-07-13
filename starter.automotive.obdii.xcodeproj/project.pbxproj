@@ -32,7 +32,7 @@
 		61A806AC1DDBA875008540CE /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		61A806AE1DDBAB79008540CE /* ReachabilitySwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReachabilitySwift.framework; path = "Pods/../build/Debug-iphoneos/ReachabilitySwift.framework"; sourceTree = "<group>"; };
 		61A806B01DDBAFE4008540CE /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
-		61AB542F1DDA5EAA00D60E67 /* IoT4a - OBDII.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IoT4a - OBDII.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		61AB542F1DDA5EAA00D60E67 /* IoTCVI - OBDII.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IoTCVI - OBDII.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		61AB54321DDA5EAA00D60E67 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		61AB54341DDA5EAA00D60E67 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		61AB54371DDA5EAA00D60E67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -75,7 +75,7 @@
 		61AB54301DDA5EAA00D60E67 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				61AB542F1DDA5EAA00D60E67 /* IoT4a - OBDII.app */,
+				61AB542F1DDA5EAA00D60E67 /* IoTCVI - OBDII.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -137,7 +137,7 @@
 			);
 			name = starter.automotive.obdii;
 			productName = starter.automotive.obdii;
-			productReference = 61AB542F1DDA5EAA00D60E67 /* IoT4a - OBDII.app */;
+			productReference = 61AB542F1DDA5EAA00D60E67 /* IoTCVI - OBDII.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -389,7 +389,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.iot.automotive.starter.obd.ios;
-				PRODUCT_NAME = "IoT4a - OBDII";
+				PRODUCT_NAME = "IoTCVI - OBDII";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
@@ -412,7 +412,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.iot.automotive.starter.obd.ios;
-				PRODUCT_NAME = "IoT4a - OBDII";
+				PRODUCT_NAME = "IoTCVI - OBDII";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
