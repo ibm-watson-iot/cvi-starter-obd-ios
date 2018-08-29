@@ -19,9 +19,11 @@ class MQTTConnection {
     private var mqtt: CocoaMQTT?
     public var timer = Timer()
     static var timerInterval: Double = 5.0
+    private var tripId: String?
     
     init(clientId: String, host: String, port: Int) {
         self.mqtt = CocoaMQTT(clientID: clientId, host: host, port: UInt16(port))
+        self.tripId = createTripId()
     }
     
     func connect(deviceId: String) {
@@ -42,7 +44,7 @@ class MQTTConnection {
         }
         
         var data: [String: Any] = [
-            "trip_id": createTripId(),
+            "trip_id": self.tripId!,
             "lng": ViewController.location != nil ? ((ViewController.location?.coordinate.longitude)!) : 0,
             "lat": ViewController.location != nil ? ((ViewController.location?.coordinate.latitude)!) : 0
         ]
