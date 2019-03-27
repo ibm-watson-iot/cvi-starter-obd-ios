@@ -45,11 +45,11 @@ class OBDStream: NSObject, StreamDelegate {
         Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
         
         inputStream!.delegate = self
-        inputStream!.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        inputStream!.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)
         inputStream!.open()
         
         outputStream!.delegate = self
-        outputStream!.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        outputStream!.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)
         outputStream!.open()
     }
     
@@ -146,7 +146,7 @@ class OBDStream: NSObject, StreamDelegate {
         }
     }
     
-    func writeQueries() {
+    @objc func writeQueries() {
         if (OBDStream.sessionStarted && canWrite && !inProgress) {
             writeToStream(message: "AT Z")
         }

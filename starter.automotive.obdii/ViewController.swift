@@ -99,7 +99,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         ViewController.navigationBar?.barStyle = UIBarStyle.blackOpaque
         
         
-        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
+        activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.white)
         navigationRightButton.customView = activityIndicator
         
         ViewController.sharedInstance = self
@@ -113,13 +113,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     func startApp() {
         self.deviceBSSID = self.getBSSID()
         
-        let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+        let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
             ViewController.simulation = true
             
             self.startSimulation()
         })
-        alertController.addAction(UIAlertAction(title: "I have a real OBDII dongle", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+        alertController.addAction(UIAlertAction(title: "I have a real OBDII dongle", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
             self.actualDevice()
         })
         self.present(alertController, animated: true, completion: nil)
@@ -150,12 +150,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     private func actualDevice() {
-        let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+        let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
             self.talkToSocket()
         })
-        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-            let toast = UIAlertController(title: nil, message: "You would need to connect to your OBDII dongle in order to use this feature!", preferredStyle: UIAlertControllerStyle.alert)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
+            let toast = UIAlertController(title: nil, message: "You would need to connect to your OBDII dongle in order to use this feature!", preferredStyle: UIAlertController.Style.alert)
             
             self.present(toast, animated: true, completion: nil)
             
@@ -205,13 +205,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     
                     self.progressStop()
                     
-                    let alertController = UIAlertController(title: "Your Device is NOT Registered!", message: "In order to use this application, we need to register your device to the IBM IoT Platform", preferredStyle: UIAlertControllerStyle.alert)
+                    let alertController = UIAlertController(title: "Your Device is NOT Registered!", message: "In order to use this application, we need to register your device to the IBM IoT Platform", preferredStyle: UIAlertController.Style.alert)
                     
-                    alertController.addAction(UIAlertAction(title: "Register", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    alertController.addAction(UIAlertAction(title: "Register", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
                         self.registerDevice()
                     })
                     
-                    alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                    alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
                         self.showToast(message: "Cannot continue without registering your device!")
                     })
                     
@@ -223,13 +223,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     
                     self.progressStop()
                     
-                    let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
+                    let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertController.Style.alert)
                     
-                    alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                    alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
                         self.showStatus(title: "Failed to connect to IBM IoT Platform")
                     })
                     
-                    alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                    alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
                         self.showToast(message: "Cannot continue without connecting to IBM IoT Platform!")
                     })
                     self.present(alertController, animated: true, completion: nil)
@@ -283,9 +283,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                         API.storeData(key: userDefaultsKey, value: authToken!)
                     }
                     
-                    let alertController = UIAlertController(title: "Your Device is Now Registered!", message: "Please take note of this Autentication Token as you will need it in the future", preferredStyle: UIAlertControllerStyle.alert)
+                    let alertController = UIAlertController(title: "Your Device is Now Registered!", message: "Please take note of this Autentication Token as you will need it in the future", preferredStyle: UIAlertController.Style.alert)
                     
-                    alertController.addAction(UIAlertAction(title: "Copy to my Clipboard", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                    alertController.addAction(UIAlertAction(title: "Copy to my Clipboard", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
                         UIPasteboard.general.string = authToken
                         
                         self.deviceRegistered()
@@ -309,13 +309,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                 
                 self.progressStop()
                 
-                let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
+                let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertController.Style.alert)
                 
-                alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+                alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
                     self.showStatus(title: "Failed to connect to IBM IoT Platform")
                 })
                 
-                alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+                alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
                     self.showToast(message: "Cannot continue without connecting to IBM IoT Platform!")
                 })
                 self.present(alertController, animated: true, completion: nil)
@@ -362,7 +362,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     @IBAction func changeFrequency(_ sender: Any) {
-        let alertController = UIAlertController(title: "Change the Frequency of Data Being Sent (in Seconds)", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "Change the Frequency of Data Being Sent (in Seconds)", message: nil, preferredStyle: UIAlertController.Style.alert)
         
         let uiViewController = UIViewController()
         uiViewController.preferredContentSize = CGSize(width: 250,height: 275)
@@ -374,9 +374,9 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         uiViewController.view.addSubview(pickerView)
         alertController.setValue(uiViewController, forKey: "contentViewController")
         
-        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in})
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in})
         
-        alertController.addAction(UIAlertAction(title: "Update", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+        alertController.addAction(UIAlertAction(title: "Update", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
             let newInterval: Double = Double(self.frequencyArray[pickerView.selectedRow(inComponent: 0)])
             self.mqttConnection?.updateTimer(interval: newInterval)
         })
@@ -389,11 +389,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     internal func obdStreamError() {
-        let alertController = UIAlertController(title: "Connection Failed", message: "Did you want to try again?", preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+        let alertController = UIAlertController(title: "Connection Failed", message: "Did you want to try again?", preferredStyle: UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
             self.talkToSocket()
         })
-        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
             self.startApp()
         })
         
@@ -431,7 +431,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func showToast(message: String) {
-        let toast = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        let toast = UIAlertController(title: nil, message: message, preferredStyle: UIAlertController.Style.alert)
         
         self.present(toast, animated: true, completion: nil)
         
@@ -445,7 +445,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: UITableViewCellStyle.value1, reuseIdentifier: "HomeTableCells")
+        let cell = UITableViewCell(style: UITableViewCell.CellStyle.value1, reuseIdentifier: "HomeTableCells")
         
         cell.textLabel?.text = tableItemsTitles[indexPath.row]
         
