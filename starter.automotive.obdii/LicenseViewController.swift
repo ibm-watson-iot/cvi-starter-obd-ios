@@ -33,7 +33,7 @@ class LicenseViewController: UIViewController {
         self.dismiss(animated: true, completion: onAgree)
     }
     @IBAction func _onDisagree() {
-        self.dismiss(animated: true, completion: {Void in
+        self.dismiss(animated: true, completion: {() in
             self.onDisagree()
             exit(-1)
         })
