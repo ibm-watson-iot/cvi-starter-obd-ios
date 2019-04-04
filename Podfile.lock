@@ -1,30 +1,26 @@
 PODS:
-  - Alamofire (4.0.0)
-  - CocoaAsyncSocket (7.5.1):
-    - CocoaAsyncSocket/GCD (= 7.5.1)
-  - CocoaAsyncSocket/GCD (7.5.1)
-  - CocoaMQTT (1.0.17):
-    - CocoaAsyncSocket (~> 7.5.1)
-    - SwiftyTimer (~> 2.0.0)
+  - Alamofire (4.8.1)
+  - CocoaAsyncSocket (7.6.3)
+  - CocoaMQTT (1.1.3):
+    - CocoaAsyncSocket (~> 7.6.3)
   - ReachabilitySwift (3)
-  - SwiftyTimer (2.0.0)
 
 DEPENDENCIES:
-  - Alamofire (from `https://github.com/Alamofire/Alamofire.git`, tag `4.0.0`)
-  - CocoaAsyncSocket (from `https://github.com/robbiehanson/CocoaAsyncSocket.git`, tag `7.5.1`)
-  - CocoaMQTT (from `https://github.com/emqtt/CocoaMQTT.git`, tag `1.0.17`)
+  - Alamofire (from `https://github.com/Alamofire/Alamofire.git`, tag `4.8.1`)
+  - CocoaAsyncSocket (from `https://github.com/robbiehanson/CocoaAsyncSocket.git`, tag `7.6.3`)
+  - CocoaMQTT (from `https://github.com/emqtt/CocoaMQTT.git`, tag `1.1.3`)
   - ReachabilitySwift (from `https://github.com/ashleymills/Reachability.swift.git`, tag `v3`)
 
 EXTERNAL SOURCES:
   Alamofire:
     :git: https://github.com/Alamofire/Alamofire.git
-    :tag: 4.0.0
+    :tag: 4.8.1
   CocoaAsyncSocket:
     :git: https://github.com/robbiehanson/CocoaAsyncSocket.git
-    :tag: 7.5.1
+    :tag: 7.6.3
   CocoaMQTT:
     :git: https://github.com/emqtt/CocoaMQTT.git
-    :tag: 1.0.17
+    :tag: 1.1.3
   ReachabilitySwift:
     :git: https://github.com/ashleymills/Reachability.swift.git
     :tag: v3
@@ -32,24 +28,23 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   Alamofire:
     :git: https://github.com/Alamofire/Alamofire.git
-    :tag: 4.0.0
+    :tag: 4.8.1
   CocoaAsyncSocket:
     :git: https://github.com/robbiehanson/CocoaAsyncSocket.git
-    :tag: 7.5.1
+    :tag: 7.6.3
   CocoaMQTT:
     :git: https://github.com/emqtt/CocoaMQTT.git
-    :tag: 1.0.17
+    :tag: 1.1.3
   ReachabilitySwift:
     :git: https://github.com/ashleymills/Reachability.swift.git
     :tag: v3
 
 SPEC CHECKSUMS:
-  Alamofire: fef59f00388f267e52d9b432aa5d93dc97190f14
-  CocoaAsyncSocket: e0a7e93b2ffa411592ff87e58524fbbc9b95b4fa
-  CocoaMQTT: b24471fd58454ea12d7b1e669d8c086691bc9d6b
+  Alamofire: 16ce2c353fb72865124ddae8a57c5942388f4f11
+  CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
+  CocoaMQTT: b506d38ad3bbe1c55a4f8ee8c9fd02c35da1a7d8
   ReachabilitySwift: f5b9bb30a0777fac8f09ce8b067e32faeb29bb64
-  SwiftyTimer: 2efd74b060d69ad4f1496baf5bbedbe132125fcf
 
-PODFILE CHECKSUM: bcd9f96e5921fd552769de1db4c0aefd1fa87b51
+PODFILE CHECKSUM: ef62b4c8dc4fd17129a50204f28c6e1ff16726b9
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.6.1

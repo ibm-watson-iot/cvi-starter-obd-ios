@@ -10,12 +10,6 @@
 
 import UIKit
 
-protocol OBDStreamDelegate: class {
-    func showStatus(title: String, progress: Bool)
-    func checkDeviceRegistry()
-    func obdStreamError()
-}
-
 class OBDStream: NSObject, StreamDelegate {
     weak var delegate: OBDStreamDelegate?
     private var buffer = [UInt8](repeating: 0, count: 1024)
