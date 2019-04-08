@@ -33,18 +33,20 @@ class HTTPVehicleDevice: VehicleDevice {
             "User-Agent": userAgent ?? HTTPVehicleDevice.defaultVdhUserAgent,
             "Authorization": "Basic " + credentialsBase64
         ];
-        var url: String = endpoint! + "?op=sync"
-        if (tenant_id != nil) {
-            url += "&tenant_id=" + tenant_id!
+        var url: String = "\(endpoint!)?op=sync"
+        if tenant_id != nil {
+            url += "&tenant_id=\(tenant_id!)"
         }
         
         Alamofire.request(url, method: HTTPMethod.post, parameters: eventDict, encoding: JSONEncoding.default, headers: headers)
             .responseJSON { (response) in
                 let statusCode = response.response?.statusCode;
-                if (statusCode == 200) {
+                if statusCode == 200 {
                     self.delegate?.showStatus(title: "Live Data is Being Sent", progress: true)
+                } else if statusCode != nil {
+                    self.delegate?.showStatus(title: "Failed to publish event (\(statusCode!))", progress: true)
                 } else {
-                    self.delegate?.showStatus(title: "Failed to publish event (\(statusCode))", progress: true)
+                    self.delegate?.showStatus(title: "Failed to publish event (Unkown)", progress: true)
                 }
         }
         return true;
