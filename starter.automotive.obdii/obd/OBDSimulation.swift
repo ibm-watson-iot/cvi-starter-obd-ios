@@ -18,7 +18,7 @@ class OBDSimulation {
     private var engineOilTemp: Double?
     
     func connect() {
-        fuelLevel = Double(arc4random_uniform(50) + 50)
+        fuelLevel = Double(arc4random_uniform(50) + 10)
         engineCoolant = Double(Int(arc4random_uniform(115) + 50))
         engineRPM = round(Double(arc4random_uniform(2000))/100)*100 + 2000
         engineOilTemp = Double(Int(arc4random_uniform(115) + 50))
@@ -28,7 +28,7 @@ class OBDSimulation {
     func updateSimulatedValues() {
         fuelLevel = fuelLevel! - round(Double(arc4random_uniform(10))/10.0)
         if fuelLevel! < 5.0 {
-            fuelLevel = Double(arc4random_uniform(50) + 50)
+            fuelLevel = Double(arc4random_uniform(50) + 10)
         }
         engineCoolant = engineCoolant! + Double(arc4random_uniform(700)/10) - 30.0
         if engineCoolant! < -10.0 || engineCoolant! > 350.0 {
@@ -51,8 +51,8 @@ class OBDSimulation {
             speed = 0
         }
         let currentSpeed: Int = Int(round(speed));
-        ViewController.tableItemsValues = ["\(engineCoolant!)", "\(fuelLevel!)", "\(currentSpeed)", "\(engineRPM!)", "\(engineOilTemp!)"]
-        ViewController.sharedInstance.tableView.reloadData()
+        ViewController.tableItemsValues = ["\(currentSpeed)", "\(engineRPM!)", "\(fuelLevel!)", "\(engineOilTemp!)", "\(engineCoolant!)"]
+        delegate?.updateOBDValues()
     }
 
 }

@@ -15,5 +15,6 @@ import Foundation
 protocol OBDStreamDelegate: class {
     func showStatus(title: String, progress: Bool)
     func checkDeviceRegistry()
+    func updateOBDValues()
     func obdStreamError()
 }

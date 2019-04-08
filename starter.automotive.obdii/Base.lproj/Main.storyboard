@@ -102,7 +102,7 @@
                                     </label>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k3E-9s-4rI">
                                         <rect key="frame" x="148.5" y="0.0" width="194.5" height="25"/>
-                                        <state key="normal" title="Specify Servder"/>
+                                        <state key="normal" title="Specify Server"/>
                                         <connections>
                                             <segue destination="zMW-s4-Y7t" kind="show" id="YFu-vd-AMs"/>
                                         </connections>
@@ -248,7 +248,7 @@
         <!--Specify Server View Controller-->
         <scene sceneID="0Rz-7q-fnT">
             <objects>
-                <viewController id="zMW-s4-Y7t" customClass="SpecifyServerViewController" customModule="IoTCVI___OBDII" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="specifyServerView" id="zMW-s4-Y7t" customClass="SpecifyServerViewController" customModule="IoTCVI___OBDII" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="7Du-cr-zpF"/>
                         <viewControllerLayoutGuide type="bottom" id="ug5-97-KTA"/>

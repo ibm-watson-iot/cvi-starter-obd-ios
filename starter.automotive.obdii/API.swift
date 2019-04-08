@@ -38,9 +38,14 @@ struct API {
 
     static let DOESNOTEXIST: String = "doesNotExist";
     
+    static func isServerSpecified() -> Bool {
+        let uuid = UserDefaults.standard.string(forKey: "iota-starter-uuid")
+        return uuid != nil
+    }
+    
     static func initialize() {
-        var uuid = UserDefaults.standard.string(forKey: "iota-starter-uuid");
-        if (uuid == nil) {
+        var uuid = UserDefaults.standard.string(forKey: "iota-starter-uuid")
+        if uuid == nil {
             uuid = self.getUUID();
             UserDefaults.standard.setValue(uuid, forKey: "iota-starter-uuid")
         }

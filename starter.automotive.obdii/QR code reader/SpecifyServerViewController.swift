@@ -45,6 +45,11 @@ class SpecifyServerViewController: UIViewController {
         super.viewWillAppear(animated)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        ViewController.isServerSpecified = true
+        super.viewWillAppear(animated)
+    }
+    
     func showError(_ message: String) {
         let alert = UIAlertController(title: "Scan Error", message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .cancel) { action -> Void in
@@ -56,6 +61,7 @@ class SpecifyServerViewController: UIViewController {
     
     @IBAction func useDefaultAction(_ sender: AnyObject) {
         API.useDefault();
+        navigationController?.popViewController(animated: true)
     }
     
     @IBAction func moreInfoAction(_ sender: AnyObject) {

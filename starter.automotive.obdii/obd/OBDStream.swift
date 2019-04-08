@@ -89,7 +89,7 @@ class OBDStream: NSObject, StreamDelegate {
                         }
                         
                         if (counter == ViewController.obdCommands.count) {
-                            ViewController.sharedInstance.tableView.reloadData()
+                            delegate?.updateOBDValues()
                             
                             inProgress = false
                             

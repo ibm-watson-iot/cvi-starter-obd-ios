@@ -17,10 +17,11 @@ import CocoaMQTT
 
 class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, UIViewControllerTransitioningDelegate, OBDStreamDelegate, DeviceDelegate {
     
-    private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
-    private let tableItemsUnits: [String] = ["°C", "%", " KM/H", " RPM", "°C"]
+//    private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
+    private let tableItemsTitles: [String] = ["Speed", "Engine RPM", "Fuel Level", "Engine Oil Temperature", "Engine Coolant Temperature"]
+    private let tableItemsUnits: [String] = [" MPH", " RPM", " %", " °F", " °F"]
+    static let obdCommands: [String] = ["0D", "0C", "2F", "5C", "05"]
     private let eventKeys: [String] = ["mo_id", "latitude", "longitude", "altitude", "heading", "timestamp", "trip_id", "speed", "confidence", "map_vendor_name", "map_version", "tenant_id", "props_engineTemp", "props_fuel", "props_engineOilTemp", "props_engineRPM"]
-    static let obdCommands: [String] = ["05", "2F", "0D", "0C", "5C"]
 
     @IBOutlet weak var navigationRightButton: UIBarButtonItem!
     @IBOutlet weak var vehicleIDLabel: UILabel!
@@ -37,10 +38,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private var curHeading: Int = -1000
     
     static var tableItemsValues: [String] = []
+    static var tableDisplayValues: [String] = []
     static var navigationBar: UINavigationBar?
     
     private var activityIndicator: UIActivityIndicatorView?
-    private var isInitialized: Bool = false
+    private var isLicenseAgreed: Bool = false
+    private var isApplicationStarted: Bool = false
+    static var isServerSpecified: Bool = false
 
     private var obdStream: OBDStream?
     private var obdSimulation: OBDSimulation?
@@ -50,7 +54,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private var currentFrequency: Int = 1
     private var curProtocol: Protocol = Protocol.HTTP
     private var vehicleDevice: VehicleDevice?
-    private var trip_id: String?
     
     static var sharedInstance = ViewController()
     
@@ -58,14 +61,13 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         super.viewDidLoad()
         
         // Initialize this mobile application
+        ViewController.isServerSpecified = API.isServerSpecified()
         API.initialize();
 
-        confirmDisclaimer()
-        
         // Initialize the table view to show data
         tableView.dataSource = self
         tableView.delegate = self
-        ViewController.tableItemsValues = [String](repeating: "N/A", count: ViewController.obdCommands.count)
+        ViewController.tableDisplayValues = [String](repeating: "N/A", count: ViewController.obdCommands.count)
     }
 
     // Show disclamer UI
@@ -74,10 +76,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         licenseVC.modalPresentationStyle = .custom
         licenseVC.transitioningDelegate = self
         licenseVC.onAgree = {() -> Void in
+            self.isLicenseAgreed = true
             // Start the application when aggreed to the license
-            self.checkMQTTAvailable(callback: {() in
+            if ViewController.isServerSpecified {
                 self.startApp()
-            })
+            }
         }
         self.present(licenseVC, animated: true, completion: nil)
     }
@@ -89,15 +92,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        // Initialize the location manager
-        locationManager.requestAlwaysAuthorization()
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager.activityType = .automotiveNavigation
-            locationManager.startUpdatingLocation()
-        }
-        
         ViewController.navigationBar = self.navigationController?.navigationBar
         ViewController.navigationBar?.barStyle = UIBarStyle.blackOpaque
         ViewController.sharedInstance = self
@@ -105,13 +99,24 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.white)
         navigationRightButton.customView = activityIndicator
         
-        if isInitialized {
+        if isApplicationStarted {
             // Back from the specify server
             checkMQTTAvailable(callback:{() in
                 self.checkDeviceRegistry()
             })
-        } else {
-            isInitialized = true
+        } else if ViewController.isServerSpecified == false {
+            // First, show the specify server page to set connecting fleet management server
+            if let viewController = self.storyboard!.instantiateViewController(withIdentifier: "specifyServerView") as? SpecifyServerViewController {
+                if let navigator = self.navigationController {
+                    navigator.pushViewController(viewController, animated: true)
+                }
+            }
+        } else if isLicenseAgreed == true && isApplicationStarted == false {
+            startApp()
+        }
+
+        if isLicenseAgreed == false {
+            confirmDisclaimer()
         }
     }
     
@@ -153,16 +158,39 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
 
     // Start the application
     func startApp() {
-        let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertController.Style.alert)
-        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
-            self.startSimulation()
+        // Initialize the location manager
+        self.locationManager.requestAlwaysAuthorization()
+        if CLLocationManager.locationServicesEnabled() {
+            self.locationManager.delegate = self
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            self.locationManager.activityType = .automotiveNavigation
+            self.locationManager.startUpdatingLocation()
+        }
+        
+        self.checkMQTTAvailable(callback:{() in
+            self.isApplicationStarted = true
+            let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertController.Style.alert)
+            alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+                self.startSimulation()
+            })
+            alertController.addAction(UIAlertAction(title: "I have a real OBDII dongle", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
+                self.actualDevice()
+            })
+            self.present(alertController, animated: true, completion: nil)
         })
-        alertController.addAction(UIAlertAction(title: "I have a real OBDII dongle", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
-            self.actualDevice()
-        })
-        self.present(alertController, animated: true, completion: nil)
     }
 
+    func updateOBDValues() {
+        let speed = Int(round(Double(ViewController.tableItemsValues[0])! * 0.621371192))
+        let engineRPM = Int(round(Double(ViewController.tableItemsValues[1])!))
+        let fuelLevel = Double(ViewController.tableItemsValues[2])!
+        let engineOilTemp = (Double(ViewController.tableItemsValues[3])! * 9 / 5) + 32
+        let engineTemp =  (Double(ViewController.tableItemsValues[4])! * 9 / 5) + 32
+
+        ViewController.tableDisplayValues = ["\(speed)", "\(engineRPM)", "\(fuelLevel)", "\(engineOilTemp)", "\(engineTemp)"]
+        tableView.reloadData()
+    }
+    
     // Generate car probe data
     func generateData() -> Dictionary<String, Any> {
         
@@ -175,7 +203,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         let latitude: Double = ViewController.location?.coordinate.latitude ?? 0.0
         let altitude: Double = ViewController.location?.altitude ?? 0.0
         let heading: Int = curHeading
-        let speed: Int = Int(round(Double(ViewController.tableItemsValues[2])!))
+        let speed: Int = Int(round(Double(ViewController.tableItemsValues[0])!))
         
         var dict = Dictionary<String, Any>()
         dict.updateValue(longitude, forKey: "longitude")
@@ -185,10 +213,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         dict.updateValue(speed, forKey: "speed")
 
         var props = Dictionary<String, Any>()
+        props.updateValue(ViewController.tableItemsValues[1], forKey: "engineRPM")
+        props.updateValue(ViewController.tableItemsValues[2], forKey: "fuel")
+        props.updateValue(ViewController.tableItemsValues[3], forKey: "engineOilTemp")
         props.updateValue(ViewController.tableItemsValues[4], forKey: "engineTemp")
-        props.updateValue(ViewController.tableItemsValues[1], forKey: "fuel")
-        props.updateValue(ViewController.tableItemsValues[0], forKey: "engineOilTemp")
-        props.updateValue(ViewController.tableItemsValues[3], forKey: "engineRPM")
         dict.updateValue(props, forKey: "props")
         return dict;
     }
@@ -268,7 +296,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         showStatus(title: "Checking Device Registeration", progress: true)
         
         // Stop existing trip and initialize new trip
-        trip_id = nil
         vehicleDevice?.clean()
         vehicleDevice = nil
         
@@ -318,7 +345,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
             case 200, 201:
                 let accessInfo: Dictionary<String, String?> = self.setAccessInfo(resultDictionary: result as! NSDictionary)
 
-                let alertController = UIAlertController(title: "Message", message: "Your device is registered!",
+                let alertController = UIAlertController(title: "Success", message: "Your device is registered!",
                                                         preferredStyle: UIAlertController.Style.alert)
                 alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
                     self.deviceRegistered(accessInfo: accessInfo)
@@ -360,7 +387,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     private func deviceRegistered(accessInfo: Dictionary<String, String?>) {
-        showStatus(title: "Device Is Ready", progress: true)
+        showStatus(title: "Device is Ready", progress: true)
 
         // Show vehicle ID to UI
         let mo_id: String! = accessInfo[USER_DEFAULTS_KEY_PROTOCOL_MOID] ?? "<None>"
@@ -485,10 +512,10 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         cell.textLabel?.text = tableItemsTitles[indexPath.row]
         
-        if ViewController.tableItemsValues[indexPath.row] == "N/A" {
-            cell.detailTextLabel?.text = ViewController.tableItemsValues[indexPath.row]
+        if ViewController.tableDisplayValues[indexPath.row] == "N/A" {
+            cell.detailTextLabel?.text = ViewController.tableDisplayValues[indexPath.row]
         } else {
-            cell.detailTextLabel?.text = ViewController.tableItemsValues[indexPath.row] + tableItemsUnits[indexPath.row]
+            cell.detailTextLabel?.text = ViewController.tableDisplayValues[indexPath.row] + tableItemsUnits[indexPath.row]
         }
         
         return cell
