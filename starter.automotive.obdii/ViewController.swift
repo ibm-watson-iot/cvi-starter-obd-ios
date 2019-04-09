@@ -16,12 +16,11 @@ import CoreLocation
 import CocoaMQTT
 
 class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, UIViewControllerTransitioningDelegate, OBDStreamDelegate, DeviceDelegate {
-    
-//    private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
+    private let tableLocationTitles: [String] = ["Longitude", "Latitude", "Heading"]
     private let tableItemsTitles: [String] = ["Speed", "Engine RPM", "Fuel Level", "Engine Oil Temperature", "Engine Coolant Temperature"]
-    private let tableItemsUnits: [String] = [" MPH", " RPM", " %", " °F", " °F"]
+    private let tableItemsUnits: [String] = ["", "", "", " MPH", " RPM", " %", " °F", " °F"]
     static let obdCommands: [String] = ["0D", "0C", "2F", "5C", "05"]
-    private let eventKeys: [String] = ["mo_id", "latitude", "longitude", "altitude", "heading", "timestamp", "trip_id", "speed", "confidence", "map_vendor_name", "map_version", "tenant_id", "props_engineTemp", "props_fuel", "props_engineOilTemp", "props_engineRPM"]
+    private let eventKeys: [String] = ["mo_id", "latitude", "longitude", "altitude", "heading", "timestamp", "trip_id", "speed", "confidence", "map_vendor_name", "map_version", "tenant_id", "props_engineTemp", "props_fuel", "props_engineCoolantTemp", "props_engineRPM"]
 
     @IBOutlet weak var navigationRightButton: UIBarButtonItem!
     @IBOutlet weak var vehicleIDLabel: UILabel!
@@ -38,7 +37,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     private var curHeading: Int = -1000
     
     static var tableItemsValues: [String] = []
-    static var tableDisplayValues: [String] = []
+    private var tableDisplayTitles: [String] = []
+    private var tableDisplayValues: [String] = []
     static var navigationBar: UINavigationBar?
     
     private var activityIndicator: UIActivityIndicatorView?
@@ -63,11 +63,25 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         // Initialize this mobile application
         ViewController.isServerSpecified = API.isServerSpecified()
         API.initialize();
-
+        
+        // Init protocol
+        let proto = UserDefaults.standard.string(forKey: USER_DEFAULTS_KEY_PROTOCOL) ?? Protocol.HTTP.rawValue
+        curProtocol = Protocol(rawValue: proto) ?? Protocol.HTTP
+        setProtocolSWitch(proto: curProtocol, hidden: false)
+        
+        currentFrequency = UserDefaults.standard.integer(forKey: USER_DEFAULTS_KEY_FREQUENCY)
+        if currentFrequency < frequencyArray[0] {
+            currentFrequency = frequencyArray[0]
+        } else if currentFrequency > frequencyArray[frequencyArray.count - 1] {
+            currentFrequency = frequencyArray[frequencyArray.count - 1]
+        }
+ 
         // Initialize the table view to show data
         tableView.dataSource = self
         tableView.delegate = self
-        ViewController.tableDisplayValues = [String](repeating: "N/A", count: ViewController.obdCommands.count)
+
+        tableDisplayTitles = tableLocationTitles + tableItemsTitles
+        tableDisplayValues = [String](repeating: "N/A", count: tableLocationTitles.count + ViewController.obdCommands.count)
     }
 
     // Show disclamer UI
@@ -181,13 +195,16 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
 
     func updateOBDValues() {
+        let longitude: Double = ViewController.location?.coordinate.longitude ?? 0.0
+        let latitude: Double = ViewController.location?.coordinate.latitude ?? 0.0
+        let heading: Int = curHeading
         let speed = Int(round(Double(ViewController.tableItemsValues[0])! * 0.621371192))
         let engineRPM = Int(round(Double(ViewController.tableItemsValues[1])!))
         let fuelLevel = Double(ViewController.tableItemsValues[2])!
-        let engineOilTemp = (Double(ViewController.tableItemsValues[3])! * 9 / 5) + 32
-        let engineTemp =  (Double(ViewController.tableItemsValues[4])! * 9 / 5) + 32
+        let engineTemp = (Double(ViewController.tableItemsValues[3])! * 9 / 5) + 32
+        let engineCoolantTemp =  (Double(ViewController.tableItemsValues[4])! * 9 / 5) + 32
 
-        ViewController.tableDisplayValues = ["\(speed)", "\(engineRPM)", "\(fuelLevel)", "\(engineOilTemp)", "\(engineTemp)"]
+        tableDisplayValues = ["\(longitude)", "\(latitude)", "\(heading)", "\(speed)", "\(engineRPM)", "\(fuelLevel)", "\(engineTemp)", "\(engineCoolantTemp)"]
         tableView.reloadData()
     }
     
@@ -215,8 +232,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         var props = Dictionary<String, Any>()
         props.updateValue(ViewController.tableItemsValues[1], forKey: "engineRPM")
         props.updateValue(ViewController.tableItemsValues[2], forKey: "fuel")
-        props.updateValue(ViewController.tableItemsValues[3], forKey: "engineOilTemp")
-        props.updateValue(ViewController.tableItemsValues[4], forKey: "engineTemp")
+        props.updateValue(ViewController.tableItemsValues[3], forKey: "engineTemp")
+        props.updateValue(ViewController.tableItemsValues[4], forKey: "engineCoolantTemp")
         dict.updateValue(props, forKey: "props")
         return dict;
     }
@@ -261,31 +278,36 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         obdStream?.connect()
     }
 
+    private func setProtocolSWitch(proto: Protocol, hidden: Bool) {
+        if (!hidden) {
+            if self.curProtocol == Protocol.MQTT {
+                self.protocolSwitch.selectedSegmentIndex = 1
+            } else {
+                self.protocolSwitch.selectedSegmentIndex = 0
+            }
+        }
+        self.protocolSwitch.isHidden = hidden;
+
+    }
+    
     // Check if MQTT protocol is supported or not. If true, show the switch control to change protocols
     private func checkMQTTAvailable(callback: @escaping ()->()){
-        curProtocol = Protocol.HTTP
-
         API.checkMQTTAvailable(callback: {(statusCode, result) in
             self.protocolSwitch.isHidden = true;
             if statusCode == 200 {
                 let resultDictionary = result as! NSDictionary
                 let mqttAvailable = resultDictionary["available"] as! Bool
                 if mqttAvailable {
-                    // If MQTT is available, restore the current protocol
-                    let proto = UserDefaults.standard.string(forKey: USER_DEFAULTS_KEY_PROTOCOL) ?? self.curProtocol.rawValue
-                    self.curProtocol = Protocol(rawValue: proto) ?? Protocol.HTTP
-                    
                     // Update protocol switch UI
-                    if self.curProtocol == Protocol.MQTT {
-                        self.protocolSwitch.selectedSegmentIndex = 1
-                    } else {
-                        self.protocolSwitch.selectedSegmentIndex = 0
-                    }
-                    self.protocolSwitch.isHidden = false;
+                    self.setProtocolSWitch(proto: self.curProtocol, hidden: false)
+                } else {
+                    self.curProtocol = Protocol.HTTP
+                    self.setProtocolSWitch(proto: self.curProtocol, hidden: false)
                 }
             } else {
                 // Error to get the status
                 self.curProtocol = Protocol.HTTP
+                self.setProtocolSWitch(proto: self.curProtocol, hidden: true)
             }
             callback()
         })
@@ -408,6 +430,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         let pickerView = UIPickerView(frame: CGRect(x: 0, y: 0, width: 250, height: 275))
         pickerView.delegate = self
         pickerView.dataSource = self
+        pickerView.selectRow(currentFrequency-1, inComponent: 0, animated: false)
         
         uiViewController.view.addSubview(pickerView)
         alertController.setValue(uiViewController, forKey: "contentViewController")
@@ -416,6 +439,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         
         alertController.addAction(UIAlertAction(title: "Update", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
             self.currentFrequency = self.frequencyArray[pickerView.selectedRow(inComponent: 0)]
+            UserDefaults.standard.set(self.currentFrequency, forKey: USER_DEFAULTS_KEY_FREQUENCY)
             self.vehicleDevice?.startPublishing(uploadInterval: self.currentFrequency)
         })
         
@@ -504,18 +528,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tableItemsTitles.count
+        return tableDisplayTitles.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: UITableViewCell.CellStyle.value1, reuseIdentifier: "HomeTableCells")
         
-        cell.textLabel?.text = tableItemsTitles[indexPath.row]
+        cell.textLabel?.text = tableDisplayTitles[indexPath.row]
         
-        if ViewController.tableDisplayValues[indexPath.row] == "N/A" {
-            cell.detailTextLabel?.text = ViewController.tableDisplayValues[indexPath.row]
+        if tableDisplayValues[indexPath.row] == "N/A" {
+            cell.detailTextLabel?.text = tableDisplayValues[indexPath.row]
         } else {
-            cell.detailTextLabel?.text = ViewController.tableDisplayValues[indexPath.row] + tableItemsUnits[indexPath.row]
+            cell.detailTextLabel?.text = tableDisplayValues[indexPath.row] + tableItemsUnits[indexPath.row]
         }
         
         return cell

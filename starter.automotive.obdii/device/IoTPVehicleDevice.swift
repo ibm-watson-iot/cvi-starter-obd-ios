@@ -67,10 +67,6 @@ class IoTPVehicleDevice: VehicleDevice, CocoaMQTTDelegate {
             accepted = true
             
             delegate?.showStatus(title: "Connected, Preparing to Send Data", progress: true)
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                self.delegate?.showStatus(title: "Live Data is Being Sent", progress: true)
-            }
         }
     }
     
@@ -78,10 +74,6 @@ class IoTPVehicleDevice: VehicleDevice, CocoaMQTTDelegate {
         print("didPublishMessage with message: \((message.string)!)")
         
         delegate?.showStatus(title: "Successfully Published to Server", progress: false)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.delegate?.showStatus(title: "Live Data is Being Sent", progress: true)
-        }
     }
     
     func mqtt(_ mqtt: CocoaMQTT, didPublishAck id: UInt16) {

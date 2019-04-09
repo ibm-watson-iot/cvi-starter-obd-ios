@@ -42,11 +42,11 @@ class HTTPVehicleDevice: VehicleDevice {
             .responseJSON { (response) in
                 let statusCode = response.response?.statusCode;
                 if statusCode == 200 {
-                    self.delegate?.showStatus(title: "Live Data is Being Sent", progress: true)
+                    self.delegate?.showStatus(title: "Successfully Published to Server", progress: false)
                 } else if statusCode != nil {
-                    self.delegate?.showStatus(title: "Failed to publish event (\(statusCode!))", progress: true)
+                    self.delegate?.showStatus(title: "Failed to publish event (\(statusCode!))", progress: false)
                 } else {
-                    self.delegate?.showStatus(title: "Failed to publish event (Unkown)", progress: true)
+                    self.delegate?.showStatus(title: "Failed to publish event (Unkown)", progress: false)
                 }
         }
         return true;

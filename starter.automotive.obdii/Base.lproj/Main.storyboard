@@ -112,12 +112,9 @@
                                     <constraint firstAttribute="height" constant="25" id="iig-SN-pfX"/>
                                 </constraints>
                             </stackView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Pf2-YJ-ZLS">
-                                <rect key="frame" x="0.0" y="97" width="375" height="426"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" pagingEnabled="YES" dataMode="prototypes" style="plain" separatorStyle="default" sectionIndexMinimumDisplayRowCount="7" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Pf2-YJ-ZLS">
+                                <rect key="frame" x="0.0" y="92" width="375" height="460"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="426" id="aD0-89-G3E"/>
-                                </constraints>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="HomeTableCells" textLabel="Mvb-FY-sTw" detailTextLabel="q7P-V0-oZP" style="IBUITableViewCellStyleValue1" id="1g1-CU-ZWc">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
@@ -199,16 +196,17 @@
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="bgB-nM-Ilw" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="2y2-IF-OZF"/>
-                            <constraint firstAttribute="trailing" secondItem="Pf2-YJ-ZLS" secondAttribute="trailing" id="9DG-Hx-jai"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bgB-nM-Ilw" secondAttribute="trailing" id="Chl-7z-ohg"/>
                             <constraint firstAttribute="trailingMargin" secondItem="lJE-Sy-TUE" secondAttribute="trailing" id="FAb-sg-1LZ"/>
+                            <constraint firstAttribute="trailing" secondItem="Pf2-YJ-ZLS" secondAttribute="trailing" id="IHo-X9-CNe"/>
                             <constraint firstItem="lJE-Sy-TUE" firstAttribute="top" secondItem="bgB-nM-Ilw" secondAttribute="bottom" constant="15" id="MtO-Tc-tEI"/>
+                            <constraint firstItem="bgB-nM-Ilw" firstAttribute="top" secondItem="Pf2-YJ-ZLS" secondAttribute="bottom" constant="10" id="RhT-U9-d6j"/>
                             <constraint firstAttribute="trailingMargin" secondItem="dXL-gC-HWe" secondAttribute="trailing" id="WeG-L4-nJb"/>
+                            <constraint firstItem="Pf2-YJ-ZLS" firstAttribute="top" secondItem="dXL-gC-HWe" secondAttribute="bottom" id="XCg-H0-Vj9"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="lJE-Sy-TUE" secondAttribute="bottom" constant="10" id="cDG-qH-pEK"/>
                             <constraint firstItem="lJE-Sy-TUE" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="ciQ-8L-a2r"/>
                             <constraint firstItem="dXL-gC-HWe" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="ji6-l2-NeD"/>
-                            <constraint firstItem="Pf2-YJ-ZLS" firstAttribute="top" secondItem="dXL-gC-HWe" secondAttribute="bottom" constant="5" id="l0Q-Lj-kOB"/>
-                            <constraint firstItem="Pf2-YJ-ZLS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="n8i-tH-eb3"/>
+                            <constraint firstItem="Pf2-YJ-ZLS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="tdb-fe-mz9"/>
                             <constraint firstItem="dXL-gC-HWe" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="3" id="x4K-hT-t5n"/>
                         </constraints>
                     </view>

@@ -16,6 +16,8 @@ let USER_DEFAULTS_KEY_APP_ROUTE = "appRoute"
 let USER_DEFAULTS_KEY_APP_USER = "appUser"
 let USER_DEFAULTS_KEY_APP_PASSWORD = "appPassword"
 
+let USER_DEFAULTS_KEY_FREQUENCY = "frequency"
+
 let USER_DEFAULTS_KEY_PROTOCOL = "protocol"
 let USER_DEFAULTS_KEY_PROTOCOL_ENDPOINT = "endpoint"
 let USER_DEFAULTS_KEY_PROTOCOL_VENDOR = "vendor"
@@ -186,7 +188,7 @@ struct API {
     }
 
     static func registerDevice(p: Protocol, callback: @escaping (Int, Any)->()){
-        let url = connectedAppURL + "/user/device/" + getUUID()
+        let url = connectedAppURL + "/user/device/" + getUUID() + "?protocol=" + p.rawValue.lowercased()
         let params: Parameters = [:]
         doRequest(url: url, method: HTTPMethod.post, params: params, callback: callback)
     }

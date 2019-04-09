@@ -113,12 +113,21 @@ class VehicleDevice {
             dict.updateValue(mo_id!, forKey: "mo_id")
             let merged = eventDict.merging(dict) { (_, new) in new }
             
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                self.delegate?.showStatus(title: "Live Data is Being Sent", progress: true)
+            }
             do {
                 let success: Bool = try publishEvent(eventDict: merged, eventFormat: eventFormat)
                 if (!success) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        self.delegate?.showStatus(title: "Failed to publish event", progress: false)
+                    }
                     stopPublishing();
                 }
             } catch {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    self.delegate?.showStatus(title: "Failed to publish event", progress: false)
+                }
                 stopPublishing();
             }
         }
