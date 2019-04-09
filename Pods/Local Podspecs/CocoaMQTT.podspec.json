@@ -1,7 +1,7 @@
 {
   "name": "CocoaMQTT",
-  "version": "1.0.17",
-  "summary": "MQTT v3.1.1 client library for iOS and OS X written with Swift 3",
+  "version": "1.1.3",
+  "summary": "MQTT v3.1.1 client library for iOS and OS X written with Swift 4",
   "homepage": "https://github.com/emqtt/CocoaMQTT",
   "license": {
     "type": "MIT"
@@ -19,7 +19,7 @@
   },
   "source": {
     "git": "https://github.com/emqtt/CocoaMQTT.git",
-    "tag": "1.0.17"
+    "tag": "1.1.3"
   },
   "source_files": [
     "Source/{*.h}",
@@ -27,10 +27,7 @@
   ],
   "dependencies": {
     "CocoaAsyncSocket": [
-      "~> 7.5.1"
-    ],
-    "SwiftyTimer": [
-      "~> 2.0.0"
+      "~> 7.6.3"
     ]
   }
 }

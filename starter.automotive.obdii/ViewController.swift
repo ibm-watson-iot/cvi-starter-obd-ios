@@ -1,5 +1,5 @@
 /**
- * Copyright 2016 IBM Corp. All Rights Reserved.
+ * Copyright 2016,2019 IBM Corp. All Rights Reserved.
  *
  * Licensed under the IBM License, a copy of which may be obtained at:
  *
@@ -15,59 +15,86 @@ import SystemConfiguration.CaptiveNetwork
 import CoreLocation
 import CocoaMQTT
 
-class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, UIViewControllerTransitioningDelegate, MQTTConnectionDelegate, OBDStreamDelegate {
-    private var reachability = Reachability()!
+class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIPickerViewDelegate, UIPickerViewDataSource, UIViewControllerTransitioningDelegate, OBDStreamDelegate, DeviceDelegate {
+    private let tableLocationTitles: [String] = ["Longitude", "Latitude", "Heading"]
+    private let tableItemsTitles: [String] = ["Speed", "Engine RPM", "Fuel Level", "Engine Oil Temperature", "Engine Coolant Temperature"]
+    private let tableItemsUnits: [String] = ["", "", "", " MPH", " RPM", " %", " °F", " °F"]
+    static let obdCommands: [String] = ["0D", "0C", "2F", "5C", "05"]
+    private let eventKeys: [String] = ["mo_id", "latitude", "longitude", "altitude", "heading", "timestamp", "trip_id", "speed", "confidence", "map_vendor_name", "map_version", "tenant_id", "props_engineTemp", "props_fuel", "props_engineCoolantTemp", "props_engineRPM"]
 
-    private let tableItemsTitles: [String] = ["Engine Coolant Temperature", "Fuel Level", "Speed", "Engine RPM", "Engine Oil Temperature"]
-    private let tableItemsUnits: [String] = ["°C", "%", " KM/hr", " RPM", "°C"]
-    static let obdCommands: [String] = ["05", "2F", "0D", "0C", "5C"]
-    
-    static var tableItemsValues: [String] = []
-    
-    static var simulation: Bool = false
-    
     @IBOutlet weak var navigationRightButton: UIBarButtonItem!
+    @IBOutlet weak var vehicleIDLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
-    
-    static var navigationBar: UINavigationBar?
-    private var activityIndicator: UIActivityIndicatorView?
-    
+    @IBOutlet weak var protocolSwitch: UISegmentedControl!
+    @IBOutlet weak var pauseResumeButton: UIButton!
+
+    private var reachability = Reachability()!
     let locationManager = CLLocationManager()
     static var location: CLLocation?
     
-    private var deviceBSSID: String = ""
-    private var currentDeviceId: String = ""
+    private var prevLongitude: Double = -1000
+    private var prevLatitude: Double = -1000
+    private var curHeading: Int = -1000
     
-    private var frequencyArray: [Int] = Array(5...60)
+    static var tableItemsValues: [String] = []
+    private var tableDisplayTitles: [String] = []
+    private var tableDisplayValues: [String] = []
+    static var navigationBar: UINavigationBar?
     
-    private var mqttConnection: MQTTConnection?
-    
+    private var activityIndicator: UIActivityIndicatorView?
+    private var isLicenseAgreed: Bool = false
+    private var isApplicationStarted: Bool = false
+    static var isServerSpecified: Bool = false
+
     private var obdStream: OBDStream?
-    
-    private let credentialHeaders: HTTPHeaders = [
-        "Content-Type": "application/json",
-        "Authorization": "Basic " + API.credentialsBase64
-    ]
+    private var obdSimulation: OBDSimulation?
+    static var simulation: Bool = false
+
+    private var frequencyArray: [Int] = Array(1...60)
+    private var currentFrequency: Int = 1
+    private var curProtocol: Protocol = Protocol.HTTP
+    private var vehicleDevice: VehicleDevice?
     
     static var sharedInstance = ViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        confirmDisclaimer()
+        // Initialize this mobile application
+        ViewController.isServerSpecified = API.isServerSpecified()
+        API.initialize();
         
+        // Init protocol
+        let proto = UserDefaults.standard.string(forKey: USER_DEFAULTS_KEY_PROTOCOL) ?? Protocol.HTTP.rawValue
+        curProtocol = Protocol(rawValue: proto) ?? Protocol.HTTP
+        setProtocolSWitch(proto: curProtocol, hidden: false)
+        
+        currentFrequency = UserDefaults.standard.integer(forKey: USER_DEFAULTS_KEY_FREQUENCY)
+        if currentFrequency < frequencyArray[0] {
+            currentFrequency = frequencyArray[0]
+        } else if currentFrequency > frequencyArray[frequencyArray.count - 1] {
+            currentFrequency = frequencyArray[frequencyArray.count - 1]
+        }
+ 
+        // Initialize the table view to show data
         tableView.dataSource = self
         tableView.delegate = self
-        
-        ViewController.tableItemsValues = [String](repeating: "N/A", count: ViewController.obdCommands.count)
+
+        tableDisplayTitles = tableLocationTitles + tableItemsTitles
+        tableDisplayValues = [String](repeating: "N/A", count: tableLocationTitles.count + ViewController.obdCommands.count)
     }
-    
+
+    // Show disclamer UI
     func confirmDisclaimer() {
         let licenseVC: LicenseViewController = self.storyboard!.instantiateViewController(withIdentifier: "licenseViewController") as! LicenseViewController
         licenseVC.modalPresentationStyle = .custom
         licenseVC.transitioningDelegate = self
         licenseVC.onAgree = {() -> Void in
-            self.startApp()
+            self.isLicenseAgreed = true
+            // Start the application when aggreed to the license
+            if ViewController.isServerSpecified {
+                self.startApp()
+            }
         }
         self.present(licenseVC, animated: true, completion: nil)
     }
@@ -75,87 +102,164 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
         return LicensePresentationController(presentedViewController: presented, presenting: presenting)
     }
-
-    func talkToSocket() {
-        obdStream = OBDStream()
-        obdStream?.delegate = self
-        
-        obdStream?.connect()
-    }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        locationManager.requestAlwaysAuthorization()
-        
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.delegate = self
-            locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager.activityType = .automotiveNavigation
-            locationManager.startUpdatingLocation()
-        }
-        
         ViewController.navigationBar = self.navigationController?.navigationBar
         ViewController.navigationBar?.barStyle = UIBarStyle.blackOpaque
-        
-        
-        activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: UIActivityIndicatorViewStyle.white)
+        ViewController.sharedInstance = self
+
+        activityIndicator = UIActivityIndicatorView(style: UIActivityIndicatorView.Style.white)
         navigationRightButton.customView = activityIndicator
         
-        ViewController.sharedInstance = self
+        if isApplicationStarted {
+            // Back from the specify server
+            checkMQTTAvailable(callback:{() in
+                self.checkDeviceRegistry()
+            })
+        } else if ViewController.isServerSpecified == false {
+            // First, show the specify server page to set connecting fleet management server
+            if let viewController = self.storyboard!.instantiateViewController(withIdentifier: "specifyServerView") as? SpecifyServerViewController {
+                if let navigator = self.navigationController {
+                    navigator.pushViewController(viewController, animated: true)
+                }
+            }
+        } else if isLicenseAgreed == true && isApplicationStarted == false {
+            startApp()
+        }
+
+        if isLicenseAgreed == false {
+            confirmDisclaimer()
+        }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        vehicleDevice?.stopPublishing()
+    }
+
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         ViewController.location = manager.location!
-        print("New Location: \(manager.location!.coordinate.longitude), \(manager.location!.coordinate.latitude)")
+//        print("New Location: \(manager.location!.coordinate.longitude), \(manager.location!.coordinate.latitude)")
+
+        let longitude: Double = ViewController.location?.coordinate.longitude ?? -1000
+        let latitude: Double = ViewController.location?.coordinate.latitude ?? -1000
+        if (prevLongitude != -1000 && prevLatitude != -1000 &&
+            longitude != -1000 && latitude != -1000 &&
+            prevLatitude != latitude && prevLongitude != longitude) {
+            curHeading = calcHeading(lon1: prevLongitude, lat1: prevLatitude, lon2: longitude, lat2: latitude)
+        }
+        prevLongitude = longitude
+        prevLatitude = latitude
     }
     
+    private func calcHeading(lon1: Double, lat1: Double, lon2: Double, lat2: Double) -> Int {
+        // this will calculate bearing
+        let p1lon = toRadians(n: lon1);
+        let p1lat = toRadians(n: lat1);
+        let p2lon = toRadians(n: lon2);
+        let p2lat = toRadians(n: lat2);
+        let y = sin(p2lon-p1lon) * cos(p2lat);
+        let x = cos(p1lat)*sin(p2lat) - sin(p1lat)*cos(p2lat)*cos(p2lon-p1lon);
+        let brng = atan2(y, x);
+        return Int(brng * (180 / Double.pi) + 360) % 360;
+    }
+
+    private func toRadians(n: Double) -> Double {
+        return n * (Double.pi / 180);
+    };
+
+    // Start the application
     func startApp() {
-        self.deviceBSSID = self.getBSSID()
+        // Initialize the location manager
+        self.locationManager.requestAlwaysAuthorization()
+        if CLLocationManager.locationServicesEnabled() {
+            self.locationManager.delegate = self
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
+            self.locationManager.activityType = .automotiveNavigation
+            self.locationManager.startUpdatingLocation()
+        }
         
-        let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            ViewController.simulation = true
-            
-            self.startSimulation()
+        self.checkMQTTAvailable(callback:{() in
+            self.isApplicationStarted = true
+            let alertController = UIAlertController(title: "Would you like to use our Simulator?", message: "If you do not have a real OBDII device, then click \"Yes\"", preferredStyle: UIAlertController.Style.alert)
+            alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+                self.startSimulation()
+            })
+            alertController.addAction(UIAlertAction(title: "I have a real OBDII dongle", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
+                self.actualDevice()
+            })
+            self.present(alertController, animated: true, completion: nil)
         })
-        alertController.addAction(UIAlertAction(title: "I have a real OBDII dongle", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-            self.actualDevice()
-        })
-        self.present(alertController, animated: true, completion: nil)
     }
-    
-    public func updateSimulatedValues(){
-        let randomFuelLevel: Double = Double(arc4random_uniform(95) + 5)
-        let randomSpeed: Double = Double(arc4random_uniform(150))
-        let randomEngineCoolant: Double = Double(-40 + Int(arc4random_uniform(UInt32(215 - (-40) + 1))))
-        let randomEngineRPM: Double = Double(arc4random_uniform(600) + 600)
-        let randomEngineOilTemp: Double = Double(-40 + Int(arc4random_uniform(UInt32(210 - (-40) + 1))))
-        
-        ViewController.tableItemsValues = ["\(randomEngineCoolant)", "\(randomFuelLevel)", "\(randomSpeed)", "\(randomEngineRPM)", "\(randomEngineOilTemp)"]
-        
+
+    func updateOBDValues() {
+        let longitude: Double = ViewController.location?.coordinate.longitude ?? 0.0
+        let latitude: Double = ViewController.location?.coordinate.latitude ?? 0.0
+        let heading: Int = curHeading
+        let speed = Int(round(Double(ViewController.tableItemsValues[0])! * 0.621371192))
+        let engineRPM = Int(round(Double(ViewController.tableItemsValues[1])!))
+        let fuelLevel = Double(ViewController.tableItemsValues[2])!
+        let engineTemp = (Double(ViewController.tableItemsValues[3])! * 9 / 5) + 32
+        let engineCoolantTemp =  (Double(ViewController.tableItemsValues[4])! * 9 / 5) + 32
+
+        tableDisplayValues = ["\(longitude)", "\(latitude)", "\(heading)", "\(speed)", "\(engineRPM)", "\(fuelLevel)", "\(engineTemp)", "\(engineCoolantTemp)"]
         tableView.reloadData()
     }
     
+    // Generate car probe data
+    func generateData() -> Dictionary<String, Any> {
+        
+        // Update simulated value
+        if ViewController.simulation {
+            obdSimulation?.updateSimulatedValues()
+        }
+
+        let longitude: Double = ViewController.location?.coordinate.longitude ?? 0.0
+        let latitude: Double = ViewController.location?.coordinate.latitude ?? 0.0
+        let altitude: Double = ViewController.location?.altitude ?? 0.0
+        let heading: Int = curHeading
+        let speed: Int = Int(round(Double(ViewController.tableItemsValues[0])!))
+        
+        var dict = Dictionary<String, Any>()
+        dict.updateValue(longitude, forKey: "longitude")
+        dict.updateValue(latitude, forKey: "latitude")
+        dict.updateValue(altitude, forKey: "altitude")
+        dict.updateValue(heading, forKey: "heading")
+        dict.updateValue(speed, forKey: "speed")
+
+        var props = Dictionary<String, Any>()
+        props.updateValue(ViewController.tableItemsValues[1], forKey: "engineRPM")
+        props.updateValue(ViewController.tableItemsValues[2], forKey: "fuel")
+        props.updateValue(ViewController.tableItemsValues[3], forKey: "engineTemp")
+        props.updateValue(ViewController.tableItemsValues[4], forKey: "engineCoolantTemp")
+        dict.updateValue(props, forKey: "props")
+        return dict;
+    }
+
+    // Start with simulation mode
     private func startSimulation() {
+        ViewController.simulation = true
         if reachability.isReachable {
             showStatus(title: "Starting the Simulation")
-            
-            updateSimulatedValues()
-            
+            obdSimulation = OBDSimulation()
+            obdSimulation?.delegate = self
+            obdSimulation?.connect()
             checkDeviceRegistry()
         } else {
             showStatus(title: "No Internet Connection Available")
         }
     }
     
+    // Start with real device mode
     private func actualDevice() {
-        let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+        let alertController = UIAlertController(title: "Are you connected to your OBDII Dongle?", message: "You need to connect to your OBDII dongle through Wi-Fi, and then press \"Yes\"", preferredStyle: UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
             self.talkToSocket()
         })
-        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-            let toast = UIAlertController(title: nil, message: "You would need to connect to your OBDII dongle in order to use this feature!", preferredStyle: UIAlertControllerStyle.alert)
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
+            let toast = UIAlertController(title: nil, message: "You would need to connect to your OBDII dongle in order to use this feature!", preferredStyle: UIAlertController.Style.alert)
             
             self.present(toast, animated: true, completion: nil)
             
@@ -165,204 +269,160 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         })
         self.present(alertController, animated: true, completion: nil)
     }
+ 
+    // Start connecting to OBDII device
+    func talkToSocket() {
+        obdStream = OBDStream()
+        obdStream?.delegate = self
+        
+        obdStream?.connect()
+    }
+
+    private func setProtocolSWitch(proto: Protocol, hidden: Bool) {
+        if (!hidden) {
+            if self.curProtocol == Protocol.MQTT {
+                self.protocolSwitch.selectedSegmentIndex = 1
+            } else {
+                self.protocolSwitch.selectedSegmentIndex = 0
+            }
+        }
+        self.protocolSwitch.isHidden = hidden;
+
+    }
     
+    // Check if MQTT protocol is supported or not. If true, show the switch control to change protocols
+    private func checkMQTTAvailable(callback: @escaping ()->()){
+        API.checkMQTTAvailable(callback: {(statusCode, result) in
+            self.protocolSwitch.isHidden = true;
+            if statusCode == 200 {
+                let resultDictionary = result as! NSDictionary
+                let mqttAvailable = resultDictionary["available"] as! Bool
+                if mqttAvailable {
+                    // Update protocol switch UI
+                    self.setProtocolSWitch(proto: self.curProtocol, hidden: false)
+                } else {
+                    self.curProtocol = Protocol.HTTP
+                    self.setProtocolSWitch(proto: self.curProtocol, hidden: false)
+                }
+            } else {
+                // Error to get the status
+                self.curProtocol = Protocol.HTTP
+                self.setProtocolSWitch(proto: self.curProtocol, hidden: true)
+            }
+            callback()
+        })
+    }
+
+    // Check access information in cache or get the information from server if it does not exist in the cache
     internal func checkDeviceRegistry() {
         showStatus(title: "Checking Device Registeration", progress: true)
         
-        var url: String = ""
+        // Stop existing trip and initialize new trip
+        vehicleDevice?.clean()
+        vehicleDevice = nil
         
-        if (ViewController.simulation) {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + API.getUUID()
-        } else {
-            url = API.platformAPI + "/device/types/" + API.typeId + "/devices/" + deviceBSSID.replacingOccurrences(of: ":", with: "-")
+        if let accessInfo: Dictionary<String, String?> = API.createAccessInfo(proto: curProtocol) {
+            deviceRegistered(accessInfo: accessInfo)
+            return
         }
         
-        Alamofire.request(url, method: .get, parameters: nil, encoding: JSONEncoding.default, headers: credentialHeaders).responseJSON { (response) in
-            print(response)
-            print("\(response.response?.statusCode)")
-            
-            let statusCode = response.response!.statusCode
-            
+        API.getDeviceAccessInfo(p: curProtocol, callback: { (statusCode: Int, result: Any) in
             switch statusCode{
-                case 200:
-                    print("Check Device Registry: \(response)");
-                    print("Check Device Registry: ***Already Registered***");
-                    
-                    if let result = response.result.value {
-                        let resultDictionary = result as! NSDictionary
-                        self.currentDeviceId = resultDictionary["deviceId"] as! String
-                        
-                        self.showStatus(title: "Device Already Registered")
-                        
-                        self.deviceRegistered()
-                    }
-                    
-                    self.progressStop()
-                    
-                    break;
-                case 404, 405:
-                    print("Check Device Registry: ***Not Registered***")
-                    
-                    self.progressStop()
-                    
-                    let alertController = UIAlertController(title: "Your Device is NOT Registered!", message: "In order to use this application, we need to register your device to the IBM IoT Platform", preferredStyle: UIAlertControllerStyle.alert)
-                    
-                    alertController.addAction(UIAlertAction(title: "Register", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                        self.registerDevice()
-                    })
-                    
-                    alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                        self.showToast(message: "Cannot continue without registering your device!")
-                    })
-                    
-                    self.present(alertController, animated: true, completion: nil)
-                    
-                    break;
-                default:
-                    print("Failed to connect IoTP: statusCode: \(statusCode)");
-                    
-                    self.progressStop()
-                    
-                    let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
-                    
-                    alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                        self.showStatus(title: "Failed to connect to IBM IoT Platform")
-                    })
-                    
-                    alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                        self.showToast(message: "Cannot continue without connecting to IBM IoT Platform!")
-                    })
-                    self.present(alertController, animated: true, completion: nil)
-                    
-                    break;
-            }
-        }
-    }
-    
-    private func getBSSID() -> String{
-        let interfaces:NSArray? = CNCopySupportedInterfaces()
-        if let interfaceArray = interfaces {
-            let interfaceDict:NSDictionary? = CNCopyCurrentNetworkInfo(interfaceArray[0] as! CFString)
-            
-            if interfaceDict != nil {
-                return interfaceDict!["BSSID"]! as! String
-            }
-        }
-        
-        return "0:17:df:37:94:b1"
-        // TODO - Change to NONE
-    }
-    
-    private func registerDevice() {
-        let url: URL = URL(string: API.addDevices)!
-        
-        self.showStatus(title: "Registering Your Device", progress: true)
-        
-        let parameters: Parameters = [
-            "typeId": API.typeId,
-            "deviceId": ViewController.simulation ? API.getUUID() : deviceBSSID.replacingOccurrences(of: ":", with: "-"),
-            "authToken": API.apiToken
-        ]
-        
-        Alamofire.request(url, method: .post, parameters: parameters, encoding: deviceParamsEncoding(), headers: credentialHeaders).responseJSON { (response) in
-            print("Register Device: \(response)")
-            
-            let statusCode = response.response!.statusCode
-            print(statusCode)
-            
-            switch statusCode{
-            case 200, 201:
-                if let result = response.result.value {
-                    let resultDictionary = (result as! [NSDictionary])[0]
-                    
-                    let authToken = (resultDictionary["authToken"] ?? "N/A") as? String
-                    self.currentDeviceId = ((resultDictionary["deviceId"] ?? "N/A") as? String)!
-                    let userDefaultsKey = "iota-obdii-auth-" + self.currentDeviceId
-                    
-                    if (API.getStoredData(key: userDefaultsKey) != authToken) {
-                        API.storeData(key: userDefaultsKey, value: authToken!)
-                    }
-                    
-                    let alertController = UIAlertController(title: "Your Device is Now Registered!", message: "Please take note of this Autentication Token as you will need it in the future", preferredStyle: UIAlertControllerStyle.alert)
-                    
-                    alertController.addAction(UIAlertAction(title: "Copy to my Clipboard", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                        UIPasteboard.general.string = authToken
-                        
-                        self.deviceRegistered()
-                    })
-                    
-                    alertController.addTextField(configurationHandler: {(textField: UITextField!) in
-                        textField.text = authToken
-                        textField.isEnabled = false
-                    })
-                    
-                    self.present(alertController, animated: true, completion: nil)
-                }
+            case 200:
+                print("Check Device Registry: \(result)");
+                print("Check Device Registry: ***Already Registered***");
+                
+                self.showStatus(title: "Your device is already registered")
+                let accessInfo: Dictionary<String, String?> = self.setAccessInfo(resultDictionary: result as! NSDictionary)
+                self.deviceRegistered(accessInfo: accessInfo)
+                self.progressStop()
                 
                 break;
             case 404, 405:
-                print(statusCode)
-                
-                break;
-            default:
-                print("Failed to connect IoTP: statusCode: \(statusCode)")
+                print("Check Device Registry: ***Not Registered***")
                 
                 self.progressStop()
-                
-                let alertController = UIAlertController(title: "Failed to connect to IBM IoT Platform", message: "Check orgId, apiKey and apiToken of your IBM IoT Platform. statusCode: \(statusCode)", preferredStyle: UIAlertControllerStyle.alert)
-                
-                alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-                    self.showStatus(title: "Failed to connect to IBM IoT Platform")
+                let alertController = UIAlertController(title: "Your Device is NOT Registered!", message: "In order to use this application, we need to register your device to the IBM IoT Platform", preferredStyle: UIAlertController.Style.alert)
+                alertController.addAction(UIAlertAction(title: "Register", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+                    self.registerDevice()
                 })
-                
-                alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
-                    self.showToast(message: "Cannot continue without connecting to IBM IoT Platform!")
+                alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
+                    self.showToast(message: "Cannot continue without registering your device!")
                 })
                 self.present(alertController, animated: true, completion: nil)
-                
+                break;
+            default:
+                self.connectingToApplicationError(statusCode: statusCode);
                 break;
             }
-        }
-    }
+        });
+
+     }
     
-    private func deviceRegistered() {
-        let clientIdPid = "d:\(API.orgId):\(API.typeId):\(currentDeviceId)"
-        
-        mqttConnection = MQTTConnection(clientId: clientIdPid, host: "\(API.orgId).messaging.internetofthings.ibmcloud.com", port: 8883)
-        mqttConnection?.delegate = self
-        
-        print("Password \(API.getStoredData(key: ("iota-obdii-auth-" + currentDeviceId)))")
-        
-        mqttConnection?.connect(deviceId: currentDeviceId)
-    }
-    
-    private static func deviceParamsToString(parameters: Parameters) -> String {
-        var temp: String = "[{"
-        
-        for (index, item) in parameters.enumerated() {
-            temp += "\"\(item.key)\":\"\(item.value)\""
-            
-            if index < (parameters.count - 1) {
-                temp += ", "
+    private func registerDevice() {
+        self.showStatus(title: "Registering Your Device", progress: true)
+ 
+        API.registerDevice(p: curProtocol, callback: { (statusCode: Int, result: Any) in
+            switch statusCode{
+            case 200, 201:
+                let accessInfo: Dictionary<String, String?> = self.setAccessInfo(resultDictionary: result as! NSDictionary)
+
+                let alertController = UIAlertController(title: "Success", message: "Your device is registered!",
+                                                        preferredStyle: UIAlertController.Style.alert)
+                alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+                    self.deviceRegistered(accessInfo: accessInfo)
+                })
+               self.present(alertController, animated: true, completion: nil)
+                self.progressStop()
+                break;
+            default:
+                self.connectingToApplicationError(statusCode: statusCode);
+                break;
             }
-        }
-        
-        temp += "}]"
-        
-        return temp
+        })
     }
     
-    struct deviceParamsEncoding: ParameterEncoding {
-        func encode(_ urlRequest: URLRequestConvertible, with parameters: Parameters?) throws -> URLRequest {
-            var request = try urlRequest.asURLRequest()
-            request.httpBody = ViewController.deviceParamsToString(parameters: parameters!).data(using: .utf8)
-            
-            return request
+    private func setAccessInfo(resultDictionary: NSDictionary) -> Dictionary <String, String?> {
+        var accessInfo = Dictionary<String, String?>();
+        for (key, value) in resultDictionary {
+            accessInfo.updateValue(value as? String, forKey: key as! String)
         }
+        API.setAccessInfo(proto: self.curProtocol, accessInfo: accessInfo)
+        return accessInfo
+    }
+    
+    private func connectingToApplicationError(statusCode: Int) {
+        print("Failed to register device : statusCode: \(statusCode)");
+        
+        progressStop()
+        
+        let alertController = UIAlertController(title: "Failed to register device", message: "Check configurations of the starter app server. statusCode: \(statusCode)", preferredStyle: UIAlertController.Style.alert)
+        
+        alertController.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+            self.showStatus(title: "Failed to register device")
+        })
+        
+        alertController.addAction(UIAlertAction(title: "Exit", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
+            self.showToast(message: "Cannot continue without connecting to starter app!")
+        })
+        present(alertController, animated: true, completion: nil)
+    }
+    
+    private func deviceRegistered(accessInfo: Dictionary<String, String?>) {
+        showStatus(title: "Device is Ready", progress: true)
+
+        // Show vehicle ID to UI
+        let mo_id: String! = accessInfo[USER_DEFAULTS_KEY_PROTOCOL_MOID] ?? "<None>"
+        vehicleIDLabel.text = mo_id
+
+        // Start publishing
+        vehicleDevice = curProtocol.createVehicleData(accessInfo: accessInfo, eventKeys: eventKeys)
+        vehicleDevice?.delegate = self
+        vehicleDevice?.startPublishing(uploadInterval: currentFrequency)
     }
     
     @IBAction func changeFrequency(_ sender: Any) {
-        let alertController = UIAlertController(title: "Change the Frequency of Data Being Sent (in Seconds)", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "Change the Frequency of Data Being Sent (in Seconds)", message: nil, preferredStyle: UIAlertController.Style.alert)
         
         let uiViewController = UIViewController()
         uiViewController.preferredContentSize = CGSize(width: 250,height: 275)
@@ -370,30 +430,57 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         let pickerView = UIPickerView(frame: CGRect(x: 0, y: 0, width: 250, height: 275))
         pickerView.delegate = self
         pickerView.dataSource = self
+        pickerView.selectRow(currentFrequency-1, inComponent: 0, animated: false)
         
         uiViewController.view.addSubview(pickerView)
         alertController.setValue(uiViewController, forKey: "contentViewController")
         
-        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in})
+        alertController.addAction(UIAlertAction(title: "Cancel", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in})
         
-        alertController.addAction(UIAlertAction(title: "Update", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
-            let newInterval: Double = Double(self.frequencyArray[pickerView.selectedRow(inComponent: 0)])
-            self.mqttConnection?.updateTimer(interval: newInterval)
+        alertController.addAction(UIAlertAction(title: "Update", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
+            self.currentFrequency = self.frequencyArray[pickerView.selectedRow(inComponent: 0)]
+            UserDefaults.standard.set(self.currentFrequency, forKey: USER_DEFAULTS_KEY_FREQUENCY)
+            self.vehicleDevice?.startPublishing(uploadInterval: self.currentFrequency)
         })
         
         self.present(alertController, animated: true, completion: nil)
     }
     
+    @IBAction func changeProtocol(_ sender: UISegmentedControl) {
+        switch sender.selectedSegmentIndex {
+        case 0:
+            curProtocol = Protocol.HTTP
+            break
+        case 1:
+            curProtocol = Protocol.MQTT
+            break
+        default:
+            return
+        }
+        UserDefaults.standard.set(curProtocol.rawValue, forKey: USER_DEFAULTS_KEY_PROTOCOL)
+        self.checkDeviceRegistry()
+    }
+    
+    @IBAction func pauseResumeAction(_ sender: UIButton) {
+        if pauseResumeButton.currentTitle == "Pause" {
+            pauseResumeButton.setTitle("Resume", for: UIControl.State.normal)
+            vehicleDevice?.stopPublishing()
+        } else {
+            pauseResumeButton.setTitle("Pause", for: UIControl.State.normal)
+            vehicleDevice?.startPublishing(uploadInterval: currentFrequency)
+        }
+    }
+
     @IBAction func endSession(_ sender: Any) {
         showToast(message: "Session Ended, application will close now!")
     }
     
     internal func obdStreamError() {
-        let alertController = UIAlertController(title: "Connection Failed", message: "Did you want to try again?", preferredStyle: UIAlertControllerStyle.alert)
-        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertActionStyle.default) { (result : UIAlertAction) -> Void in
+        let alertController = UIAlertController(title: "Connection Failed", message: "Did you want to try again?", preferredStyle: UIAlertController.Style.alert)
+        alertController.addAction(UIAlertAction(title: "Yes", style: UIAlertAction.Style.default) { (result : UIAlertAction) -> Void in
             self.talkToSocket()
         })
-        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertActionStyle.destructive) { (result : UIAlertAction) -> Void in
+        alertController.addAction(UIAlertAction(title: "Back", style: UIAlertAction.Style.destructive) { (result : UIAlertAction) -> Void in
             self.startApp()
         })
         
@@ -431,7 +518,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func showToast(message: String) {
-        let toast = UIAlertController(title: nil, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        let toast = UIAlertController(title: nil, message: message, preferredStyle: UIAlertController.Style.alert)
         
         self.present(toast, animated: true, completion: nil)
         
@@ -441,18 +528,18 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tableItemsTitles.count
+        return tableDisplayTitles.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: UITableViewCellStyle.value1, reuseIdentifier: "HomeTableCells")
+        let cell = UITableViewCell(style: UITableViewCell.CellStyle.value1, reuseIdentifier: "HomeTableCells")
         
-        cell.textLabel?.text = tableItemsTitles[indexPath.row]
+        cell.textLabel?.text = tableDisplayTitles[indexPath.row]
         
-        if ViewController.tableItemsValues[indexPath.row] == "N/A" {
-            cell.detailTextLabel?.text = ViewController.tableItemsValues[indexPath.row]
+        if tableDisplayValues[indexPath.row] == "N/A" {
+            cell.detailTextLabel?.text = tableDisplayValues[indexPath.row]
         } else {
-            cell.detailTextLabel?.text = ViewController.tableItemsValues[indexPath.row] + tableItemsUnits[indexPath.row]
+            cell.detailTextLabel?.text = tableDisplayValues[indexPath.row] + tableItemsUnits[indexPath.row]
         }
         
         return cell

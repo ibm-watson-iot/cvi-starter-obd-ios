@@ -17,7 +17,7 @@ Once you want to stop the application from recording your data, simply press "En
 You can currently download and install the mobile app on your iOS mobile device.
 
 ### Server component
-The "IBM IoT Connected Vehicle Insights - OBDII Fleet Management App" interacts with a server component. The server component provides the back-end fleet management and system monitoring service that provides more features for fleet management companies. By default, the mobile app connects to a test server that is provided by IBM. You can also choose to deploy your own server instance to IBM Cloud and connect your mobile app to that instance instead of the test system. For more information about deploying the fleet management server component, see [ibm-watson-iot/iota-starter-server-fm](https://github.com/ibm-watson-iot/iota-starter-server-fm).
+The "IBM IoT Connected Vehicle Insights - OBDII Fleet Management App" interacts with a server component. The server component provides the back-end fleet management and system monitoring service that provides more features for fleet management companies. By default, the mobile app connects to a test server that is provided by IBM. You can also choose to deploy your own server instance to IBM Cloud and connect your mobile app to that instance instead of the test system. For more information about deploying the fleet management server component, see [ibm-watson-iot/iota-starter-server-fm-saas](https://github.com/ibm-watson-iot/iota-starter-server-fm-saas).
 
 ### OBDII Parsing
 The application uses a class made in-house to initiate OBDII connection and parse values. It can currently only parse the variables used in this application, but can easily be scaled to support more commands.
@@ -30,7 +30,7 @@ Before you deploy the iOS application, ensure that the following prerequisites a
 
 - The sample source code for the mobile app is only supported for use with an official Apple iOS device.
 - The sample source code for the mobile app is also supported only with officially licensed Apple development tools that are customized and distributed under the terms and conditions of your licensed Apple iOS Developer Program or your licensed Apple iOS Enterprise Program.
-- Apple Xcode 8.0 integrated development environment (IDE) and [CocoaPods](https://cocoapods.org/) must be installed on the computer that you plan to clone the mobile app source repository onto.
+- Apple Xcode 10.2 integrated development environment (IDE) and [CocoaPods](https://cocoapods.org/) must be installed on the computer that you plan to clone the mobile app source repository onto.
 
 
 ## Deploying the mobile app
@@ -39,19 +39,17 @@ To try the iOS application using iOS Emulator, complete the following steps:
 
 1. Open a Terminal session and install CocoaPods by using the following command:   
 ```$ sudo gem install cocoapods```    
-1. Clone the source code repository for the mobile app by using the following git command:    
+
+2. Clone the source code repository for the mobile app by using the following git command:    
 
     ```$ git clone https://github.com/ibm-watson-iot/iota-starter-obd-ios```  
-2. Go to source code folder, and then enter the following commands:   
+3. Go to source code folder, and then enter the following commands:   
 ```$ pod install```  
 ```$ open starter.automotive.obdii.xcworkspace```
 
-
-3. Edit the **API.swift file**, and set the `orgId` variable to your Organization's ID, and the `apiKey` and `apiToken` variables to your API key and Auth Token from your instance of the IoT Platform.
-
 4. Go to the upper left of the Xcode UI, click **Run**.
 
-5. To deploy the mobile app on your device, see [Launching Your App on Devices](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/LaunchingYourApponDevices/LaunchingYourApponDevices.html).
+5. To deploy the mobile app on your device, see [Run your app on a devices](https://help.apple.com/xcode/mac/current/#/dev60b6fbbc7).
 
 ## Running the mobile app
 Before running the mobile app with a real OBDII dongle, you need to set up WiFi connection between your phone and the OBDII device to use a static IP address, unless the instruction given from the device manufacturer directs otherwise. Do the following steps:
@@ -71,14 +69,13 @@ To report a defect with the IBM IoT Connected Vehicle Insights - Mobility Starte
 The "IBM IoT Connected Vehicle Insights - OBDII Fleet Management App for iOS" on IBM Cloud stores all of the driving data that is obtained while you use the mobile app.
 
 ## Questions, comments or suggestions
-For your questions, comments or suggestions to us, visit [IBM IoT Connected Vehicle Insights Application community site] (https://www.ibm.com/developerworks/community/groups/service/html/communitystart?communityUuid=3b06ca1c-fd7c-4a59-a888-e5e3a8384091).
+For your questions, comments or suggestions to us, visit [IBM Community for IBM IoT Connected Vehicle Insights](https://community.ibm.com/community/user/imwuc/communities/globalgrouphome?CommunityKey=eaea64a5-fb9b-4d78-b1bd-d87dc70e8171).
 
 ## Useful links
-
-- [IBM IoT Connected Vehicle Insights](http://www.ibm.com/internet-of-things/iot-industry/iot-automotive)
-- [IBM Watson Internet of Things](http://www.ibm.com/internet-of-things/)  
-- [IBM Watson IoT Platform](http://www.ibm.com/internet-of-things/iot-solutions/watson-iot-platform/)   
-- [IBM Watson IoT Platform Developers Community](https://developer.ibm.com/iotplatform/)
-- [IBM Cloud](https://bluemix.net/)  
-- [IBM Cloud documentation](https://www.ng.bluemix.net/docs/)  
-- [IBM Cloud developers community](http://developer.ibm.com/bluemix) 
+- [IBM Cloud](https://cloud.ibm.com)
+- [IBM Cloud Documentation](https://cloud.ibm.com/docs)
+- [IBM Cloud Developers Community](https://developer.ibm.com/depmodels/cloud)
+- [IBM Watson Internet of Things](http://www.ibm.com/internet-of-things)
+- [IBM Watson IoT Platform](https://www.ibm.com/internet-of-things/solutions/iot-platform/watson-iot-platform)
+- [IBM Watson IoT Platform Developers Community](https://developer.ibm.com/iotplatform)
+- [IBM Marketplace: IBM IoT Connected Vehicle Insights](https://www.ibm.com/us-en/marketplace/iot-for-automotive)

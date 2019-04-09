@@ -8,7 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		4BA8BFBC934ED5EDF7A2A4B0 /* Pods_starter_automotive_obdii.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B4F8D1C394091276F18CB17 /* Pods_starter_automotive_obdii.framework */; };
-		613AE1C81E01D0FD002EA6B7 /* MQTTConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613AE1C71E01D0FD002EA6B7 /* MQTTConnection.swift */; };
+		4C7990AA2254F51400C0C696 /* OBDSimulation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7990A92254F51400C0C696 /* OBDSimulation.swift */; };
+		4C7990AC2254F56800C0C696 /* OBDStreamDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7990AB2254F56800C0C696 /* OBDStreamDelegate.swift */; };
+		4CD929CB224BDA210027E869 /* QRCodeReaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD929C9224BDA210027E869 /* QRCodeReaderViewController.swift */; };
+		4CD929CC224BDA210027E869 /* SpecifyServerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD929CA224BDA210027E869 /* SpecifyServerViewController.swift */; };
+		4CD929CE224DCB780027E869 /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD929CD224DCB780027E869 /* Protocol.swift */; };
+		4CD929D0224DCC5D0027E869 /* EventFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD929CF224DCC5D0027E869 /* EventFormat.swift */; };
+		4CD929D7224E6B0E0027E869 /* VehicleDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD929D6224E6B0E0027E869 /* VehicleDevice.swift */; };
+		4CD929D9224E7A0B0027E869 /* HTTPVehicleDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD929D8224E7A0B0027E869 /* HTTPVehicleDevice.swift */; };
+		4CD929DC2250AE0C0027E869 /* DeviceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD929DB2250AE0C0027E869 /* DeviceDelegate.swift */; };
+		4CD929DE2251D8400027E869 /* IoTPVehicleDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD929DD2251D8400027E869 /* IoTPVehicleDevice.swift */; };
 		613AE1CA1E099679002EA6B7 /* OBDStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 613AE1C91E099679002EA6B7 /* OBDStream.swift */; };
 		61A806AD1DDBA875008540CE /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 61A806AC1DDBA875008540CE /* Podfile */; };
 		61A806AF1DDBAB79008540CE /* ReachabilitySwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61A806AE1DDBAB79008540CE /* ReachabilitySwift.framework */; };
@@ -19,7 +28,6 @@
 		61AB543A1DDA5EAA00D60E67 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 61AB54391DDA5EAA00D60E67 /* Assets.xcassets */; };
 		61AB543D1DDA5EAA00D60E67 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61AB543B1DDA5EAA00D60E67 /* LaunchScreen.storyboard */; };
 		61BDF6DB1DDCBFA300793CD2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */; };
-		61DEBE6B1DF8995300779408 /* IoTPlatformDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DEBE6A1DF8995300779408 /* IoTPlatformDevice.swift */; };
 		7077A0391E07C67500E73A10 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7077A0381E07C67500E73A10 /* LICENSE */; };
 		7077A03B1E07C76200E73A10 /* LicenseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7077A03A1E07C76200E73A10 /* LicenseViewController.swift */; };
 /* End PBXBuildFile section */
@@ -27,7 +35,16 @@
 /* Begin PBXFileReference section */
 		3D01C5A92CAF67CA67CF61C1 /* Pods-starter.automotive.obdii.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-starter.automotive.obdii.release.xcconfig"; path = "Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii.release.xcconfig"; sourceTree = "<group>"; };
 		4B4F8D1C394091276F18CB17 /* Pods_starter_automotive_obdii.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_starter_automotive_obdii.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		613AE1C71E01D0FD002EA6B7 /* MQTTConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MQTTConnection.swift; sourceTree = "<group>"; };
+		4C7990A92254F51400C0C696 /* OBDSimulation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OBDSimulation.swift; sourceTree = "<group>"; };
+		4C7990AB2254F56800C0C696 /* OBDStreamDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OBDStreamDelegate.swift; sourceTree = "<group>"; };
+		4CD929C9224BDA210027E869 /* QRCodeReaderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QRCodeReaderViewController.swift; sourceTree = "<group>"; };
+		4CD929CA224BDA210027E869 /* SpecifyServerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpecifyServerViewController.swift; sourceTree = "<group>"; };
+		4CD929CD224DCB780027E869 /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
+		4CD929CF224DCC5D0027E869 /* EventFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventFormat.swift; sourceTree = "<group>"; };
+		4CD929D6224E6B0E0027E869 /* VehicleDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleDevice.swift; sourceTree = "<group>"; };
+		4CD929D8224E7A0B0027E869 /* HTTPVehicleDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPVehicleDevice.swift; sourceTree = "<group>"; };
+		4CD929DB2250AE0C0027E869 /* DeviceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDelegate.swift; sourceTree = "<group>"; };
+		4CD929DD2251D8400027E869 /* IoTPVehicleDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IoTPVehicleDevice.swift; sourceTree = "<group>"; };
 		613AE1C91E099679002EA6B7 /* OBDStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OBDStream.swift; sourceTree = "<group>"; };
 		61A806AC1DDBA875008540CE /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		61A806AE1DDBAB79008540CE /* ReachabilitySwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReachabilitySwift.framework; path = "Pods/../build/Debug-iphoneos/ReachabilitySwift.framework"; sourceTree = "<group>"; };
@@ -40,7 +57,6 @@
 		61AB543C1DDA5EAA00D60E67 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		61AB543E1DDA5EAA00D60E67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "Pods/../build/Debug-iphoneos/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
-		61DEBE6A1DF8995300779408 /* IoTPlatformDevice.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IoTPlatformDevice.swift; sourceTree = "<group>"; };
 		7077A0381E07C67500E73A10 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		7077A03A1E07C76200E73A10 /* LicenseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LicenseViewController.swift; sourceTree = "<group>"; };
 		ABD1DA47B34BFE20485504F5 /* Pods-starter.automotive.obdii.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-starter.automotive.obdii.debug.xcconfig"; path = "Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii.debug.xcconfig"; sourceTree = "<group>"; };
@@ -60,6 +76,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4CD929C8224BDA090027E869 /* QR code reader */ = {
+			isa = PBXGroup;
+			children = (
+				4CD929C9224BDA210027E869 /* QRCodeReaderViewController.swift */,
+				4CD929CA224BDA210027E869 /* SpecifyServerViewController.swift */,
+			);
+			path = "QR code reader";
+			sourceTree = "<group>";
+		};
+		4CD929D5224E6AE80027E869 /* device */ = {
+			isa = PBXGroup;
+			children = (
+				4CD929CD224DCB780027E869 /* Protocol.swift */,
+				4CD929CF224DCC5D0027E869 /* EventFormat.swift */,
+				4CD929D6224E6B0E0027E869 /* VehicleDevice.swift */,
+				4CD929D8224E7A0B0027E869 /* HTTPVehicleDevice.swift */,
+				4CD929DB2250AE0C0027E869 /* DeviceDelegate.swift */,
+				4CD929DD2251D8400027E869 /* IoTPVehicleDevice.swift */,
+			);
+			path = device;
+			sourceTree = "<group>";
+		};
+		4CD929DA2250974C0027E869 /* obd */ = {
+			isa = PBXGroup;
+			children = (
+				613AE1C91E099679002EA6B7 /* OBDStream.swift */,
+				4C7990A92254F51400C0C696 /* OBDSimulation.swift */,
+				4C7990AB2254F56800C0C696 /* OBDStreamDelegate.swift */,
+			);
+			path = obd;
+			sourceTree = "<group>";
+		};
 		61AB54261DDA5EAA00D60E67 = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +131,9 @@
 		61AB54311DDA5EAA00D60E67 /* starter.automotive.obdii */ = {
 			isa = PBXGroup;
 			children = (
+				4CD929DA2250974C0027E869 /* obd */,
+				4CD929D5224E6AE80027E869 /* device */,
+				4CD929C8224BDA090027E869 /* QR code reader */,
 				7077A03A1E07C76200E73A10 /* LicenseViewController.swift */,
 				61A806B01DDBAFE4008540CE /* API.swift */,
 				61AB54321DDA5EAA00D60E67 /* AppDelegate.swift */,
@@ -91,9 +142,6 @@
 				61AB54391DDA5EAA00D60E67 /* Assets.xcassets */,
 				61AB543B1DDA5EAA00D60E67 /* LaunchScreen.storyboard */,
 				61AB543E1DDA5EAA00D60E67 /* Info.plist */,
-				61DEBE6A1DF8995300779408 /* IoTPlatformDevice.swift */,
-				613AE1C71E01D0FD002EA6B7 /* MQTTConnection.swift */,
-				613AE1C91E099679002EA6B7 /* OBDStream.swift */,
 			);
 			path = starter.automotive.obdii;
 			sourceTree = "<group>";
@@ -129,7 +177,6 @@
 				61AB542C1DDA5EAA00D60E67 /* Frameworks */,
 				61AB542D1DDA5EAA00D60E67 /* Resources */,
 				6F5538D70B54828B065F0D0F /* [CP] Embed Pods Frameworks */,
-				F5823FABBF1C3A94D8150998 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -153,6 +200,7 @@
 					61AB542E1DDA5EAA00D60E67 = {
 						CreatedOnToolsVersion = 8.1;
 						DevelopmentTeam = Q7W47GFKL3;
+						LastSwiftMigration = 1010;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -162,6 +210,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -197,13 +246,22 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
+				"${BUILT_PRODUCTS_DIR}/CocoaAsyncSocket/CocoaAsyncSocket.framework",
+				"${BUILT_PRODUCTS_DIR}/CocoaMQTT/CocoaMQTT.framework",
+				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/ReachabilitySwift.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaAsyncSocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CocoaMQTT.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReachabilitySwift.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7ADE6A8D28B1FB5FAA715147 /* [CP] Check Pods Manifest.lock */ = {
@@ -212,28 +270,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-starter.automotive.obdii-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		F5823FABBF1C3A94D8150998 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -244,12 +290,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				61AB54351DDA5EAA00D60E67 /* ViewController.swift in Sources */,
-				613AE1C81E01D0FD002EA6B7 /* MQTTConnection.swift in Sources */,
+				4CD929D9224E7A0B0027E869 /* HTTPVehicleDevice.swift in Sources */,
+				4CD929CC224BDA210027E869 /* SpecifyServerViewController.swift in Sources */,
 				61A806B11DDBAFE4008540CE /* API.swift in Sources */,
 				613AE1CA1E099679002EA6B7 /* OBDStream.swift in Sources */,
+				4CD929D0224DCC5D0027E869 /* EventFormat.swift in Sources */,
+				4CD929DE2251D8400027E869 /* IoTPVehicleDevice.swift in Sources */,
 				61AB54331DDA5EAA00D60E67 /* AppDelegate.swift in Sources */,
 				7077A03B1E07C76200E73A10 /* LicenseViewController.swift in Sources */,
-				61DEBE6B1DF8995300779408 /* IoTPlatformDevice.swift in Sources */,
+				4CD929DC2250AE0C0027E869 /* DeviceDelegate.swift in Sources */,
+				4CD929CB224BDA210027E869 /* QRCodeReaderViewController.swift in Sources */,
+				4CD929D7224E6B0E0027E869 /* VehicleDevice.swift in Sources */,
+				4C7990AC2254F56800C0C696 /* OBDStreamDelegate.swift in Sources */,
+				4C7990AA2254F51400C0C696 /* OBDSimulation.swift in Sources */,
+				4CD929CE224DCB780027E869 /* Protocol.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -395,7 +449,8 @@
 				PRODUCT_NAME = "IoTCVI - OBDII";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "IBM Test Wildcard App";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -406,7 +461,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Q7W47GFKL3;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug-iphoneos",
@@ -418,8 +473,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.cio.be.iphone.iot.automotive.starter.obd2;
 				PRODUCT_NAME = "IoTCVI - OBDII";
 				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "IBM CIO Distribution Wildcard";
-				SWIFT_VERSION = 3.0;
+				PROVISIONING_PROFILE_SPECIFIER = "IBM Test Wildcard App";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

@@ -10,12 +10,6 @@
 
 import UIKit
 
-protocol OBDStreamDelegate: class {
-    func showStatus(title: String, progress: Bool)
-    func checkDeviceRegistry()
-    func obdStreamError()
-}
-
 class OBDStream: NSObject, StreamDelegate {
     weak var delegate: OBDStreamDelegate?
     private var buffer = [UInt8](repeating: 0, count: 1024)
@@ -45,11 +39,11 @@ class OBDStream: NSObject, StreamDelegate {
         Stream.getStreamsToHost(withName: host, port: port, inputStream: &inputStream, outputStream: &outputStream)
         
         inputStream!.delegate = self
-        inputStream!.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        inputStream!.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)
         inputStream!.open()
         
         outputStream!.delegate = self
-        outputStream!.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
+        outputStream!.schedule(in: RunLoop.current, forMode: RunLoop.Mode.default)
         outputStream!.open()
     }
     
@@ -95,7 +89,7 @@ class OBDStream: NSObject, StreamDelegate {
                         }
                         
                         if (counter == ViewController.obdCommands.count) {
-                            ViewController.sharedInstance.tableView.reloadData()
+                            delegate?.updateOBDValues()
                             
                             inProgress = false
                             
@@ -146,7 +140,7 @@ class OBDStream: NSObject, StreamDelegate {
         }
     }
     
-    func writeQueries() {
+    @objc func writeQueries() {
         if (OBDStream.sessionStarted && canWrite && !inProgress) {
             writeToStream(message: "AT Z")
         }
