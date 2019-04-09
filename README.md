@@ -21,7 +21,7 @@ The "IBM IoT Connected Vehicle Insights - OBDII Fleet Management App" interacts 
 
 ### OBDII Parsing
 The application uses a class made in-house to initiate OBDII connection and parse values. It can currently only parse the variables used in this application, but can easily be scaled to support more commands.
-[OBDStream.swift](https://github.ibm.com/Watson-IoT/IoT-Automotive-OBD2-iOS/blob/master/starter.automotive.obdii/OBDStream.swift)
+[OBDStream.swift](https://github.ibm.com/Watson-IoT/IoT-Automotive-OBD2-iOS/blob/master/starter.automotive.obdii/obd/OBDStream.swift)
 
 
 ## Prerequisites
