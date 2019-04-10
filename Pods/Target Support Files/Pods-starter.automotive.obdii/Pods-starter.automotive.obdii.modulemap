@@ -1,6 +1,0 @@
-framework module Pods_starter_automotive_obdii {
-  umbrella header "Pods-starter.automotive.obdii-umbrella.h"
-
-  export *
-  module * { export * }
-}

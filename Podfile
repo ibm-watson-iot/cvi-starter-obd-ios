@@ -3,8 +3,8 @@ platform :ios, '9.0'
 use_frameworks!
 
 target "starter.automotive.obdii" do
-    pod 'ReachabilitySwift', :git => 'https://github.com/ashleymills/Reachability.swift.git', :tag => 'v3'
-    pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :tag => '4.8.1'
-    pod 'CocoaMQTT', :git => 'https://github.com/emqtt/CocoaMQTT.git', :tag => '1.1.3'
-    pod 'CocoaAsyncSocket', :git => 'https://github.com/robbiehanson/CocoaAsyncSocket.git', :tag => '7.6.3'
+  pod 'ReachabilitySwift', '~> 3.0'
+  pod 'Alamofire', '~> 4.8.1'
+  pod 'CocoaMQTT', '~> 1.1.3'
+  pod 'CocoaAsyncSocket', '~> 7.6.3'
 end
