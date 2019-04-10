@@ -114,13 +114,13 @@
 		<echo>=============================================================================</echo>
 		<echo>=============================================================================</echo>
 		<echo>Run the Jenkins Build Job.</echo>
-		<echo>https://ciobuild.cloud.dst.ibm.com/job/IBM_IOT_for_Auto_Mobility_Starter_App/</echo>
+		<echo>https://ciobuild.cloud.dst.ibm.com/job/IoT-Automotive-OBD2-iOS/</echo>
 		<echo>  GYM_SCHEME   = starter.automotive.obdii</echo>
 		<echo>  SCAN_SCHEMA  = starter.automotive.obdii</echo>
 		<echo>  IPA_NAME     = starter.automotive.obdii</echo>
 		<echo>  IPA_VERSION  = [version number]</echo>
 		<echo>  GIT_BRANCH   = */ciobuild</echo>
-		<echo>  XCODE_SELECT = Xcode_8.3</echo>
+		<echo>  XCODE_SELECT = Xcode_10.2</echo>
 		<echo>=============================================================================</echo>
 		<echo>=============================================================================</echo>
 		
