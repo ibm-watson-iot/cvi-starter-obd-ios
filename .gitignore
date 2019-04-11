@@ -1,3 +1,5 @@
 /_ghe_ciobuild.properties
 /_ghe_copy_mobile_repo.properties
+/_tmp.ciobuild_clone.*/
+/Pods/
 **/xcuserdata/*
