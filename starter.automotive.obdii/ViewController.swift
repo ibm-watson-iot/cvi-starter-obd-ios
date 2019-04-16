@@ -302,7 +302,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     self.setProtocolSWitch(proto: self.curProtocol, hidden: false)
                 } else {
                     self.curProtocol = Protocol.HTTP
-                    self.setProtocolSWitch(proto: self.curProtocol, hidden: false)
+                    self.setProtocolSWitch(proto: self.curProtocol, hidden: true)
                 }
             } else {
                 // Error to get the status
