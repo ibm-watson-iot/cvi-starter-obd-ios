@@ -2,7 +2,7 @@
 
 
 ## Overview
-The IBM IoT Connected Vehicle Insights - Mobility Starter Application uses the **IBM IoT Platform** that is available on **IBM Cloud** to help you to quickly build a smart fleet management solution. The solution consists of a mobile app and a server component which is the **IBM IoT Connected Vehicle Insights - Fleet Management Starter Web Application**.
+The IBM IoT Connected Vehicle Insights - Mobility Starter Application uses the **IBM IoT Platform** that is available on **IBM Cloud** to help you to quickly build a smart fleet management solution. The solution consists of a mobile app and a server component which is the **IBM IoT Connected Vehicle Insights - Fleet Management Starter Application**.
 
 ### Mobile app
 The starter app provides a mobile app to connect to an OBDII dongle plugged in to your car. If you are a user of the application, you can use the mobile app to do the following tasks:
@@ -26,8 +26,9 @@ The application uses a class made in-house to initiate OBDII connection and pars
 
 ## Prerequisites
 
-Before you deploy the iOS application, ensure that the following prerequisites are met:
+Before you deploy the iOS application, ensure that the following prerequisites are met. 
 
+- Deploy the Fleet Management Starter Application, see [ibm-watson-iot/iota-starter-server-fm-saas](https://github.com/ibm-watson-iot/iota-starter-server-fm-saas).
 - The sample source code for the mobile app is only supported for use with an official Apple iOS device.
 - The sample source code for the mobile app is also supported only with officially licensed Apple development tools that are customized and distributed under the terms and conditions of your licensed Apple iOS Developer Program or your licensed Apple iOS Enterprise Program.
 - Apple Xcode 10.2 integrated development environment (IDE) and [CocoaPods](https://cocoapods.org/) must be installed on the computer that you plan to clone the mobile app source repository onto.
@@ -47,7 +48,7 @@ To try the iOS application using iOS Emulator, complete the following steps:
 ```$ pod install```  
 ```$ open starter.automotive.obdii.xcworkspace```
 
-4. Go to the upper left of the Xcode UI, click **Run**.
+4. In the Xcode view, within the toolbar, click the **Build and then run the current schema** button.
 
 5. To deploy the mobile app on your device, see [Run your app on a devices](https://help.apple.com/xcode/mac/current/#/dev60b6fbbc7).
 
