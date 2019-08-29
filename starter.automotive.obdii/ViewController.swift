@@ -3,7 +3,7 @@
  *
  * Licensed under the IBM License, a copy of which may be obtained at:
  *
- * http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?li_formnum=L-DDIN-AHKQ8X&popup=n&title=IBM%20IoT%20for%20Automotive%20Sample%20Starter%20Apps%20%28iOS%20Mobile%29
+ * https://github.com/ibm-watson-iot/iota-starter-obd-ios/blob/master/LICENSE
  *
  * You may not use this file except in compliance with the license.
  */
@@ -42,7 +42,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     static var navigationBar: UINavigationBar?
     
     private var activityIndicator: UIActivityIndicatorView?
-    private var isLicenseAgreed: Bool = false
     private var isApplicationStarted: Bool = false
     static var isServerSpecified: Bool = false
 
@@ -84,25 +83,6 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
         tableDisplayValues = [String](repeating: "N/A", count: tableLocationTitles.count + ViewController.obdCommands.count)
     }
 
-    // Show disclamer UI
-    func confirmDisclaimer() {
-        let licenseVC: LicenseViewController = self.storyboard!.instantiateViewController(withIdentifier: "licenseViewController") as! LicenseViewController
-        licenseVC.modalPresentationStyle = .custom
-        licenseVC.transitioningDelegate = self
-        licenseVC.onAgree = {() -> Void in
-            self.isLicenseAgreed = true
-            // Start the application when aggreed to the license
-            if ViewController.isServerSpecified {
-                self.startApp()
-            }
-        }
-        self.present(licenseVC, animated: true, completion: nil)
-    }
-    
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return LicensePresentationController(presentedViewController: presented, presenting: presenting)
-    }
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -125,12 +105,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
                     navigator.pushViewController(viewController, animated: true)
                 }
             }
-        } else if isLicenseAgreed == true && isApplicationStarted == false {
+        } else if isApplicationStarted == false {
             startApp()
-        }
-
-        if isLicenseAgreed == false {
-            confirmDisclaimer()
         }
     }
     
@@ -563,35 +539,5 @@ class ViewController: UIViewController, CLLocationManagerDelegate, UITableViewDe
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
         return "\(frequencyArray[row])"
-    }
-}
-class LicensePresentationController: UIPresentationController{
-    private static let LICENSE_VIEW_MARGIN:CGFloat = 20
-    var overlay: UIView!
-    override func presentationTransitionWillBegin() {
-        let containerView = self.containerView!
-        self.overlay = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-        self.overlay.frame = containerView.bounds
-        containerView.insertSubview(self.overlay, at: 0)
-    }
-    override func dismissalTransitionDidEnd(_ completed: Bool) {
-        if completed {
-            self.overlay.removeFromSuperview()
-        }
-    }
-    func sizeForChildContentContainer(container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
-        return CGSize(width: parentSize.width - LicensePresentationController.LICENSE_VIEW_MARGIN*2, height: parentSize.height - LicensePresentationController.LICENSE_VIEW_MARGIN*2)
-    }
-    override var frameOfPresentedViewInContainerView:CGRect {
-        var presentedViewFrame = CGRect.zero
-        let containerBounds = self.containerView!.bounds
-        presentedViewFrame.size = self.sizeForChildContentContainer(container: self.presentedViewController, withParentContainerSize: containerBounds.size)
-        presentedViewFrame.origin.x = LicensePresentationController.LICENSE_VIEW_MARGIN
-        presentedViewFrame.origin.y = LicensePresentationController.LICENSE_VIEW_MARGIN
-        return presentedViewFrame
-    }
-    override func containerViewWillLayoutSubviews() {
-        self.overlay.frame = self.containerView!.bounds
-        self.presentedView!.frame = self.frameOfPresentedViewInContainerView
     }
 }

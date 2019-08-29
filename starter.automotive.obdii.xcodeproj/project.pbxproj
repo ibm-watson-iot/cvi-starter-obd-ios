@@ -29,7 +29,6 @@
 		61AB543D1DDA5EAA00D60E67 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 61AB543B1DDA5EAA00D60E67 /* LaunchScreen.storyboard */; };
 		61BDF6DB1DDCBFA300793CD2 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */; };
 		7077A0391E07C67500E73A10 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7077A0381E07C67500E73A10 /* LICENSE */; };
-		7077A03B1E07C76200E73A10 /* LicenseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7077A03A1E07C76200E73A10 /* LicenseViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,7 +57,6 @@
 		61AB543E1DDA5EAA00D60E67 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		61BDF6DA1DDCBFA300793CD2 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = "Pods/../build/Debug-iphoneos/Alamofire/Alamofire.framework"; sourceTree = "<group>"; };
 		7077A0381E07C67500E73A10 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
-		7077A03A1E07C76200E73A10 /* LicenseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LicenseViewController.swift; sourceTree = "<group>"; };
 		ABD1DA47B34BFE20485504F5 /* Pods-starter.automotive.obdii.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-starter.automotive.obdii.debug.xcconfig"; path = "Pods/Target Support Files/Pods-starter.automotive.obdii/Pods-starter.automotive.obdii.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -134,7 +132,6 @@
 				4CD929DA2250974C0027E869 /* obd */,
 				4CD929D5224E6AE80027E869 /* device */,
 				4CD929C8224BDA090027E869 /* QR code reader */,
-				7077A03A1E07C76200E73A10 /* LicenseViewController.swift */,
 				61A806B01DDBAFE4008540CE /* API.swift */,
 				61AB54321DDA5EAA00D60E67 /* AppDelegate.swift */,
 				61AB54341DDA5EAA00D60E67 /* ViewController.swift */,
@@ -297,7 +294,6 @@
 				4CD929D0224DCC5D0027E869 /* EventFormat.swift in Sources */,
 				4CD929DE2251D8400027E869 /* IoTPVehicleDevice.swift in Sources */,
 				61AB54331DDA5EAA00D60E67 /* AppDelegate.swift in Sources */,
-				7077A03B1E07C76200E73A10 /* LicenseViewController.swift in Sources */,
 				4CD929DC2250AE0C0027E869 /* DeviceDelegate.swift in Sources */,
 				4CD929CB224BDA210027E869 /* QRCodeReaderViewController.swift in Sources */,
 				4CD929D7224E6B0E0027E869 /* VehicleDevice.swift in Sources */,
