@@ -31,7 +31,7 @@
 
 	<tstamp>
 		<format property="TAG_NAME" pattern="yyyyMMdd_HHmm" locale="en" timezone="Etc/GMT-9"/>
-		<format property="TAG_DATE" pattern="yyyyMMdd" locale="en" timezone="Etc/GMT-9"/>
+		<format property="TAG_DATE" pattern="yyyyMMddHHmm" locale="en" timezone="Etc/GMT-9"/>
 	</tstamp>
 
 	<!-- for cio build content -->
