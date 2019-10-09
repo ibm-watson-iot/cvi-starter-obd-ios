@@ -26,24 +26,24 @@
 	     5. delete temporary directories
 	        - _tmp.ciobuild_clone.YYYYMMDD
 	-->
-	
+
 	<property name="dry-run" value="false"/>
-	
+
 	<tstamp>
 		<format property="TAG_NAME" pattern="yyyyMMdd_HHmm" locale="en" timezone="Etc/GMT-9"/>
 		<format property="TAG_DATE" pattern="yyyyMMdd" locale="en" timezone="Etc/GMT-9"/>
 	</tstamp>
-	
+
 	<!-- for cio build content -->
 	<property name="ciobuild.src.branch" value="release"/>
 	<property name="ciobuild.build.branch" value="ciobuild"/>
-	
+
 	<property name="src.depth" value="--depth=50"/>
 
 	<property name="src.url" value="https://github.ibm.com/Watson-IoT/IoT-Automotive-OBD2-iOS"/>
 	<property name="src.opts" value="${src.depth} -b ${ciobuild.src.branch} --single-branch"/>
 	<property name="src.clone" location="_tmp.ciobuild_clone.${TAG_NAME}"/>
-	
+
 	<!-- for cio build -->
 	<property name="ciobuild.bundle.id" value="com.ibm.cio.be.iphone.iot.automotive.starter.obd2"/>
 	<property name="ciobuild.build.version" value="${TAG_DATE}"/>
@@ -51,9 +51,9 @@
 	<property name="iotp.apikey" value="a-kibb33-rkhexfo7ml"/>
 	<property name="iotp.apitoken" value="lDfjTThkWv*@Ea_!4d"/>
 
-	
-	<!-- ================================= 
-          target: main              
+
+	<!-- =================================
+          target: main
          ================================= -->
 	<target name="main" depends="" description="description">
 		<echo>Start cio build w/ tag ${TAG_NAME}...</echo>
@@ -64,7 +64,7 @@
 			<param name="repo.opts" value="${src.opts}"/>
 			<param name="repo.clone" value="${src.clone}"/>
 		</antcall>
-		
+
 		<!-- git checkout -->
 		<echo>Checking out the ${ciobuild.build.branch} branch...</echo>
 		<exec executable="git" dir="${src.clone}" failonerror="true">
@@ -83,33 +83,24 @@
 		<fail message="Issue on the script's git fetch setting. The fetch depth specified by the 'src.depth' property is too shallow to merge ${ciobuild.build.branch} and ${ciobuild.src.branch} (current: ${src.depth}). Please increase the value and retry.">
 			<condition><not><equals arg1="${rc.check.merge-base}" arg2="0"/></not></condition>
 		</fail>
-		
-		
+
 		<!-- git merge -->
 		<exec executable="git" dir="${src.clone}" failonerror="true">
 			<arg line="merge --no-ff ${ciobuild.src.branch}"/>
 		</exec>
-		
-		<!-- tag changes to ciobuild branch with tag -->
-		<exec executable="git" dir="${src.clone}" failonerror="true">
-			<arg line="tag -a"/>
-			<arg value="ciobuild-${TAG_NAME}"/>
-			<arg line="-m"/>
-			<arg value="Version ${TAG_NAME}"/>
-		</exec>
-		
+
 		<!-- set working directory -->
 		<property name="work" location="${src.clone}"/>
-		
+
 		<!-- update contents -->
 		<antcall target="update_contents_for_ciobuild">
 			<param name="work" value="${src.clone}"/>
 		</antcall>
-		
+
 		<!-- push changes -->
 		<echo>cio build complited. Pushing contents to GHE...</echo>
 		<antcall target="push_contents"/>
-		
+
 		<!-- Run the Jenkins Build Job -->
 		<echo>=============================================================================</echo>
 		<echo>=============================================================================</echo>
@@ -123,14 +114,14 @@
 		<echo>  XCODE_SELECT = Xcode_10.2</echo>
 		<echo>=============================================================================</echo>
 		<echo>=============================================================================</echo>
-		
+
 		<!--
 		<echo>Cleaning up tmp...</echo>
 		<delete dir="${src.clone}"/>
 		-->
 		<echo>Done.</echo>
 	</target>
-	
+
 	<!--
 		Prepare cio build
 		https://github.ibm.com/CIOpenmix/fastlane
@@ -159,7 +150,7 @@
 			<fileset refid="fileset.API.swift"></fileset>
 		</replaceregexp>
 
-		<!-- 
+		<!--
 			* Set correct version (starter.automotive.obdii/Info.plist)
 			  - update <key>CFBundleVersion</key><value>[VERSION HERE]</version>
 		-->
@@ -167,7 +158,7 @@
 			match="(&lt;key&gt;CFBundleVersion&lt;/key&gt;\s*&lt;string&gt;)[^&lt;]*(&lt;/string&gt;)"
 			replace="\1${ciobuild.build.version}\2"
 			/>
-		
+
 		<!-- Remove files -->
 		<!-- * Remove IPA file -->
 		<delete>
@@ -176,15 +167,49 @@
 			</fileset>
 		</delete>
 	</target>
-	
+
 	<!--
 	==============================================
 	            GIT related targets
 	==============================================
 	-->
-	
+
+	<target name="stage_contents">
+		<echo>Staging changes...</echo>
+		<exec executable="git" dir="${src.clone}" failonerror="true">
+			<arg line="add --all ."/>
+		</exec>
+		<exec executable="git" dir="${src.clone}" failonerror="false" resultproperty="gitindexresult">
+			<arg line="diff-index --quiet --cached HEAD"/>
+		</exec>
+		<echo>  Flag if there are staged chagnges: ${gitindexresult}</echo>
+		<script language="javascript">
+			var r = project.getProperty("gitindexresult");
+			if(r != 0){
+				project.setProperty("contents_changed", true);
+			}
+		</script>
+	</target>
+
+	<target name="commit_contents" depends="stage_contents" if="contents_changed">
+		<!-- tag changes to ciobuild branch with tag -->
+		<echo>Tagging source</echo>
+		<exec executable="git" dir="${src.clone}" failonerror="true">
+			<arg line="tag -a"/>
+			<arg value="ciobuild-${TAG_NAME}"/>
+			<arg line="-m"/>
+			<arg value="Version ${TAG_NAME}"/>
+		</exec>
+
+		<echo>Commiting the changes...</echo>
+		<exec executable="git" dir="${src.clone}" failonerror="true">
+			<arg line="commit -m"/>
+			<arg value="${TAG_NAME}"/>
+		</exec>
+	</target>
+
 	<!-- git push -->
-	<target name="push_contents" depends="" unless="${dry-run}">
+	<target name="push_contents" depends="commit_contents" unless="${dry-run}">
 		<echo>Pushing the changes...</echo>
 		<exec executable="git" dir="${src.clone}">
 			<arg line="push"/>
@@ -254,5 +279,5 @@
 	<target name="git.clone.check">
 		<available type="dir" file="${repo.clone}/.git" property="git.clone.exists" />
 	</target>
-	
+
 </project>
