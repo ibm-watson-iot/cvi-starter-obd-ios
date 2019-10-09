@@ -192,6 +192,12 @@
 	</target>
 
 	<target name="commit_contents" depends="stage_contents" if="contents_changed">
+		<echo>Commiting the changes...</echo>
+		<exec executable="git" dir="${src.clone}" failonerror="true">
+			<arg line="commit -m"/>
+			<arg value="${TAG_NAME}"/>
+		</exec>
+
 		<!-- tag changes to ciobuild branch with tag -->
 		<echo>Tagging source</echo>
 		<exec executable="git" dir="${src.clone}" failonerror="true">
@@ -199,12 +205,6 @@
 			<arg value="ciobuild-${TAG_NAME}"/>
 			<arg line="-m"/>
 			<arg value="Version ${TAG_NAME}"/>
-		</exec>
-
-		<echo>Commiting the changes...</echo>
-		<exec executable="git" dir="${src.clone}" failonerror="true">
-			<arg line="commit -m"/>
-			<arg value="${TAG_NAME}"/>
 		</exec>
 	</target>
 
