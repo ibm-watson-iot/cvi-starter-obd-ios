@@ -441,6 +441,7 @@
 				INFOPLIST_FILE = starter.automotive.obdii/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.cio.be.iphone.iot.automotive.starter.obd2;
 				PRODUCT_NAME = "IoTCVI - OBDII";
 				PROVISIONING_PROFILE = "";
@@ -466,6 +467,7 @@
 				INFOPLIST_FILE = starter.automotive.obdii/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ibm.cio.be.iphone.iot.automotive.starter.obd2;
 				PRODUCT_NAME = "IoTCVI - OBDII";
 				PROVISIONING_PROFILE = "";
