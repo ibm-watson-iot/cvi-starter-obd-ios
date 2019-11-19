@@ -32,7 +32,7 @@ Once you want to stop the application from recording your data, simply press "En
 You can currently download and install the mobile app on your iOS mobile device.
 
 ### Server component
-The "IBM IoT Connected Vehicle Insights - OBDII Fleet Management App" interacts with a server component. The server component provides the back-end fleet management and system monitoring service that provides more features for fleet management companies. By default, the mobile app connects to a test server that is provided by IBM. You can also choose to deploy your own server instance to IBM Cloud and connect your mobile app to that instance instead of the test system. For more information about deploying the fleet management server component, see [ibm-watson-iot/iota-starter-server-fm-saas](https://github.com/ibm-watson-iot/iota-starter-server-fm-saas).
+The "IBM IoT Connected Vehicle Insights - OBDII Fleet Management App" interacts with a server component. The server component provides the back-end fleet management and system monitoring service that provides more features for fleet management companies. By default, the mobile app connects to a test server that is provided by IBM. You can also choose to deploy your own server instance to IBM Cloud and connect your mobile app to that instance instead of the test system. For more information about deploying the fleet management server component, see [ibm-watson-iot/cvi-starter-server-fm](https://github.com/ibm-watson-iot/cvi-starter-server-fm).
 
 ### OBDII Parsing
 The application uses a class made in-house to initiate OBDII connection and parse values. It can currently only parse the variables used in this application, but can easily be scaled to support more commands.
@@ -43,7 +43,7 @@ The application uses a class made in-house to initiate OBDII connection and pars
 
 Before you deploy the iOS application, ensure that the following prerequisites are met. 
 
-- Deploy the Fleet Management Starter Application, see [ibm-watson-iot/iota-starter-server-fm-saas](https://github.com/ibm-watson-iot/iota-starter-server-fm-saas).
+- Deploy the Fleet Management Starter Application, see [ibm-watson-iot/cvi-starter-server-fm](https://github.com/ibm-watson-iot/cvi-starter-server-fm).
 - The sample source code for the mobile app is only supported for use with an official Apple iOS device.
 - The sample source code for the mobile app is also supported only with officially licensed Apple development tools that are customized and distributed under the terms and conditions of your licensed Apple iOS Developer Program or your licensed Apple iOS Enterprise Program.
 - Apple Xcode 10.2 integrated development environment (IDE) and [CocoaPods](https://cocoapods.org/) must be installed on the computer that you plan to clone the mobile app source repository onto.
@@ -58,7 +58,7 @@ To try the iOS application using iOS Emulator, complete the following steps:
 
 2. Clone the source code repository for the mobile app by using the following git command:    
 
-    ```$ git clone https://github.com/ibm-watson-iot/iota-starter-obd-ios```  
+    ```$ git clone https://github.com/ibm-watson-iot/cvi-starter-obd-ios```  
 3. Go to source code folder, and then enter the following commands:   
 ```$ pod install```  
 ```$ open starter.automotive.obdii.xcworkspace```
@@ -79,7 +79,7 @@ Before running the mobile app with a real OBDII dongle, you need to set up WiFi 
 4. Select the "Static" option and enter only the IP and Subnet Mask addresses from Step 3; leave everything else blank
 
 ## Reporting defects
-To report a defect with the IBM IoT Connected Vehicle Insights - Mobility Starter Application mobile app, go to the [Issues](https://github.com/ibm-watson-iot/iota-starter-obd-ios/issues) section.
+To report a defect with the IBM IoT Connected Vehicle Insights - Mobility Starter Application mobile app, go to the [Issues](https://github.com/ibm-watson-iot/cvi-starter-obd-ios/issues) section.
 
 ## Privacy notice
 The "IBM IoT Connected Vehicle Insights - OBDII Fleet Management App for iOS" on IBM Cloud stores all of the driving data that is obtained while you use the mobile app.
