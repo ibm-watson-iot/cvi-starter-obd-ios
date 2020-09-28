@@ -78,6 +78,34 @@ Before running the mobile app with a real OBDII dongle, you need to set up WiFi 
 
 4. Select the "Static" option and enter only the IP and Subnet Mask addresses from Step 3; leave everything else blank
 
+## Certificate Pinning
+You can pin the server certificates as following if you are required according to the security requirement. See [Security Guide](https://github.com/Alamofire/Alamofire/blob/4.8.2/Documentation/AdvancedUsage.md#security) of Alamofire 4.8.2.
+1. Get certificates of the application server and Connected Vehicle Insights server. You can get them from running servers, for example,
+   ```bash
+   $ openssl s_client -connect example.mybluemix.net:443 -showcerts < /dev/null | openssl x509 -outform DER > example.der
+   ```
+1. Copy the der files to the Xcode project
+   - Drag and drop into the starter.automotive.obdii folder on Xcode
+   - Check `starter.automotive.obdii in` in `Add to targets` and click Finish button ![Add To Targets](AddToTargets.png)
+1. Replace following code at the bottom of initialize function of API.swift. Use your own servers instead of this sample.
+    ```swift
+        let serverTrustPolicies: [String: ServerTrustPolicy] = [
+            "example.mybluemix.net": .pinCertificates(
+                certificates: ServerTrustPolicy.certificates(),
+                validateCertificateChain: true,
+                validateHost: true
+            ),
+            "xxxx.automotive.internetofthings.ibmcloud.com": .pinCertificates(
+                certificates: ServerTrustPolicy.certificates(),
+                validateCertificateChain: true,
+                validateHost: true
+            )
+        ]
+        sessionManager = SessionManager(serverTrustPolicyManager: ServerTrustPolicyManager(policies: serverTrustPolicies))
+
+        //    sessionManager = SessionManager.default
+    ```
+
 ## Reporting defects
 To report a defect with the IBM IoT Connected Vehicle Insights - Mobility Starter Application mobile app, go to the [Issues](https://github.com/ibm-watson-iot/cvi-starter-obd-ios/issues) section.
 

@@ -34,17 +34,19 @@ let USER_DEFAULTS_KEY_PROTOCOL_USERAGENT = "userAgent"
 
 struct API {
     // Platform API URLs
-    static var defaultAppURL = "https://iota-starter-server-fleetmgmt.mybluemix.net";
-    static var defaultAppUser: String = "";
-    static var defaultAppPassword: String = "";
-    static var deviceUUID: String = "";
+    private static let defaultAppURL = "https://iota-starter-server-fleetmgmt.mybluemix.net"
+    private static let defaultAppUser: String = ""
+    private static let defaultAppPassword: String = ""
+    private static let deviceUUID: String = ""
     
-    static var connectedAppURL = defaultAppURL;
-    static var connectedAppUser = defaultAppUser;
-    static var connectedAppPassword = defaultAppPassword;
+    private static var connectedAppURL = defaultAppURL
+    private static var connectedAppUser = defaultAppUser
+    private static var connectedAppPassword = defaultAppPassword
 
-    static let DOESNOTEXIST: String = "doesNotExist";
-    
+    private static let DOESNOTEXIST: String = "doesNotExist"
+
+    private static var sessionManager: SessionManager!
+
     static func isServerSpecified() -> Bool {
         let uuid = UserDefaults.standard.string(forKey: "iota-starter-uuid")
         return uuid != nil
@@ -65,6 +67,24 @@ struct API {
         } else {
             setEndpoint(appUrl: appUrl!, appUsername: appUser, appPassword: appPassword)
         }
+
+        /*
+               let serverTrustPolicies: [String: ServerTrustPolicy] = [
+                   "example.mybluemix.net": .pinCertificates(
+                       certificates: ServerTrustPolicy.certificates(),
+                       validateCertificateChain: true,
+                       validateHost: true
+                   ),
+                   "xxxx.automotive.internetofthings.ibmcloud.com": .pinCertificates(
+                       certificates: ServerTrustPolicy.certificates(),
+                       validateCertificateChain: true,
+                       validateHost: true
+                   )
+               ]
+               sessionManager = SessionManager(serverTrustPolicyManager: ServerTrustPolicyManager(policies: serverTrustPolicies))
+        */
+
+        sessionManager = SessionManager.default
     }
     
     static func getUUID() -> String {
@@ -209,7 +229,7 @@ struct API {
             "Content-Type": "application/json",
             "Accept": "application/json"
         ]
-        Alamofire.request(url, method: method, parameters: params, headers: headers)
+        sessionManager.request(url, method: method, parameters: params, headers: headers)
             .authenticate(user:connectedAppUser, password: connectedAppPassword)
             .responseJSON { (response) in
                 let statusCode = response.response?.statusCode;
@@ -217,6 +237,8 @@ struct API {
                     callback(statusCode!, response.result.value!)
                 } else if (statusCode != nil) {
                     callback(statusCode!, response.error as Any)
+                } else {
+                    callback(-1, response.error as Any)
                 }
             }
     }

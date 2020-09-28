@@ -36,7 +36,7 @@ class SpecifyServerViewController: UIViewController {
             if let url : URL = URL(string: appRoute) {
                 if UIApplication.shared.canOpenURL(url) {
                     if(serverSpecified){
-                        performSegue(withIdentifier: "goToHomeScreen", sender: self)
+                        self.navigationController?.popViewController(animated: true)
                     }
                 } else {
                     showError("No valid URL found from data provided:\n\n\(appRoute)")
@@ -84,9 +84,7 @@ class SpecifyServerViewController: UIViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let target :UITabBarController? = segue.destination as? UITabBarController
-        if(segue.identifier == "goToHomeScreen"){
-            target?.viewControllers!.remove(at: 0)
-        }else if(segue.identifier == "goToCodeReader"){
+        if(segue.identifier == "goToCodeReader"){
             serverSpecified = true
         }
     }

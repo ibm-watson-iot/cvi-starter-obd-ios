@@ -14,13 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="2Q5-5h-7Rr">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="2Q5-5h-7Rr">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -37,7 +35,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="dXL-gC-HWe">
-                                <rect key="frame" x="16" y="67" width="343" height="25"/>
+                                <rect key="frame" x="16" y="47" width="343" height="25"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Vehicle ID: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hN6-ri-RrZ">
                                         <rect key="frame" x="0.0" y="0.0" width="72.5" height="25"/>
@@ -64,14 +62,14 @@
                                 </constraints>
                             </stackView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" pagingEnabled="YES" dataMode="prototypes" style="plain" separatorStyle="default" sectionIndexMinimumDisplayRowCount="7" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Pf2-YJ-ZLS">
-                                <rect key="frame" x="0.0" y="92" width="375" height="460"/>
+                                <rect key="frame" x="0.0" y="72" width="375" height="479"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="HomeTableCells" textLabel="Mvb-FY-sTw" detailTextLabel="q7P-V0-oZP" style="IBUITableViewCellStyleValue1" id="1g1-CU-ZWc">
                                         <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="1g1-CU-ZWc" id="lpF-cm-yrK">
-                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Mvb-FY-sTw">
@@ -94,10 +92,10 @@
                                 </prototypes>
                             </tableView>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="bgB-nM-Ilw">
-                                <rect key="frame" x="16" y="562" width="343" height="30"/>
+                                <rect key="frame" x="16" y="561" width="343" height="31"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n5h-VJ-V6A">
-                                        <rect key="frame" x="0.0" y="0.0" width="228" height="30"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="220" height="31"/>
                                         <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="15"/>
                                         <size key="titleShadowOffset" width="0.0" height="3"/>
                                         <state key="normal" title="Change Frequency"/>
@@ -106,7 +104,7 @@
                                         </connections>
                                     </button>
                                     <segmentedControl opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="right" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="Kgt-6a-Xo4">
-                                        <rect key="frame" x="238" y="0.0" width="105" height="31"/>
+                                        <rect key="frame" x="230" y="0.0" width="113" height="32"/>
                                         <segments>
                                             <segment title="HTTP"/>
                                             <segment title="MQTT"/>
@@ -182,7 +180,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="2Q5-5h-7Rr" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="phg-LF-3x5">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <nil name="viewControllers"/>
@@ -207,14 +205,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="9" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="417-oS-qSP">
-                                <rect key="frame" x="16" y="94" width="343" height="62.5"/>
+                                <rect key="frame" x="16" y="74" width="343" height="62.5"/>
                                 <string key="text">After instantiating the "IBM IoT Connected Vehicle Insights - Mobility Starter Application server", tap the QR code button below to scan the QR code from your application's home page.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TqO-3N-7Zh">
-                                <rect key="frame" x="16" y="483.5" width="343" height="30"/>
+                                <rect key="frame" x="16" y="463.5" width="343" height="30"/>
                                 <state key="normal" title="Clear access information cache"/>
                                 <connections>
                                     <action selector="clearCacheAction:" destination="zMW-s4-Y7t" eventType="touchUpInside" id="thF-EE-CHP"/>
@@ -228,17 +226,17 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PRV-qn-vv5">
-                                <rect key="frame" x="16" y="448.5" width="343" height="30"/>
+                                <rect key="frame" x="16" y="428.5" width="343" height="30"/>
                                 <state key="normal" title="Use the default public server instead"/>
                                 <connections>
                                     <action selector="useDefaultAction:" destination="zMW-s4-Y7t" eventType="touchUpInside" id="VcX-X3-sha"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eHk-po-hvV">
-                                <rect key="frame" x="81.5" y="196.5" width="212" height="212"/>
+                                <rect key="frame" x="81.5" y="176.5" width="212" height="212"/>
                                 <state key="normal" image="QRcode"/>
                                 <connections>
-                                    <segue destination="DDm-4m-RVI" kind="show" id="qIC-f2-vKN"/>
+                                    <segue destination="DDm-4m-RVI" kind="show" identifier="goToCodeReader" id="qIC-f2-vKN"/>
                                 </connections>
                             </button>
                         </subviews>
